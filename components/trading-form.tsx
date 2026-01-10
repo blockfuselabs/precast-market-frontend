@@ -121,9 +121,10 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     disabled={isPending}
+                    min={0}
                 />
                 <Button
-                    className={`w-full ${isAllowanceSufficient ? bgClass : ""}`}
+                    className={`w-full ${isAllowanceSufficient ? bgClass : "bg-primary"}`}
                     onClick={isAllowanceSufficient ? handleBuy : handleApprove}
                     disabled={isPending || !amount || parseFloat(amount) <= 0}
                     variant={isAllowanceSufficient ? "default" : "secondary"}
