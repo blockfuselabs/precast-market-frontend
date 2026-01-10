@@ -4,7 +4,10 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
+import { useUserRights } from "@/hooks/useUserRights"
+
 export default function Header() {
+  const { hasCreationRights, isConnected } = useUserRights()
   // const [activeCategory, setActiveCategory] = useState("All")
 
   return (
@@ -18,9 +21,11 @@ export default function Header() {
 
             {/* Mobile Buttons (moved here to share row with logo) */}
             <div className="flex items-center gap-4 md:order-3 md:ml-auto">
-              <Button asChild variant="ghost" size="sm">
-                <Link href="/create-market">Create Market</Link>
-              </Button>
+              {isConnected && hasCreationRights && (
+                <Button asChild variant="ghost" size="sm">
+                  <Link href="/create-market">Create Market</Link>
+                </Button>
+              )}
               <ConnectButton showBalance={false} />
             </div>
           </div>
