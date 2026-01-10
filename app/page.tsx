@@ -7,6 +7,8 @@ import { useMarkets } from "@/hooks/useMarkets"
 export default function Home() {
   const { markets, isLoading } = useMarkets()
 
+  console.log("Markets: ", markets)
+
   return (
     <main className="min-h-screen bg-background">
       <Header />

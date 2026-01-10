@@ -89,6 +89,8 @@ export function useMarkets() {
     const markets = marketsData?.map((result, index): Market | null => {
         if (result.status !== "success") return null
 
+        index = index + 1
+
         // result.result matches the struct:
         // [exists, b, qYes, qNo, startTime, endTime, resolved, yesWon, question, cId]
         const data = result.result as any

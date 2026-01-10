@@ -62,3 +62,26 @@ export async function uploadJSONToIPFS(json: any): Promise<string> {
     const data = await res.json()
     return data.IpfsHash
 }
+
+export const IPFS_GATEWAY = "https://gateway.pinata.cloud/ipfs/"
+
+export function getIPFSUrl(cidOrUrl: string): string {
+    if (!cidOrUrl) return ""
+    if (cidOrUrl.startsWith("http")) return cidOrUrl
+    if (cidOrUrl.startsWith("ipfs://")) {
+        return `${IPFS_GATEWAY}${cidOrUrl.slice(7)}`
+    }
+    return `${IPFS_GATEWAY}${cidOrUrl}`
+}
+
+export async function fetchIPFSMetadata(cid: string): Promise<any> {
+    try {
+        const url = getIPFSUrl(cid)
+        const res = await fetch(url)
+        if (!res.ok) throw new Error("Failed to fetch IPFS metadata")
+        return await res.json()
+    } catch (error) {
+        console.error("Error fetching IPFS metadata:", error)
+        return null
+    }
+}

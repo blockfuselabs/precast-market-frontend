@@ -166,11 +166,19 @@ export function MarketCreationForm() {
             toast.success("Metadata uploaded! Creating market...");
 
             // 3. Create Market
-            const startTime = Math.floor(new Date(values.startDate).getTime() / 1000)
+            // Ensure startTime is not in the past relative to block time. 
+            // Add 60s buffer if it's very close to now or mistakenly in past.
+            let startTime = Math.floor(new Date(values.startDate).getTime() / 1000)
             const endTime = Math.floor(new Date(values.endDate).getTime() / 1000)
+            const now = Math.floor(Date.now() / 1000)
+
+            if (startTime <= now) {
+                console.warn("Start time is in the past, adjusting to now + 60s")
+                startTime = now + 60
+            }
 
             console.log("Creating market with args:", {
-                liquidity: parseEther(values.liquidity.toString()),
+                liquidity: parseUnits(values.liquidity.toString(), 6),
                 startTime,
                 endTime,
                 question: values.question,
@@ -188,6 +196,8 @@ export function MarketCreationForm() {
                     values.question,
                     metadataCid // _cId
                 ],
+                // Manual gas limit to bypass estimation errors if simulation fails vaguely
+                gas: BigInt(1000000),
             })
         } catch (error) {
             console.error("Create Market Error:", error)
