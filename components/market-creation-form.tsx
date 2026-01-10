@@ -325,7 +325,7 @@ export function MarketCreationForm() {
                         type="button"
                         onClick={handleApprove}
                         disabled={isApprovePending || isConfirmingApprove}
-                        className="w-full"
+                        className="w-full bg-primary"
                         variant="secondary"
                     >
                         {isApprovePending ? "Confirming Approval..." : isConfirmingApprove ? "Processing Approval..." : "Approve USDC"}
