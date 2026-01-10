@@ -6,6 +6,7 @@ import { useParams } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { TradingForm } from "@/components/trading-form"
+import { MarketResolution } from "@/components/market-resolution"
 
 export default function EventPage() {
     const params = useParams()
@@ -77,8 +78,10 @@ export default function EventPage() {
                         </div>
                     </div>
 
+
                     {/* Right Column: Trading Interface */}
                     <div className="w-full md:w-80 space-y-4">
+                        <MarketResolution marketId={id} />
                         <TradingForm
                             marketId={market.id}
                             outcome="YES"
