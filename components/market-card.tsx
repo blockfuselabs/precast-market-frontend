@@ -24,9 +24,9 @@ export default function MarketCard({ market }: MarketCardProps) {
       <div className="p-4">
         <div className="mb-3 flex items-start justify-between gap-2">
           <h3 className="flex-1 text-sm font-semibold leading-tight text-foreground">{market.title}</h3>
-          <button className="flex-shrink-0 text-muted-foreground hover:text-foreground">
+          {/* <button className="flex-shrink-0 text-muted-foreground hover:text-foreground">
             <MoreVertical className="h-4 w-4" />
-          </button>
+          </button> */}
         </div>
 
         {/* Binary Market */}
