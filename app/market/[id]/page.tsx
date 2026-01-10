@@ -5,6 +5,7 @@ import Header from "@/components/header"
 import { useParams } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
+import { TradingForm } from "@/components/trading-form"
 
 export default function EventPage() {
     const params = useParams()
@@ -39,7 +40,7 @@ export default function EventPage() {
             <div className="max-w-4xl mx-auto px-6 py-8">
                 <div className="flex gap-8 flex-col md:flex-row">
                     {/* Left Column: Image and Main Info */}
-                    <div className="flex-1 space-y-6">
+                    <div className="flex-1 space-y-6 border border-muted-foreground/20 rounded-lg p-6">
                         <div className="aspect-video relative rounded-lg overflow-hidden border border-border">
                             <Image
                                 src={market.image}
@@ -76,23 +77,18 @@ export default function EventPage() {
                         </div>
                     </div>
 
-                    {/* Right Column: Trading Interface (Mock for now) */}
+                    {/* Right Column: Trading Interface */}
                     <div className="w-full md:w-80 space-y-4">
-                        <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-                            <div className="flex justify-between items-center">
-                                <span className="font-semibold text-lg">Yes</span>
-                                <span className="text-2xl font-bold text-green-500">{market.outcomes[0].probability}%</span>
-                            </div>
-                            <Button className="w-full bg-green-500 hover:bg-green-600">Buy Yes</Button>
-                        </div>
-
-                        <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-                            <div className="flex justify-between items-center">
-                                <span className="font-semibold text-lg">No</span>
-                                <span className="text-2xl font-bold text-red-500">{market.outcomes[1].probability}%</span>
-                            </div>
-                            <Button className="w-full bg-red-500 hover:bg-red-600">Buy No</Button>
-                        </div>
+                        <TradingForm
+                            marketId={market.id}
+                            outcome="YES"
+                            probability={market.outcomes[0].probability}
+                        />
+                        <TradingForm
+                            marketId={market.id}
+                            outcome="NO"
+                            probability={market.outcomes[1].probability}
+                        />
                     </div>
                 </div>
             </div>
