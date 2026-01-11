@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button"
 import { TradingForm } from "@/components/trading-form"
 import { MarketResolution } from "@/components/market-resolution"
 import { MarketTimer } from "@/components/market-timer"
+import { ClaimWinnings } from "@/components/claim-winnings"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function EventPage() {
     const params = useParams()
@@ -82,19 +84,34 @@ export default function EventPage() {
                         </div>
                     </div>
 
-                    {/* Right Column: Trading Interface */}
+                    {/* Right Column - Trading Form */}
                     <div className="w-full md:w-80 space-y-4">
                         <MarketResolution marketId={id} />
-                        <TradingForm
-                            marketId={market.id}
-                            outcome="YES"
-                            probability={market.outcomes[0].probability}
+                        <ClaimWinnings
+                            marketId={id}
+                            resolved={market.resolved}
+                            yesWon={market.yesWon}
                         />
-                        <TradingForm
-                            marketId={market.id}
-                            outcome="NO"
-                            probability={market.outcomes[1].probability}
-                        />
+                        <Tabs defaultValue="YES" className="w-full">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="YES">Yes</TabsTrigger>
+                                <TabsTrigger value="NO">No</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="YES">
+                                <TradingForm
+                                    marketId={id}
+                                    outcome="YES"
+                                    probability={market.outcomes[0].probability}
+                                />
+                            </TabsContent>
+                            <TabsContent value="NO">
+                                <TradingForm
+                                    marketId={id}
+                                    outcome="NO"
+                                    probability={market.outcomes[1].probability}
+                                />
+                            </TabsContent>
+                        </Tabs>
                     </div>
                 </div>
             </div>
