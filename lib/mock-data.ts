@@ -15,6 +15,10 @@ export interface Market {
   endTime?: number
   resolved?: boolean
   yesWon?: boolean
+  description?: string
+  resolutionSource?: string
+  startDate?: string
+  endDate?: string
 }
 
 export const mockMarkets: Market[] = [

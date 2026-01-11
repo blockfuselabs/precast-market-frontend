@@ -90,7 +90,7 @@ export function useMarket(marketId: string) {
             endTime: data[5] ? Number(data[5]) : undefined,
             resolved: data[6],
             yesWon: data[7],
-        } as Market & { description?: string, resolutionSource?: string, startDate?: string, endDate?: string }
+        } as Market
     }
 
     return {
