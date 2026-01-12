@@ -212,7 +212,7 @@ export function MarketCreationForm() {
 
                 {/* Section 1: Basic Info */}
                 <div className="space-y-4">
-                    <h3 className="text-lg font-semibold border-b border-black/5 dark:border-white/5 pb-2 text-foreground">1. Market Details</h3>
+                    <h3 className="text-lg font-semibold border-b border-border pb-2 text-foreground">1. Market Details</h3>
                     <FormField
                         control={form.control}
                         name="question"
@@ -220,7 +220,7 @@ export function MarketCreationForm() {
                             <FormItem>
                                 <FormLabel>Question</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="e.g. Will BTC hit $100k by 2025?" {...field} className="bg-black/5 dark:bg-white/5 border-black/5 dark:border-white/10 text-foreground" />
+                                    <Input placeholder="e.g. Will BTC hit $100k by 2025?" {...field} className="bg-secondary border-border text-foreground focus:ring-primary" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -233,7 +233,7 @@ export function MarketCreationForm() {
                             <FormItem>
                                 <FormLabel>Description</FormLabel>
                                 <FormControl>
-                                    <Textarea placeholder="Provide context and resolution criteria..." {...field} className="min-h-[100px] bg-black/5 dark:bg-white/5 border-black/5 dark:border-white/10 text-foreground" />
+                                    <Textarea placeholder="Provide context and resolution criteria..." {...field} className="min-h-[100px] bg-secondary border-border text-foreground" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -250,7 +250,7 @@ export function MarketCreationForm() {
                                         {...fieldProps}
                                         type="file"
                                         accept="image/*"
-                                        className="bg-black/5 dark:bg-white/5 border-black/5 dark:border-white/10 cursor-pointer file:cursor-pointer file:text-primary file:border-0 file:bg-transparent file:font-semibold text-foreground"
+                                        className="bg-secondary border-border cursor-pointer file:cursor-pointer file:text-primary file:border-0 file:bg-transparent file:font-semibold text-foreground"
                                         onChange={(event) => {
                                             const file = event.target.files && event.target.files[0];
                                             if (file) {
@@ -267,7 +267,7 @@ export function MarketCreationForm() {
 
                 {/* Section 2: Resolution & Timeline */}
                 <div className="space-y-4">
-                    <h3 className="text-lg font-semibold border-b border-black/5 dark:border-white/5 pb-2 text-foreground">2. Resolution & Timeline</h3>
+                    <h3 className="text-lg font-semibold border-b border-border pb-2 text-foreground">2. Resolution & Timeline</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <FormField
                             control={form.control}
@@ -276,7 +276,7 @@ export function MarketCreationForm() {
                                 <FormItem>
                                     <FormLabel>Resolution Source</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="e.g. Binance API, CoinGecko" {...field} className="bg-black/5 dark:bg-white/5 border-black/5 dark:border-white/10 text-foreground" />
+                                        <Input placeholder="e.g. Binance API, CoinGecko" {...field} className="bg-secondary border-border text-foreground" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -289,7 +289,7 @@ export function MarketCreationForm() {
                                 <FormItem>
                                     <FormLabel>Start Date</FormLabel>
                                     <FormControl>
-                                        <Input type="datetime-local" {...field} className="bg-black/5 dark:bg-white/5 border-black/5 dark:border-white/10 text-foreground" />
+                                        <Input type="datetime-local" {...field} className="bg-secondary border-border text-foreground" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -302,7 +302,7 @@ export function MarketCreationForm() {
                                 <FormItem>
                                     <FormLabel>End Date</FormLabel>
                                     <FormControl>
-                                        <Input type="datetime-local" {...field} className="bg-black/5 dark:bg-white/5 border-black/5 dark:border-white/10 text-foreground" />
+                                        <Input type="datetime-local" {...field} className="bg-secondary border-border text-foreground" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -313,7 +313,7 @@ export function MarketCreationForm() {
 
                 {/* Section 3: Funding */}
                 <div className="space-y-4">
-                    <h3 className="text-lg font-semibold border-b border-black/5 dark:border-white/5 pb-2 text-foreground">3. Liquidity</h3>
+                    <h3 className="text-lg font-semibold border-b border-border pb-2 text-foreground">3. Liquidity</h3>
                     <FormField
                         control={form.control}
                         name="liquidity"
@@ -321,7 +321,7 @@ export function MarketCreationForm() {
                             <FormItem>
                                 <FormLabel>Initial Liquidity (USDC)</FormLabel>
                                 <FormControl>
-                                    <Input type="number" {...field} className="bg-black/5 dark:bg-white/5 border-black/5 dark:border-white/10 text-foreground" />
+                                    <Input type="number" {...field} className="bg-secondary border-border text-foreground" />
                                 </FormControl>
                                 <FormDescription>Higher liquidity means less slippage for traders.</FormDescription>
                                 <FormMessage />

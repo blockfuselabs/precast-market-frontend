@@ -15,54 +15,66 @@ export default function MarketCard({ market }: MarketCardProps) {
 
   return (
     <Link href={`/market/${market.id}`} className="group block h-full">
-      <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-black/5 dark:border-white/5 bg-white/60 dark:bg-card/40 text-card-foreground shadow-sm transition-all hover:border-primary/50 hover:shadow-md hover:shadow-primary/5 backdrop-blur-sm">
+      <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-sm transition-all hover:border-sidebar-primary/50 hover:shadow-md hover:shadow-primary/5 backdrop-blur-sm">
 
         {/* Card Header: Image & Title */}
-        <div className="flex items-start gap-4 p-4">
-          <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-black/10 dark:border-white/10">
+        <div className="flex items-start gap-2.5 p-2.5">
+          <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-lg border border-border bg-secondary">
             <img
               src={market.image}
               alt={market.title}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
             />
           </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="line-clamp-2 text-sm font-semibold leading-tight tracking-tight text-foreground group-hover:text-primary transition-colors">
+          <div className="flex-1 min-w-0 pt-0.5">
+            <h3 className="line-clamp-2 text-xs font-medium leading-snug text-foreground group-hover:text-primary transition-colors">
               {market.title}
             </h3>
-            <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
-              {market.tag && <span className="uppercase tracking-wider font-medium text-[10px]">{market.tag}</span>}
-              {/* <span>•</span>
-                <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> 2d left</span> */}
+            <div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted-foreground">
+              {market.tag && <span className="uppercase tracking-wider font-medium opacity-80">{market.tag}</span>}
             </div>
           </div>
         </div>
 
         {/* Probabilities / Graph Area */}
-        <div className="mt-auto px-4 pb-4">
-          <div className="grid grid-cols-2 gap-3">
+        <div className="mt-auto px-2.5 pb-2.5">
+          <div className="grid grid-cols-2 gap-1.5">
             {/* Yes Outcome */}
-            <div className={`relative flex flex-col justify-between overflow-hidden rounded-lg bg-emerald-500/10 p-2 transition-colors hover:bg-emerald-500/20 border border-emerald-500/20`}>
-              <div className="text-xs font-medium text-emerald-600 dark:text-emerald-500 mb-1">Yes</div>
-              <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{yesOutcome.probability}%</div>
+            <div className="relative flex items-center justify-between overflow-hidden rounded-md bg-emerald-100 dark:bg-emerald-500/10 border border-transparent hover:bg-emerald-200 dark:hover:bg-emerald-500/20 hover:border-emerald-500/20 px-2 py-1 transition-all hover:shadow-sm hover:shadow-emerald-500/5">
+              <span className="text-[10px] font-medium text-emerald-800 dark:text-emerald-400">Yes</span>
+              <div className="relative flex items-center justify-center">
+                {/* Full Circle Gauge */}
+                <svg viewBox="0 0 36 36" className="h-6 w-6 text-emerald-600 dark:text-emerald-400 -rotate-90">
+                  {/* Background Circle */}
+                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" className="opacity-10" />
+                  {/* Progress Circle */}
+                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray={`${yesOutcome.probability}, 100`} strokeLinecap="round" />
+                </svg>
+                <span className="absolute text-[7px] font-bold text-emerald-800 dark:text-emerald-400 leading-none">{yesOutcome.probability}%</span>
+              </div>
             </div>
 
             {/* No Outcome */}
-            <div className={`relative flex flex-col justify-between overflow-hidden rounded-lg bg-red-500/10 p-2 transition-colors hover:bg-red-500/20 border border-red-500/20`}>
-              <div className="text-xs font-medium text-red-600 dark:text-red-500 mb-1">No</div>
-              <div className="text-lg font-bold text-red-600 dark:text-red-400">{noOutcome.probability}%</div>
+            <div className="relative flex items-center justify-between overflow-hidden rounded-md bg-red-100 dark:bg-red-500/10 border border-transparent hover:bg-red-200 dark:hover:bg-red-500/20 hover:border-red-500/20 px-2 py-1 transition-all hover:shadow-sm hover:shadow-red-500/5">
+              <span className="text-[10px] font-medium text-red-800 dark:text-red-400">No</span>
+              <div className="relative flex items-center justify-center">
+                {/* Full Circle Gauge */}
+                <svg viewBox="0 0 36 36" className="h-6 w-6 text-red-600 dark:text-red-400 -rotate-90">
+                  {/* Background Circle */}
+                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" className="opacity-10" />
+                  {/* Progress Circle */}
+                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray={`${noOutcome.probability}, 100`} strokeLinecap="round" />
+                </svg>
+                <span className="absolute text-[7px] font-bold text-red-800 dark:text-red-400 leading-none">{noOutcome.probability}%</span>
+              </div>
             </div>
           </div>
 
           {/* Volume Footer */}
-          <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <span className="text-emerald-600 dark:text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded text-[10px] font-medium flex items-center gap-1">
-                <TrendingUp className="h-3 w-3" /> Vol
-              </span>
-              <span className="font-medium text-foreground">${market.volume}m</span>
+          <div className="mt-2.5 flex items-center justify-between text-[10px] text-muted-foreground">
+            <div className="flex items-center gap-1.5 opacity-80">
+              <span>Vol ${market.volume}m</span>
             </div>
-            <ArrowUpRight className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
           </div>
         </div>
       </div>

@@ -26,7 +26,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
                     enableSystem
                     disableTransitionOnChange
                 >
-                    <RainbowKitProvider theme={darkTheme()}>
+                    <RainbowKitProvider theme={darkTheme({
+                        accentColor: '#161616',
+                        accentColorForeground: 'white',
+                        borderRadius: 'small',
+                        fontStack: 'system',
+                        overlayBlur: 'small',
+                    })}>
                         {children}
                     </RainbowKitProvider>
                 </ThemeProvider>

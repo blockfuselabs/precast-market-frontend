@@ -12,6 +12,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 flex flex-col">
+      {/* Carbon Theme Active */}
       <Header />
 
       <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-12">

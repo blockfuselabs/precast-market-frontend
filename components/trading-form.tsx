@@ -109,7 +109,7 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
     return (
         <div className="space-y-4">
             {/* Price Display */}
-            <div className="flex justify-between items-end border-b border-black/5 dark:border-white/5 pb-4">
+            <div className="flex justify-between items-end border-b border-border pb-4">
                 <span className="text-sm font-medium text-muted-foreground">Current Price</span>
                 <div className="text-right">
                     <div className={`text-3xl font-bold ${colorClass}`}>{probability}%</div>
@@ -123,7 +123,7 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
                     <Input
                         type="number"
                         placeholder="0.00"
-                        className="pr-16 text-lg font-medium border-black/5 dark:border-white/10 bg-black/5 dark:bg-white/5 h-12 focus-visible:ring-1 focus-visible:ring-primary/50 text-foreground"
+                        className="pr-16 text-lg font-medium border-border bg-secondary h-12 focus-visible:ring-1 focus-visible:ring-primary/50 text-foreground"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
                         disabled={isPending}
