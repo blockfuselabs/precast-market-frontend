@@ -3,8 +3,7 @@
 import * as React from "react"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
-
-import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion"
 
 import { cn } from "@/lib/utils"
 
@@ -12,29 +11,49 @@ export function ThemeToggle({ className }: { className?: string }) {
     const { theme, setTheme } = useTheme()
     const [mounted, setMounted] = React.useState(false)
 
-    // Avoid hydration mismatch
     React.useEffect(() => {
         setMounted(true)
     }, [])
 
     if (!mounted) {
-        return (
-            <Button variant="ghost" size="icon" className={cn("h-9 w-9 rounded-full border border-white/10 bg-white/5 opacity-50 cursor-not-allowed", className)}>
-                <span className="sr-only">Toggle theme</span>
-            </Button>
-        )
+        return <div className={cn("h-8 w-14 rounded-full bg-muted", className)} />
     }
 
+    const isDark = theme === "dark"
+
     return (
-        <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className={cn("relative h-9 w-9 rounded-full border border-border bg-secondary hover:bg-secondary/80 transition-colors", className)}
+        <div
+            className={cn(
+                "relative flex h-8 w-14 cursor-pointer items-center rounded-full p-1 transition-colors duration-300",
+                isDark ? "bg-zinc-800" : "bg-zinc-200",
+                className
+            )}
+            onClick={() => setTheme(isDark ? "light" : "dark")}
         >
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all duration-500 ease-in-out dark:-rotate-90 dark:scale-0 text-amber-500" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all duration-500 ease-in-out dark:rotate-0 dark:scale-100 text-blue-400" />
+            <motion.div
+                className="flex h-6 w-6 items-center justify-center rounded-full bg-white shadow-md"
+                layout
+                transition={{ type: "spring", stiffness: 700, damping: 30 }}
+                animate={{
+                    x: isDark ? 24 : 0,
+                    rotate: isDark ? 360 : 0
+                }}
+            >
+                <motion.div
+                    key={isDark ? "moon" : "sun"}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                >
+                    {isDark ? (
+                        <Moon className="h-3.5 w-3.5 text-blue-500 fill-blue-500/20" />
+                    ) : (
+                        <Sun className="h-3.5 w-3.5 text-amber-500 fill-amber-500/20" />
+                    )}
+                </motion.div>
+            </motion.div>
             <span className="sr-only">Toggle theme</span>
-        </Button>
+        </div>
     )
 }

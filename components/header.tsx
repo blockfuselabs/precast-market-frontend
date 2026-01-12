@@ -17,10 +17,10 @@ export default function Header() {
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-          <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Trophy className="h-4 w-4 md:h-5 md:w-5" />
+          <div className="flex h-6 w-6 md:h-7 md:w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <Trophy className="h-3.5 w-3.5 md:h-4 md:w-4" />
           </div>
-          <span className="text-lg md:text-xl font-bold tracking-tight text-foreground">Precast</span>
+          <span className="text-base md:text-lg font-bold tracking-tight text-foreground">Precast</span>
         </Link>
 
         {/* Search Bar - Hidden on mobile, distinct on desktop */}

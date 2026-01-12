@@ -5,6 +5,8 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import '@rainbow-me/rainbowkit/styles.css';
 import { Providers } from "@/components/providers"
+import { BottomNav } from "@/components/bottom-nav"
+import { Footer } from "@/components/footer"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -38,9 +40,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans antialiased`}>
+      <body className={`font-sans antialiased pb-24 md:pb-0`}>
+
+
         <Providers>
           {children}
+          <Footer />
+          <BottomNav />
         </Providers>
         <Analytics />
       </body>
