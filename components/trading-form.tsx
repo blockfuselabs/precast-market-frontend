@@ -141,10 +141,10 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
                 </div> */}
 
                 <Button
-                    className={`w-full h-12 font-bold text-base transition-all ${isAllowanceSufficient ? bgClass : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
+                    className={`w-full h-12 font-bold text-base transition-all ${isAllowanceSufficient ? bgClass : "bg-emerald-600 text-white hover:bg-emerald-700"}`}
                     onClick={isAllowanceSufficient ? handleBuy : handleApprove}
                     disabled={isPending || !amount || parseFloat(amount) <= 0}
-                    variant={isAllowanceSufficient ? "default" : "secondary"}
+                    variant="default"
                 >
                     {isPending && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
                     {buttonLabel}

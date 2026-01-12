@@ -114,16 +114,16 @@ export default function EventPage() {
                             {/* Trading Widget */}
                             <div className="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
                                 <Tabs defaultValue="YES" className="w-full">
-                                    <TabsList className="grid w-full grid-cols-2 rounded-none bg-muted/50 p-0 h-auto">
+                                    <TabsList className="grid w-full grid-cols-2 rounded-t-xl bg-muted/50 p-0 h-auto">
                                         <TabsTrigger
                                             value="YES"
-                                            className="h-12 rounded-none data-[state=active]:bg-emerald-500/10 data-[state=active]:text-emerald-500 data-[state=active]:border-b-2 data-[state=active]:border-emerald-500 transition-none"
+                                            className="h-12 rounded-tl-xl rounded-tr-none rounded-br-none rounded-bl-none data-[state=active]:bg-emerald-100 dark:data-[state=active]:bg-emerald-500/20 data-[state=active]:text-emerald-700 dark:data-[state=active]:text-emerald-400 data-[state=active]:border-b-2 data-[state=active]:border-emerald-500 transition-all font-medium"
                                         >
                                             Buy Yes
                                         </TabsTrigger>
                                         <TabsTrigger
                                             value="NO"
-                                            className="h-12 rounded-none data-[state=active]:bg-red-500/10 data-[state=active]:text-red-500 data-[state=active]:border-b-2 data-[state=active]:border-red-500 transition-none"
+                                            className="h-12 rounded-tr-xl rounded-tl-none rounded-br-none rounded-bl-none data-[state=active]:bg-red-100 dark:data-[state=active]:bg-red-500/20 data-[state=active]:text-red-700 dark:data-[state=active]:text-red-400 data-[state=active]:border-b-2 data-[state=active]:border-red-500 transition-all font-medium"
                                         >
                                             Buy No
                                         </TabsTrigger>

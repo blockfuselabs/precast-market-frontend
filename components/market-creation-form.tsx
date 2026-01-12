@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { uploadFileToIPFS, uploadJSONToIPFS } from "@/lib/ipfs"
 import { useEffect, useState } from "react"
+import { DateTimePicker } from "@/components/ui/datetime-picker"
 
 const formSchema = z.object({
     question: z.string().min(10, {
@@ -41,13 +42,17 @@ const formSchema = z.object({
     liquidity: z.coerce.number().min(1, {
         message: "Initial liquidity must be at least 1.",
     }),
-    startDate: z.string().refine((date) => new Date(date) > new Date(), {
+    startDate: z.date({
+        required_error: "Start date is required.",
+    }).refine((date) => date > new Date(), {
         message: "Start date must be in the future.",
     }),
-    endDate: z.string().refine((date) => new Date(date) > new Date(), {
+    endDate: z.date({
+        required_error: "End date is required.",
+    }).refine((date) => date > new Date(), {
         message: "End date must be in the future.",
     }),
-}).refine((data) => new Date(data.endDate) > new Date(data.startDate), {
+}).refine((data) => data.endDate > data.startDate, {
     message: "End date must be after start date.",
     path: ["endDate"],
 });
@@ -73,8 +78,8 @@ export function MarketCreationForm() {
             description: "",
             resolutionSource: "",
             liquidity: 100,
-            startDate: "",
-            endDate: "",
+            // startDate: undefined, // removed default string
+            // endDate: undefined,
         },
     })
 
@@ -166,10 +171,9 @@ export function MarketCreationForm() {
             toast.success("Metadata uploaded! Creating market...");
 
             // 3. Create Market
-            // Ensure startTime is not in the past relative to block time. 
-            // Add 60s buffer if it's very close to now or mistakenly in past.
-            let startTime = Math.floor(new Date(values.startDate).getTime() / 1000)
-            const endTime = Math.floor(new Date(values.endDate).getTime() / 1000)
+            // Dates are already Date objects
+            let startTime = Math.floor(values.startDate.getTime() / 1000)
+            const endTime = Math.floor(values.endDate.getTime() / 1000)
             const now = Math.floor(Date.now() / 1000)
 
             if (startTime <= now) {
@@ -286,11 +290,12 @@ export function MarketCreationForm() {
                             control={form.control}
                             name="startDate"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="flex flex-col">
                                     <FormLabel>Start Date</FormLabel>
-                                    <FormControl>
-                                        <Input type="datetime-local" {...field} className="bg-secondary border-border text-foreground" />
-                                    </FormControl>
+                                    <DateTimePicker
+                                        date={field.value}
+                                        setDate={field.onChange}
+                                    />
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -299,11 +304,12 @@ export function MarketCreationForm() {
                             control={form.control}
                             name="endDate"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="flex flex-col">
                                     <FormLabel>End Date</FormLabel>
-                                    <FormControl>
-                                        <Input type="datetime-local" {...field} className="bg-secondary border-border text-foreground" />
-                                    </FormControl>
+                                    <DateTimePicker
+                                        date={field.value}
+                                        setDate={field.onChange}
+                                    />
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -340,8 +346,8 @@ export function MarketCreationForm() {
                             type="button"
                             onClick={handleApprove}
                             disabled={isApprovePending || isConfirmingApprove}
-                            className="w-full font-semibold h-12 bg-primary text-primary-foreground hover:bg-primary/90"
-                            variant="secondary"
+                            className="w-full font-semibold h-12 bg-emerald-600 text-white hover:bg-emerald-700"
+                            variant="default"
                         >
                             {isApprovePending ? "Confirming Approval..." : isConfirmingApprove ? "Processing Approval..." : "Approve USDC"}
                         </Button>

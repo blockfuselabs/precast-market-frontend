@@ -47,9 +47,8 @@
   --chart-4: oklch(0.8 0 0);
   --chart-5: oklch(0.2 0 0);
 
-  --radius: 0.75rem;
-  /* Restored radius as requested */
-  /* Brutalist/Carbon usually has square or very small radius */
+  --radius: 0.5rem;
+  /* Reduced radius as requested */
 
   /* Sidebar */
   --sidebar-background: oklch(0.98 0 0);
@@ -158,7 +157,11 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-none;
+  }
+
+  :focus-visible {
+    @apply ring-1 ring-emerald-500 ring-offset-0;
   }
 
   body {
