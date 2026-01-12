@@ -15,11 +15,11 @@ export default function MarketCard({ market }: MarketCardProps) {
 
   return (
     <Link href={`/market/${market.id}`} className="group block h-full">
-      <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-white/5 bg-card/40 text-card-foreground shadow-sm transition-all hover:border-primary/50 hover:shadow-md hover:shadow-primary/5 backdrop-blur-sm">
+      <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-black/5 dark:border-white/5 bg-white/60 dark:bg-card/40 text-card-foreground shadow-sm transition-all hover:border-primary/50 hover:shadow-md hover:shadow-primary/5 backdrop-blur-sm">
 
         {/* Card Header: Image & Title */}
         <div className="flex items-start gap-4 p-4">
-          <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-white/10">
+          <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-black/10 dark:border-white/10">
             <img
               src={market.image}
               alt={market.title}
@@ -43,21 +43,21 @@ export default function MarketCard({ market }: MarketCardProps) {
           <div className="grid grid-cols-2 gap-3">
             {/* Yes Outcome */}
             <div className={`relative flex flex-col justify-between overflow-hidden rounded-lg bg-emerald-500/10 p-2 transition-colors hover:bg-emerald-500/20 border border-emerald-500/20`}>
-              <div className="text-xs font-medium text-emerald-500 mb-1">Yes</div>
-              <div className="text-lg font-bold text-emerald-400">{yesOutcome.probability}%</div>
+              <div className="text-xs font-medium text-emerald-600 dark:text-emerald-500 mb-1">Yes</div>
+              <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{yesOutcome.probability}%</div>
             </div>
 
             {/* No Outcome */}
             <div className={`relative flex flex-col justify-between overflow-hidden rounded-lg bg-red-500/10 p-2 transition-colors hover:bg-red-500/20 border border-red-500/20`}>
-              <div className="text-xs font-medium text-red-500 mb-1">No</div>
-              <div className="text-lg font-bold text-red-400">{noOutcome.probability}%</div>
+              <div className="text-xs font-medium text-red-600 dark:text-red-500 mb-1">No</div>
+              <div className="text-lg font-bold text-red-600 dark:text-red-400">{noOutcome.probability}%</div>
             </div>
           </div>
 
           {/* Volume Footer */}
           <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-1">
-              <span className="text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded text-[10px] font-medium flex items-center gap-1">
+              <span className="text-emerald-600 dark:text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded text-[10px] font-medium flex items-center gap-1">
                 <TrendingUp className="h-3 w-3" /> Vol
               </span>
               <span className="font-medium text-foreground">${market.volume}m</span>

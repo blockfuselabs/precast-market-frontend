@@ -53,10 +53,10 @@ export default function EventPage() {
                                 {market.tag && <span className="uppercase tracking-wider font-medium text-xs bg-primary/10 text-primary px-2 py-1 rounded">{market.tag}</span>}
                                 {market.endDate && <span>Ends {market.endDate}</span>}
                             </div>
-                            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">{market.title}</h1>
+                            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{market.title}</h1>
 
                             {/* Image Banner */}
-                            <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-white/10 bg-muted">
+                            <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-black/5 dark:border-white/10 bg-muted">
                                 <Image
                                     src={market.image}
                                     alt={market.title}
@@ -68,28 +68,28 @@ export default function EventPage() {
                         </div>
 
                         {/* Description & Rules */}
-                        <div className="prose prose-invert max-w-none">
-                            <h3 className="text-xl font-semibold mb-2">Description</h3>
+                        <div className="prose dark:prose-invert max-w-none text-foreground">
+                            <h3 className="text-xl font-semibold mb-2 text-foreground">Description</h3>
                             {market.description ? (
                                 <p className="text-muted-foreground leading-relaxed">{market.description}</p>
                             ) : (
                                 <p className="text-muted-foreground italic">No description provided.</p>
                             )}
 
-                            <div className="mt-8 rounded-lg border border-white/10 bg-white/5 p-6">
-                                <h3 className="text-lg font-semibold mb-4">Market Rules</h3>
+                            <div className="mt-8 rounded-lg border border-black/5 dark:border-white/10 bg-black/5 dark:bg-white/5 p-6">
+                                <h3 className="text-lg font-semibold mb-4 text-foreground">Market Rules</h3>
                                 <dl className="space-y-4 text-sm">
-                                    <div className="flex justify-between border-b border-white/5 pb-2">
+                                    <div className="flex justify-between border-b border-black/5 dark:border-white/5 pb-2">
                                         <dt className="text-muted-foreground">Resolution Source</dt>
-                                        <dd className="font-medium">{market.resolutionSource || "Oracle"}</dd>
+                                        <dd className="font-medium text-foreground">{market.resolutionSource || "Oracle"}</dd>
                                     </div>
-                                    <div className="flex justify-between border-b border-white/5 pb-2">
+                                    <div className="flex justify-between border-b border-black/5 dark:border-white/5 pb-2">
                                         <dt className="text-muted-foreground">Start Date</dt>
-                                        <dd className="font-medium">{market.startDate}</dd>
+                                        <dd className="font-medium text-foreground">{market.startDate}</dd>
                                     </div>
-                                    <div className="flex justify-between border-b border-white/5 pb-2">
+                                    <div className="flex justify-between border-b border-black/5 dark:border-white/5 pb-2">
                                         <dt className="text-muted-foreground">End Date</dt>
-                                        <dd className="font-medium">{market.endDate}</dd>
+                                        <dd className="font-medium text-foreground">{market.endDate}</dd>
                                     </div>
                                     <div className="pt-2">
                                         <dt className="text-muted-foreground mb-1">Status</dt>
@@ -112,7 +112,7 @@ export default function EventPage() {
                             />
 
                             {/* Trading Widget */}
-                            <div className="rounded-xl border border-white/10 bg-card/60 backdrop-blur-xl shadow-2xl overflow-hidden">
+                            <div className="rounded-xl border border-black/5 dark:border-white/10 bg-white/60 dark:bg-card/60 backdrop-blur-xl shadow-2xl overflow-hidden">
                                 <Tabs defaultValue="YES" className="w-full">
                                     <TabsList className="grid w-full grid-cols-2 rounded-none bg-muted/50 p-0 h-auto">
                                         <TabsTrigger
