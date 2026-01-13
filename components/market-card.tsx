@@ -41,7 +41,7 @@ export default function MarketCard({ market }: MarketCardProps) {
           <div className="grid grid-cols-2 gap-1.5">
             {/* Yes Outcome */}
             <div className="relative flex items-center justify-between overflow-hidden rounded-md bg-emerald-100 dark:bg-emerald-500/10 border border-transparent hover:bg-emerald-200 dark:hover:bg-emerald-500/20 hover:border-emerald-500/20 px-2 py-1 transition-all hover:shadow-sm hover:shadow-emerald-500/5">
-              <span className="text-[10px] font-medium text-emerald-800 dark:text-emerald-400">Yes</span>
+              <span className="text-xs md:text-[13px] font-medium text-emerald-800 dark:text-emerald-400">Yes</span>
               <div className="relative flex items-center justify-center">
                 {/* Full Circle Gauge */}
                 <svg viewBox="0 0 36 36" className="h-6 w-6 text-emerald-600 dark:text-emerald-400 -rotate-90">
@@ -50,13 +50,13 @@ export default function MarketCard({ market }: MarketCardProps) {
                   {/* Progress Circle */}
                   <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray={`${yesOutcome.probability}, 100`} strokeLinecap="round" />
                 </svg>
-                <span className="absolute text-[7px] font-bold text-emerald-800 dark:text-emerald-400 leading-none">{yesOutcome.probability}%</span>
+                <span className="absolute text-[8px] font-bold text-emerald-800 dark:text-emerald-400 leading-none">{yesOutcome.probability}%</span>
               </div>
             </div>
 
             {/* No Outcome */}
             <div className="relative flex items-center justify-between overflow-hidden rounded-md bg-red-100 dark:bg-red-500/10 border border-transparent hover:bg-red-200 dark:hover:bg-red-500/20 hover:border-red-500/20 px-2 py-1 transition-all hover:shadow-sm hover:shadow-red-500/5">
-              <span className="text-[10px] font-medium text-red-800 dark:text-red-400">No</span>
+              <span className="text-xs md:text-[13px] font-medium text-red-800 dark:text-red-400">No</span>
               <div className="relative flex items-center justify-center">
                 {/* Full Circle Gauge */}
                 <svg viewBox="0 0 36 36" className="h-6 w-6 text-red-600 dark:text-red-400 -rotate-90">
@@ -65,7 +65,7 @@ export default function MarketCard({ market }: MarketCardProps) {
                   {/* Progress Circle */}
                   <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray={`${noOutcome.probability}, 100`} strokeLinecap="round" />
                 </svg>
-                <span className="absolute text-[7px] font-bold text-red-800 dark:text-red-400 leading-none">{noOutcome.probability}%</span>
+                <span className="absolute text-[8px] font-bold text-red-800 dark:text-red-400 leading-none">{noOutcome.probability}%</span>
               </div>
             </div>
           </div>
