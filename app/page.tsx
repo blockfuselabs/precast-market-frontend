@@ -1,26 +1,24 @@
 "use client"
 
-import Header from "@/components/header"
-import MarketGrid from "@/components/market-grid"
+import Header from "@/components/layout/header"
+import MarketGrid from "@/components/market/market-grid"
 import { useMarkets } from "@/hooks/useMarkets"
-import { Loader2 } from "lucide-react"
-import {usePrivy} from '@privy-io/react-auth';
+import { MarketGridSkeleton } from "@/components/skeletons/market-grid-skeleton"
+import { usePrivy } from '@privy-io/react-auth';
 
 export default function Home() {
   const { markets, isLoading } = useMarkets()
-  const {ready} = usePrivy();
+  const { ready } = usePrivy();
 
   console.log(markets)
   return (
-    
+
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 flex flex-col">
       <Header />
-    
+
       <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-12">
         {isLoading && (
-          <div className="flex h-[50vh] w-full items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
+          <MarketGridSkeleton count={8} />
         )}
 
         {/* All Markets Section */}
@@ -46,7 +44,7 @@ export default function Home() {
           </div>
         )}
       </main>
-      
+
 
     </div>
   )

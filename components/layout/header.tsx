@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePrivy } from '@privy-io/react-auth';
 import { Search, Trophy, Menu, Home, PlusCircle, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { ThemeToggle } from "./theme-toggle"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { useUserRights } from "@/hooks/useUserRights"
 
@@ -51,22 +51,22 @@ export default function Header() {
           {/* Privy Login/Logout */}
           {!authenticated ? (
             <>
-            <Button 
-              onClick={login} 
-              disabled={disableLogin}
-              size="sm" 
-              className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium shadow-none"
-            >
-              Login
-            </Button>
-             <Button 
-              onClick={login} 
-              disabled={disableLogin}
-              size="sm" 
-              className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium shadow-none"
-            >
-              Signup
-            </Button>
+              <Button
+                onClick={login}
+                disabled={disableLogin}
+                size="sm"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium shadow-none"
+              >
+                Login
+              </Button>
+              <Button
+                onClick={login}
+                disabled={disableLogin}
+                size="sm"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium shadow-none"
+              >
+                Signup
+              </Button>
             </>
           ) : (
             <div className="flex items-center gap-2">
@@ -74,14 +74,14 @@ export default function Header() {
               <div className="hidden sm:flex items-center gap-2 rounded-lg border border-border bg-secondary px-3 py-1.5 text-sm font-medium">
                 <div className="h-5 w-5 rounded-full bg-gradient-to-tr from-primary to-primary/50" />
                 <span className="text-foreground">
-                  {user?.email?.address || 
-                   user?.wallet?.address?.slice(0, 6) + '...' + user?.wallet?.address?.slice(-4) ||
-                   'User'}
+                  {user?.email?.address ||
+                    user?.wallet?.address?.slice(0, 6) + '...' + user?.wallet?.address?.slice(-4) ||
+                    'User'}
                 </span>
               </div>
-              
+
               {/* Logout Button */}
-              <Button 
+              <Button
                 onClick={logout}
                 size="sm"
                 variant="ghost"
@@ -114,19 +114,19 @@ export default function Header() {
                     <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-primary/50" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-foreground truncate">
-                        {user?.email?.address || 
-                         user?.wallet?.address?.slice(0, 6) + '...' + user?.wallet?.address?.slice(-4) ||
-                         'User'}
+                        {user?.email?.address ||
+                          user?.wallet?.address?.slice(0, 6) + '...' + user?.wallet?.address?.slice(-4) ||
+                          'User'}
                       </p>
                     </div>
                   </div>
                 )}
-                
+
                 <Link href="/" className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-secondary/50 transition-colors text-foreground">
                   <Home className="h-5 w-5" />
                   <span className="font-medium">Home</span>
                 </Link>
-                
+
                 {isConnected && hasCreationRights && (
                   <Link href="/create-market" className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-secondary/50 transition-colors text-foreground">
                     <PlusCircle className="h-5 w-5" />
@@ -135,7 +135,7 @@ export default function Header() {
                 )}
 
                 {authenticated && (
-                  <Button 
+                  <Button
                     onClick={logout}
                     variant="outline"
                     className="w-full justify-start gap-3 px-4"

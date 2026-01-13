@@ -10,11 +10,15 @@ import { fetchIPFSMetadata, getIPFSUrl } from "@/lib/ipfs"
 
 export function useMarkets() {
     // 1. Fetch total market count
-    const { data: marketCount } = useReadContract({
+    const { data: marketCount, isLoading: isLoadingMarketCount } = useReadContract({
         address: CONTRACT_ADDRESS as `0x${string}`,
         abi: LMSRABI as any,
         functionName: "marketCount",
     })
+
+    // ... (existing code)
+
+
 
     // 2. Generate array of indices [0, 1, ..., marketCount-1]
     const count = marketCount ? Number(marketCount) : 0
@@ -114,7 +118,7 @@ export function useMarkets() {
         console.log('Result', result)
 
         // Mock Metadata Extraction
-        let imageUrl = "/bitcoin-concept.png" // Default
+        let imageUrl = "/prediction-market-placeholder.png" // Default
 
         const metadata = metadataMap[cId]
         console.log('Metadata', metadata)
@@ -142,6 +146,6 @@ export function useMarkets() {
 
     return {
         markets,
-        isLoading: isLoadingMarkets || isLoadingPrices,
+        isLoading: isLoadingMarketCount || isLoadingMarkets || isLoadingPrices,
     }
 }
