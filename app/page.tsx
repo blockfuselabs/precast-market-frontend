@@ -5,29 +5,8 @@ import MarketGrid from "@/components/market-grid"
 import { useMarkets } from "@/hooks/useMarkets"
 import { Loader2 } from "lucide-react"
 
-import { Market } from "@/lib/mock-data"
-
-function generateDummyMarkets(count: number): Market[] {
-  return Array.from({ length: count }).map((_, i) => ({
-    id: `dummy-${i}`,
-    title: `Dummy Market Question ${i + 1}?`,
-    image: "/bitcoin-concept.png",
-    type: "binary",
-    outcomes: [
-      { name: "Yes", probability: 50 },
-      { name: "No", probability: 50 },
-    ],
-    volume: Math.floor(Math.random() * 1000).toString(),
-    tag: "dummy",
-    startTime: Date.now(),
-  }))
-}
-
 export default function Home() {
   const { markets, isLoading } = useMarkets()
-
-  const dummyMarkets = generateDummyMarkets(80)
-  const allMarkets = [...markets, ...dummyMarkets]
 
   console.log(markets)
 
@@ -48,7 +27,7 @@ export default function Home() {
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold tracking-tight text-foreground">All Markets</h2>
             </div>
-            <MarketGrid markets={allMarkets} />
+            <MarketGrid markets={markets} />
           </section>
         )}
 
