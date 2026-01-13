@@ -118,7 +118,7 @@ export function useMarkets() {
         console.log('Result', result)
 
         // Mock Metadata Extraction
-        let imageUrl = "/bitcoin-concept.png" // Default
+        let imageUrl = "/prediction-market-placeholder.png" // Default
 
         const metadata = metadataMap[cId]
         console.log('Metadata', metadata)
