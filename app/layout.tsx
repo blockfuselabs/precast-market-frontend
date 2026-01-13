@@ -4,9 +4,9 @@ import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import '@rainbow-me/rainbowkit/styles.css';
-import { Providers } from "@/components/providers"
-import { BottomNav } from "@/components/bottom-nav"
-import { Footer } from "@/components/footer"
+import { Providers } from "@/components/providers/providers"
+import { BottomNav } from "@/components/layout/bottom-nav"
+import { Footer } from "@/components/layout/footer"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })

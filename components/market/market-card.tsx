@@ -19,7 +19,7 @@ export default function MarketCard({ market }: MarketCardProps) {
 
         {/* Card Header: Image & Title */}
         <div className="flex items-start gap-2.5 p-5">
-          <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-md border border-border bg-secondary">
+          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border border-border bg-secondary">
             <img
               src={market.image}
               alt={market.title}
@@ -27,7 +27,7 @@ export default function MarketCard({ market }: MarketCardProps) {
             />
           </div>
           <div className="flex-1 min-w-0 pt-0.5">
-            <h3 className="line-clamp-2 text-base md:text-lg font-medium leading-snug text-foreground group-hover:text-primary transition-colors">
+            <h3 className="line-clamp-2 text-xs md:text-sm font-medium leading-snug text-foreground group-hover:text-primary transition-colors">
               {market.title}
             </h3>
             <div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted-foreground">
@@ -37,7 +37,7 @@ export default function MarketCard({ market }: MarketCardProps) {
         </div>
 
         {/* Probabilities / Graph Area */}
-        <div className="mt-auto px-2.5 pb-2.5">
+        <div className="mt-auto px-3 pb-3">
           <div className="grid grid-cols-2 gap-1.5">
             {/* Yes Outcome */}
             <div className="relative flex items-center justify-between overflow-hidden rounded-sm bg-emerald-100 dark:bg-emerald-500/10 border border-transparent hover:bg-emerald-200 dark:hover:bg-emerald-500/20 hover:border-emerald-500/20 px-3 py-1.5 transition-all hover:shadow-sm hover:shadow-emerald-500/5">

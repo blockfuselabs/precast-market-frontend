@@ -11,15 +11,15 @@ import {
 } from '@rainbow-me/rainbowkit';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { config } from '@/lib/wagmi';
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "./theme-provider"
 
 const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <PrivyProvider
-         appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
-         clientId = {process.env.NEXT_PUBLIC_PRIVY_SIGNER_ID}
+            appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
+            clientId={process.env.NEXT_PUBLIC_PRIVY_SIGNER_ID}
             config={{
                 // Appearance
                 appearance: {
@@ -30,7 +30,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 loginMethods: ['email', 'wallet'],
                 // Create embedded wallets for users who don't have a wallet
                 embeddedWallets: {
-                     ethereum: {
+                    ethereum: {
                         createOnLogin: 'users-without-wallets',
                     },
                 },

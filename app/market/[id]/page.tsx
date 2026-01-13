@@ -1,15 +1,15 @@
 "use client"
 
 import { useMarket } from "@/hooks/useMarket"
-import Header from "@/components/header"
+import Header from "@/components/layout/header"
 import { useParams } from "next/navigation"
 import Image from "next/image"
-import { TradingForm } from "@/components/trading-form"
-import { MarketResolution } from "@/components/market-resolution"
-import { MarketTimer } from "@/components/market-timer"
-import { ClaimWinnings } from "@/components/claim-winnings"
+import { TradingForm } from "@/components/market/trading-form"
+import { MarketResolution } from "@/components/market/market-resolution"
+import { MarketTimer } from "@/components/market/market-timer"
+import { ClaimWinnings } from "@/components/market/claim-winnings"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Loader2 } from "lucide-react"
+import { MarketDetailSkeleton } from "@/components/skeletons/market-detail-skeleton"
 
 export default function EventPage() {
     const params = useParams()
@@ -17,14 +17,7 @@ export default function EventPage() {
     const { market, isLoading } = useMarket(id)
 
     if (isLoading) {
-        return (
-            <div className="min-h-screen bg-background">
-                <Header />
-                <div className="flex justify-center py-20">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-            </div>
-        )
+        return <MarketDetailSkeleton />
     }
 
     if (!market) {
