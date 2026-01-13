@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { ArrowUpRight, TrendingUp } from "lucide-react"
 import type { Market } from "@/lib/mock-data"
-// import { MarketTimer } from "./market-timer"
+import { MarketTimer } from "./market-timer"
 
 interface MarketCardProps {
   market: Market
@@ -27,7 +27,7 @@ export default function MarketCard({ market }: MarketCardProps) {
             />
           </div>
           <div className="flex-1 min-w-0 pt-0.5">
-            <h3 className="line-clamp-2 text-base font-medium leading-snug text-foreground group-hover:text-primary transition-colors">
+            <h3 className="line-clamp-2 text-sm md:text-base font-medium leading-snug text-foreground group-hover:text-primary transition-colors">
               {market.title}
             </h3>
             <div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted-foreground">
@@ -70,11 +70,9 @@ export default function MarketCard({ market }: MarketCardProps) {
             </div>
           </div>
 
-          {/* Volume Footer */}
-          <div className="mt-2.5 flex items-center justify-between text-[10px] text-muted-foreground">
-            <div className="flex items-center gap-1.5 opacity-80">
-              <span>Vol ${market.volume}m</span>
-            </div>
+          {/* Timer Footer */}
+          <div className="mt-2.5 flex items-center justify-start">
+            <MarketTimer endTime={market.endTime} />
           </div>
         </div>
       </div>
