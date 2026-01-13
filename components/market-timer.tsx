@@ -61,7 +61,7 @@ export function MarketTimer({ endTime }: MarketTimerProps) {
     if (!timeLeft) return null
 
     return (
-        <div className="flex items-center gap-1.5 text-[11px] text-white font-medium">
+        <div className="flex items-center gap-1.5 text-[11px] text-black dark:text-white font-medium">
             <div className="relative flex items-center justify-center">
                 <div className="absolute h-2 w-2 rounded-full bg-red-600 dark:bg-red-400 animate-ping opacity-75" />
                 <div className="relative h-2 w-2 rounded-full bg-red-600 dark:bg-red-400" />
