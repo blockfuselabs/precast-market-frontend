@@ -3,9 +3,10 @@
 import * as React from "react"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 
 export function ThemeToggle({ className }: { className?: string }) {
     const { theme, setTheme } = useTheme()
@@ -16,44 +17,37 @@ export function ThemeToggle({ className }: { className?: string }) {
     }, [])
 
     if (!mounted) {
-        return <div className={cn("h-8 w-14 rounded-full bg-muted", className)} />
+        return <div className={cn("h-9 w-9 rounded-md bg-muted", className)} />
     }
 
     const isDark = theme === "dark"
 
     return (
-        <div
+        <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(isDark ? "light" : "dark")}
             className={cn(
-                "relative flex h-8 w-14 cursor-pointer items-center rounded-full p-1 transition-colors duration-300",
-                isDark ? "bg-zinc-800" : "bg-zinc-200",
+                "relative h-9 w-9 overflow-hidden rounded-full border border-border bg-transparent hover:bg-accent",
                 className
             )}
-            onClick={() => setTheme(isDark ? "light" : "dark")}
         >
-            <motion.div
-                className="flex h-6 w-6 items-center justify-center rounded-full bg-white shadow-md"
-                layout
-                transition={{ type: "spring", stiffness: 700, damping: 30 }}
-                animate={{
-                    x: isDark ? 24 : 0,
-                    rotate: isDark ? 360 : 0
-                }}
-            >
+            <AnimatePresence mode="wait" initial={false}>
                 <motion.div
-                    key={isDark ? "moon" : "sun"}
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0, opacity: 0 }}
+                    key={theme}
+                    initial={{ y: -20, opacity: 0, rotate: -90 }}
+                    animate={{ y: 0, opacity: 1, rotate: 0 }}
+                    exit={{ y: 20, opacity: 0, rotate: 90 }}
                     transition={{ duration: 0.2 }}
                 >
                     {isDark ? (
-                        <Moon className="h-3.5 w-3.5 text-blue-500 fill-blue-500/20" />
+                        <Moon className="h-5 w-5 text-blue-400" />
                     ) : (
-                        <Sun className="h-3.5 w-3.5 text-amber-500 fill-amber-500/20" />
+                        <Sun className="h-5 w-5 text-amber-500" />
                     )}
                 </motion.div>
-            </motion.div>
+            </AnimatePresence>
             <span className="sr-only">Toggle theme</span>
-        </div>
+        </Button>
     )
 }
