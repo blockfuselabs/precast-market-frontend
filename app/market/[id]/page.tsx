@@ -2,6 +2,9 @@
 
 import { useMarket } from "@/hooks/useMarket"
 import Header from "@/components/layout/header"
+import { useQuery } from "@tanstack/react-query"
+import { gql } from "graphql-request"
+import { fetchSubgraph } from "@/lib/subgraph"
 import { useParams } from "next/navigation"
 import Image from "next/image"
 import { TradingForm } from "@/components/market/trading-form"
@@ -10,11 +13,41 @@ import { MarketTimer } from "@/components/market/market-timer"
 import { ClaimWinnings } from "@/components/market/claim-winnings"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MarketDetailSkeleton } from "@/components/skeletons/market-detail-skeleton"
+import { MarketChart } from "@/components/market/market-chart"
 
 export default function EventPage() {
     const params = useParams()
     const id = params.id as string
     const { market, isLoading } = useMarket(id)
+
+    // Subgraph Query for Shares Bought
+    const query = gql`
+        query GetSharesBought($marketId: String!) {
+            sharesBoughts(
+                first: 1000
+                orderBy: blockTimestamp
+                orderDirection: asc
+                where: { marketId: $marketId }
+            ) {
+                id
+                marketId
+                user
+                yes
+                amount
+                cost
+                priceYES
+                priceNO
+                blockTimestamp
+            }
+        }
+    `
+
+    const { data: subgraphData } = useQuery({
+        queryKey: ['sharesBoughts', id],
+        queryFn: async () => fetchSubgraph(query, { marketId: id })
+    })
+
+    console.log("Subgraph Response:", subgraphData)
 
     if (isLoading) {
         return <MarketDetailSkeleton />
@@ -41,15 +74,9 @@ export default function EventPage() {
                     {/* Left Column: Market Info (8 cols) */}
                     <div className="lg:col-span-8 space-y-8">
                         {/* Header Section */}
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                {market.tag && <span className="uppercase tracking-wider font-medium text-xs bg-primary/10 text-primary px-2 py-1 rounded">{market.tag}</span>}
-                                {market.endDate && <span>Ends {market.endDate}</span>}
-                            </div>
-                            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{market.title}</h1>
-
-                            {/* Image Banner */}
-                            <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-border bg-muted">
+                        <div className="flex flex-col sm:flex-row gap-6 mb-6">
+                            {/* Image Thumbnail */}
+                            <div className="relative h-16 w-16 sm:h-24 sm:w-24 shrink-0 overflow-hidden rounded-xl border border-border bg-muted shadow-sm">
                                 <Image
                                     src={market.image}
                                     alt={market.title}
@@ -58,6 +85,21 @@ export default function EventPage() {
                                     unoptimized
                                 />
                             </div>
+
+                            {/* Title & Info */}
+                            <div className="flex flex-col justify-center space-y-2">
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    {market.tag && <span className="uppercase tracking-wider font-semibold text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-sm">{market.tag}</span>}
+                                    <span className="text-muted-foreground">•</span>
+                                    <span>Ends {market.endDate}</span>
+                                </div>
+                                <h1 className="text-xl md:text-2xl font-bold tracking-tight text-foreground leading-tight">{market.title}</h1>
+                            </div>
+                        </div>
+
+                        {/* Chart Section */}
+                        <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                            <MarketChart data={subgraphData?.sharesBoughts} />
                         </div>
 
                         {/* Description & Rules */}
