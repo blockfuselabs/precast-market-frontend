@@ -10,6 +10,7 @@ import { MarketTimer } from "@/components/market/market-timer"
 import { ClaimWinnings } from "@/components/market/claim-winnings"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MarketDetailSkeleton } from "@/components/skeletons/market-detail-skeleton"
+import { MarketChart } from "@/components/market/market-chart"
 
 export default function EventPage() {
     const params = useParams()
@@ -41,15 +42,9 @@ export default function EventPage() {
                     {/* Left Column: Market Info (8 cols) */}
                     <div className="lg:col-span-8 space-y-8">
                         {/* Header Section */}
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                {market.tag && <span className="uppercase tracking-wider font-medium text-xs bg-primary/10 text-primary px-2 py-1 rounded">{market.tag}</span>}
-                                {market.endDate && <span>Ends {market.endDate}</span>}
-                            </div>
-                            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{market.title}</h1>
-
-                            {/* Image Banner */}
-                            <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-border bg-muted">
+                        <div className="flex flex-col sm:flex-row gap-6 mb-6">
+                            {/* Image Thumbnail */}
+                            <div className="relative h-16 w-16 sm:h-24 sm:w-24 shrink-0 overflow-hidden rounded-xl border border-border bg-muted shadow-sm">
                                 <Image
                                     src={market.image}
                                     alt={market.title}
@@ -58,6 +53,21 @@ export default function EventPage() {
                                     unoptimized
                                 />
                             </div>
+
+                            {/* Title & Info */}
+                            <div className="flex flex-col justify-center space-y-2">
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    {market.tag && <span className="uppercase tracking-wider font-semibold text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-sm">{market.tag}</span>}
+                                    <span className="text-muted-foreground">•</span>
+                                    <span>Ends {market.endDate}</span>
+                                </div>
+                                <h1 className="text-xl md:text-2xl font-bold tracking-tight text-foreground leading-tight">{market.title}</h1>
+                            </div>
+                        </div>
+
+                        {/* Chart Section */}
+                        <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                            <MarketChart />
                         </div>
 
                         {/* Description & Rules */}
