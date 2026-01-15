@@ -31,7 +31,13 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export function MarketChart({ data }: MarketChartProps) {
     const chartData = React.useMemo(() => {
-        if (!data || data.length === 0) return []
+        if (!data || data.length === 0) {
+            return [
+                { date: 'Start', probability: 0 },
+                { date: '', probability: 0 },
+                { date: 'End', probability: 0 }
+            ]
+        }
 
         return data.map((item, index) => {
             const probability = Number(formatEther(BigInt(item.priceYES))) * 100
@@ -53,14 +59,6 @@ export function MarketChart({ data }: MarketChartProps) {
         })
     }, [data])
 
-    if (!chartData || chartData.length === 0) {
-        return (
-            <div className="flex h-[300px] w-full items-center justify-center text-muted-foreground">
-                No trading data available
-            </div>
-        )
-    }
-
     const startProb = chartData[0].probability
     const endProb = chartData[chartData.length - 1].probability
     const isPositive = endProb >= startProb
@@ -73,10 +71,6 @@ export function MarketChart({ data }: MarketChartProps) {
                     <span className="text-3xl font-bold text-foreground">{endProb}%</span>
                     <span className="text-sm font-medium text-muted-foreground">chance</span>
                 </div>
-                <span className={`text-sm font-medium ${isPositive ? 'text-emerald-500' : 'text-red-500'}`}>
-                    {isPositive ? '▲' : '▼'} {Math.abs(endProb - startProb).toFixed(1)}%
-                    <span className="ml-1 text-muted-foreground">vs start</span>
-                </span>
             </div>
 
             <div className="h-[300px] w-full">
@@ -133,6 +127,6 @@ export function MarketChart({ data }: MarketChartProps) {
                     </button>
                 ))}
             </div>
-        </div>
+        </div >
     )
 }
