@@ -71,15 +71,15 @@ export default function EventPage() {
         <div className="min-h-screen bg-background">
             <Header />
 
-            <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 md:py-8">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
 
                     {/* Left Column: Market Info (8 cols) */}
-                    <div className="lg:col-span-8 space-y-8">
+                    <div className="lg:col-span-8 space-y-6">
                         {/* Header Section */}
-                        <div className="flex flex-col sm:flex-row gap-6 mb-6">
+                        <div className="flex flex-row items-center gap-3 mb-4">
                             {/* Image Thumbnail */}
-                            <div className="relative h-16 w-16 sm:h-24 sm:w-24 shrink-0 overflow-hidden rounded-xl border border-border bg-muted shadow-sm">
+                            <div className="relative h-10 w-10 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-xl border border-border bg-muted shadow-sm">
                                 <Image
                                     src={market.image}
                                     alt={market.title}
@@ -90,33 +90,33 @@ export default function EventPage() {
                             </div>
 
                             {/* Title & Info */}
-                            <div className="flex flex-col justify-center space-y-2">
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    {market.tag && <span className="uppercase tracking-wider font-semibold text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-sm">{market.tag}</span>}
+                            <div className="flex flex-col justify-center space-y-0.5">
+                                <div className="flex items-center gap-2 text-[10px] md:text-xs text-muted-foreground">
+                                    {market.tag && <span className="uppercase tracking-wider font-semibold text-[9px] md:text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-sm">{market.tag}</span>}
                                     <span className="text-muted-foreground">•</span>
                                     <span>Ends {market.endDate}</span>
                                 </div>
-                                <h1 className="text-xl md:text-2xl font-bold tracking-tight text-foreground leading-tight">{market.title}</h1>
+                                <h1 className="text-sm md:text-lg font-bold tracking-tight text-foreground leading-tight">{market.title}</h1>
                             </div>
                         </div>
 
                         {/* Chart Section */}
-                        <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                        <div className="rounded-none border-none bg-transparent p-0 shadow-none md:rounded-xl md:border md:border-border md:bg-card md:p-6 md:shadow-sm">
                             <MarketChart data={subgraphData?.sharesBoughts} />
                         </div>
 
                         {/* Description & Rules */}
                         <div className="prose dark:prose-invert max-w-none text-foreground">
-                            <h3 className="text-xl font-semibold mb-2 text-foreground">Description</h3>
+                            <h3 className="text-base md:text-xl font-semibold mb-2 text-foreground">Description</h3>
                             {market.description ? (
-                                <p className="text-muted-foreground leading-relaxed">{market.description}</p>
+                                <p className="text-xs md:text-base text-muted-foreground leading-relaxed">{market.description}</p>
                             ) : (
-                                <p className="text-muted-foreground italic">No description provided.</p>
+                                <p className="text-xs md:text-base text-muted-foreground italic">No description provided.</p>
                             )}
 
-                            <div className="mt-8 rounded-lg border border-border bg-secondary p-6">
-                                <h3 className="text-lg font-semibold mb-4 text-foreground">Market Rules</h3>
-                                <dl className="space-y-4 text-sm">
+                            <div className="mt-6 rounded-lg border border-border bg-secondary p-4 md:p-6">
+                                <h3 className="text-sm md:text-lg font-semibold mb-3 text-foreground">Market Rules</h3>
+                                <dl className="space-y-3 text-xs md:text-sm">
                                     <div className="flex justify-between border-b border-border pb-2">
                                         <dt className="text-muted-foreground">Category</dt>
                                         <dd className="font-medium text-foreground">{market.category || "General"}</dd>
@@ -159,13 +159,13 @@ export default function EventPage() {
                                     <TabsList className="grid w-full grid-cols-2 rounded-t-xl bg-muted/50 p-0 h-auto">
                                         <TabsTrigger
                                             value="YES"
-                                            className="h-12 rounded-tl-xl rounded-tr-none rounded-br-none rounded-bl-none data-[state=active]:bg-emerald-100 dark:data-[state=active]:bg-emerald-500/20 data-[state=active]:text-emerald-700 dark:data-[state=active]:text-emerald-400 data-[state=active]:border-b-2 data-[state=active]:border-emerald-500 transition-all font-medium"
+                                            className="h-12 rounded-tl-xl rounded-tr-none rounded-br-none rounded-bl-none data-[state=active]:bg-emerald-100 dark:data-[state=active]:bg-emerald-500/20 data-[state=active]:text-emerald-700 dark:data-[state=active]:text-emerald-400 data-[state=active]:border-b-2 data-[state=active]:border-emerald-500 transition-all font-bold"
                                         >
                                             Buy Yes
                                         </TabsTrigger>
                                         <TabsTrigger
                                             value="NO"
-                                            className="h-12 rounded-tr-xl rounded-tl-none rounded-br-none rounded-bl-none data-[state=active]:bg-red-100 dark:data-[state=active]:bg-red-500/20 data-[state=active]:text-red-700 dark:data-[state=active]:text-red-400 data-[state=active]:border-b-2 data-[state=active]:border-red-500 transition-all font-medium"
+                                            className="h-12 rounded-tr-xl rounded-tl-none rounded-br-none rounded-bl-none data-[state=active]:bg-red-100 dark:data-[state=active]:bg-red-500/20 data-[state=active]:text-red-700 dark:data-[state=active]:text-red-400 data-[state=active]:border-b-2 data-[state=active]:border-red-500 transition-all font-bold"
                                         >
                                             Buy No
                                         </TabsTrigger>
