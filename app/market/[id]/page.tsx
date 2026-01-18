@@ -5,7 +5,7 @@ import Header from "@/components/layout/header"
 import { useQuery } from "@tanstack/react-query"
 import { gql } from "graphql-request"
 import { fetchSubgraph } from "@/lib/subgraph"
-import { useParams } from "next/navigation"
+import { useParams, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { TradingForm } from "@/components/market/trading-form"
 import { MarketResolution } from "@/components/market/market-resolution"
@@ -17,6 +17,9 @@ import { MarketChart } from "@/components/market/market-chart"
 
 export default function EventPage() {
     const params = useParams()
+    const searchParams = useSearchParams()
+    const outcome = searchParams.get("outcome")
+    const defaultTab = outcome === "NO" ? "NO" : "YES"
     const id = params.id as string
     const { market, isLoading } = useMarket(id)
 
@@ -152,7 +155,7 @@ export default function EventPage() {
 
                             {/* Trading Widget */}
                             <div className="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
-                                <Tabs defaultValue="YES" className="w-full">
+                                <Tabs defaultValue={defaultTab} className="w-full">
                                     <TabsList className="grid w-full grid-cols-2 rounded-t-xl bg-muted/50 p-0 h-auto">
                                         <TabsTrigger
                                             value="YES"
