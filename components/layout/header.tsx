@@ -2,8 +2,17 @@
 
 import Link from "next/link"
 import { usePrivy } from '@privy-io/react-auth';
-import { Search, Trophy, Menu, Home, PlusCircle, LogOut } from "lucide-react"
+import { Search, Trophy, Menu, Home, PlusCircle, LogOut, Copy, Wallet } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useBalance } from "wagmi"
 import { ThemeToggle } from "./theme-toggle"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { useUserRights } from "@/hooks/useUserRights"
@@ -11,11 +20,12 @@ import { useUserRights } from "@/hooks/useUserRights"
 export default function Header() {
   const { hasCreationRights } = useUserRights()
   const { ready, authenticated, user, login, logout } = usePrivy();
+  const { data: balanceData } = useBalance({
+    address: user?.wallet?.address as `0x${string}`,
+  });
 
   // Disable login when Privy is not ready or the user is already authenticated
   const disableLogin = !ready || (ready && authenticated);
-
-  console.log('Admin', hasCreationRights)
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
@@ -71,28 +81,45 @@ export default function Header() {
               </Button>
             </>
           ) : (
-            <div className="flex items-center gap-2">
-              {/* User Info */}
-              <div className="hidden sm:flex items-center gap-2 rounded-lg border border-border bg-secondary px-3 py-1.5 text-sm font-medium">
-                <div className="h-5 w-5 rounded-full bg-gradient-to-tr from-primary to-primary/50" />
-                <span className="text-foreground">
-                  {user?.email?.address ||
-                    user?.wallet?.address?.slice(0, 6) + '...' + user?.wallet?.address?.slice(-4) ||
-                    'User'}
-                </span>
-              </div>
-
-              {/* Logout Button */}
-              <Button
-                onClick={logout}
-                size="sm"
-                variant="ghost"
-                className="text-foreground hover:bg-secondary"
-              >
-                <LogOut className="h-4 w-4 md:mr-2" />
-                <span className="hidden md:inline">Logout</span>
-              </Button>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="hidden sm:flex items-center gap-2 rounded-lg border border-border bg-secondary px-3 py-1.5 text-sm font-medium cursor-pointer transition-colors hover:bg-secondary/80">
+                  <div className="h-5 w-5 rounded-full bg-gradient-to-tr from-primary to-primary/50" />
+                  <span className="text-foreground">
+                    {user?.email?.address ||
+                      user?.wallet?.address?.slice(0, 6) + '...' + user?.wallet?.address?.slice(-4) ||
+                      'User'}
+                  </span>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    if (user?.wallet?.address) {
+                      navigator.clipboard.writeText(user.wallet.address);
+                      // Optional: Add toast notification here if desired
+                    }
+                  }}
+                  className="cursor-pointer"
+                >
+                  <Copy className="mr-2 h-4 w-4" />
+                  Copy Address
+                </DropdownMenuItem>
+                <DropdownMenuItem disabled className="opacity-100">
+                  <Wallet className="mr-2 h-4 w-4" />
+                  <span>
+                    {balanceData ? `${Number(balanceData.formatted).toFixed(4)} ${balanceData.symbol}` : 'Loading...'}
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout} className="cursor-pointer text-destructive focus:text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
 
           {/* Mobile Hamburger Menu */}
