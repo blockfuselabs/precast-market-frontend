@@ -4,11 +4,18 @@ import { useAccount, useReadContracts } from "wagmi";
 import { CONTRACT_ADDRESS } from "@/lib/constants";
 import LMSRABI from "@/lib/LMSRABI.json";
 import { usePrivy } from '@privy-io/react-auth';
+import { useState, useEffect } from "react";
 
 export function useUserRights() {
     const { ready, authenticated, user, login, logout } = usePrivy();
-    
+
     const isConnected = ready && authenticated;
+
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const address = user?.wallet?.address;
 
@@ -25,6 +32,9 @@ export function useUserRights() {
                 functionName: "MODERATOR_ROLE",
             },
         ],
+        query: {
+            enabled: mounted,
+        }
     });
 
     const adminRole = result.data?.[0]?.result;
