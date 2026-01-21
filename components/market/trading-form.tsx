@@ -17,9 +17,10 @@ interface TradingFormProps {
     marketId: string
     outcome: "YES" | "NO"
     probability: number
+    isExpired: boolean
 }
 
-export function TradingForm({ marketId, outcome, probability }: TradingFormProps) {
+export function TradingForm({ marketId, outcome, probability, isExpired }: TradingFormProps) {
     const { address } = useAccount()
     const { authenticated, login, ready, user } = usePrivy()
     const { sendTransaction } = useSendTransaction()
@@ -212,7 +213,7 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
                         className="pr-16 text-base md:text-lg font-medium border-border bg-secondary h-10 md:h-12 focus-visible:ring-1 focus-visible:ring-primary/50 text-foreground"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
-                        disabled={isPending}
+                        disabled={isPending || isExpired}
                         min={0}
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
@@ -228,8 +229,8 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
 
                 <Button
                     className={`w-full h-10 md:h-12 font-bold text-sm md:text-base transition-all ${isAllowanceSufficient ? bgClass : "bg-emerald-600 text-white hover:bg-emerald-700"}`}
-                    onClick={!authenticated ? login : (isAllowanceSufficient ? handleBuy : handleApprove)}
-                    disabled={isPending || (authenticated && (!amount || parseFloat(amount) <= 0))}
+                    onClick={isAllowanceSufficient ? handleBuy : handleApprove}
+                    disabled={isPending || !amount || parseFloat(amount) <= 0 || isExpired}
                     variant="default"
                 >
                     {isPending && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}

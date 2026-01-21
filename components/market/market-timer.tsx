@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { format } from "date-fns"
 
 interface MarketTimerProps {
     endTime?: number
@@ -61,15 +62,19 @@ export function MarketTimer({ endTime }: MarketTimerProps) {
     if (!timeLeft) return null
 
     return (
-        <div className="flex items-center gap-1.5 text-[10px] text-gray-500 dark:text-gray-400 font-medium">
-            <div className="relative flex items-center justify-center">
-                <div className="absolute h-2 w-2 rounded-full bg-red-600 dark:bg-red-400 animate-ping opacity-75" />
-                <div className="relative h-2 w-2 rounded-full bg-red-600 dark:bg-red-400" />
-            </div>
-            <div className="flex gap-0.5">
-                {timeLeft.days > 0 && <span>{timeLeft.days}d</span>}
-                <span>{timeLeft.hours}h</span>
-                <span>{timeLeft.minutes}m</span>
+        <div className="flex items-center gap-2 text-[10px] text-gray-500 dark:text-gray-400 font-medium">
+            <span>{format(new Date(endTime * 1000), "d MMM yyyy, h:mma").toLowerCase()}</span>
+            <span className="text-gray-300 dark:text-gray-700">•</span>
+            <div className="flex items-center gap-1.5">
+                <div className="relative flex items-center justify-center">
+                    <div className="absolute h-2 w-2 rounded-full bg-red-600 dark:bg-red-400 animate-ping opacity-75" />
+                    <div className="relative h-2 w-2 rounded-full bg-red-600 dark:bg-red-400" />
+                </div>
+                <div className="flex gap-0.5">
+                    {timeLeft.days > 0 && <span>{timeLeft.days}d</span>}
+                    <span>{timeLeft.hours}h</span>
+                    <span>{timeLeft.minutes}m</span>
+                </div>
             </div>
         </div>
     )
