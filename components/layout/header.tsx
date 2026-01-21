@@ -9,11 +9,13 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/co
 import { useUserRights } from "@/hooks/useUserRights"
 
 export default function Header() {
-  const { hasCreationRights, isConnected } = useUserRights()
+  const { hasCreationRights } = useUserRights()
   const { ready, authenticated, user, login, logout } = usePrivy();
 
   // Disable login when Privy is not ready or the user is already authenticated
   const disableLogin = !ready || (ready && authenticated);
+
+  console.log('Admin', hasCreationRights)
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
@@ -42,7 +44,7 @@ export default function Header() {
         <div className="ml-auto flex items-center gap-2 md:gap-4">
           <ThemeToggle className="h-8 w-8 md:h-9 md:w-9" />
 
-          {isConnected && hasCreationRights && (
+          {authenticated && hasCreationRights && (
             <Button asChild size="sm" variant="outline" className="hidden sm:inline-flex border-border hover:bg-secondary hover:text-foreground">
               <Link href="/create-market">Create Market</Link>
             </Button>
@@ -127,7 +129,7 @@ export default function Header() {
                   <span className="font-medium">Home</span>
                 </Link>
 
-                {isConnected && hasCreationRights && (
+                {authenticated && hasCreationRights && (
                   <Link href="/create-market" className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-secondary/50 transition-colors text-foreground">
                     <PlusCircle className="h-5 w-5" />
                     <span className="font-medium">Create Market</span>
