@@ -7,32 +7,13 @@ import {
 import { WagmiProvider } from 'wagmi';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { getConfig, getSSRConfig } from '@/lib/wagmi';
+import { useTheme } from 'next-themes';
 import { ThemeProvider } from "./theme-provider"
 
-export function Providers({ children }: { children: React.ReactNode }) {
-    const [queryClient] = React.useState(() => new QueryClient());
-    const [mounted, setMounted] = React.useState(false);
-    const [config, setConfig] = React.useState(() => {
-        // Initialize with SSR-safe config
-        if (typeof window === 'undefined') {
-            return getSSRConfig();
-        }
-        return null;
-    });
+function PrivyProviderWrapper({ children, wagmiConfig }: { children: React.ReactNode; wagmiConfig: any }) {
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === 'dark';
 
-    React.useEffect(() => {
-        setMounted(true);
-        // Update to client config once mounted
-        if (typeof window !== 'undefined') {
-            setConfig(getConfig());
-        }
-    }, []);
-
-    // Always use a config (SSR-safe initially, then client config)
-    const wagmiConfig = config || getSSRConfig();
-
-    // Always render PrivyProvider to avoid "useWallets called outside PrivyProvider" warnings
-    // PrivyProvider handles SSR internally and won't cause issues
     return (
         <PrivyProvider
             appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
@@ -40,12 +21,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
             config={{
                 // Appearance
                 appearance: {
-                    theme: 'dark',
-                    accentColor: '#161616',
+                    theme: isDark ? 'dark' : 'light',
+                    accentColor: isDark ? '#ffffff' : '#161616',
                 },
                 // Login methods
                 loginMethods: ['email', 'wallet'],
-                // Create embedded wallets for users who don't have a wallet
+                
                 embeddedWallets: {
                     ethereum: {
                         createOnLogin: 'users-without-wallets',
@@ -57,18 +38,46 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 supportedChains: [...wagmiConfig.chains],
             }}
         >
-            <WagmiProvider config={wagmiConfig}>
-                <QueryClientProvider client={queryClient}>
-                    <ThemeProvider
-                        attribute="class"
-                        defaultTheme="dark"
-                        enableSystem
-                        disableTransitionOnChange
-                    >
-                        {children}
-                    </ThemeProvider>
-                </QueryClientProvider>
-            </WagmiProvider>
+            {children}
         </PrivyProvider>
+    );
+}
+
+export function Providers({ children }: { children: React.ReactNode }) {
+    const [queryClient] = React.useState(() => new QueryClient());
+    const [mounted, setMounted] = React.useState(false);
+    const [config, setConfig] = React.useState(() => {
+       
+        if (typeof window === 'undefined') {
+            return getSSRConfig();
+        }
+        return null;
+    });
+
+    React.useEffect(() => {
+        setMounted(true);
+        
+        if (typeof window !== 'undefined') {
+            setConfig(getConfig());
+        }
+    }, []);
+
+    const wagmiConfig = config || getSSRConfig();
+
+    return (
+        <WagmiProvider config={wagmiConfig}>
+            <QueryClientProvider client={queryClient}>
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="dark"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <PrivyProviderWrapper wagmiConfig={wagmiConfig}>
+                        {children}
+                    </PrivyProviderWrapper>
+                </ThemeProvider>
+            </QueryClientProvider>
+        </WagmiProvider>
     );
 }

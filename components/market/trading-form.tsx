@@ -24,18 +24,18 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
     const { authenticated, login, ready, user } = usePrivy()
     const { sendTransaction } = useSendTransaction()
     const { wallets } = useWallets()
-    
+
     const walletAddress = address || (user?.wallet?.address as `0x${string}` | undefined)
-    const wallet = wallets[0] 
-    
+    const wallet = wallets[0]
+
     const [amount, setAmount] = useState("")
-    
+
     const [approveHash, setApproveHash] = useState<string | null>(null)
     const [isApprovePending, setIsApprovePending] = useState(false)
     const [buyHash, setBuyHash] = useState<string | null>(null)
     const [isBuyPending, setIsBuyPending] = useState(false)
 
-   
+
     const { data: allowance, refetch: refetchAllowance } = useReadContract({
         address: USDC_ADDRESS as Address,
         abi: ERC20ABI,
@@ -46,10 +46,10 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
         }
     })
 
-    
+
     useEffect(() => {
         if (approveHash && !isApprovePending) {
-            
+
             setTimeout(() => {
                 refetchAllowance()
                 toast.success("USDC Approved!")
@@ -68,9 +68,9 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
 
     const isAllowanceSufficient = allowance ? allowance >= amountBI : false
 
-    
+
     async function handleApprove() {
-       
+
         if (!ready) {
             toast.error("Wallet is initializing, please wait...")
             return
@@ -82,7 +82,7 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
             return
         }
 
-      
+
         if (!wallet || !walletAddress) {
             toast.error("Wallet not available. Please reconnect your wallet.")
             return
@@ -90,15 +90,15 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
 
         try {
             setIsApprovePending(true)
-            
-           
+
+
             const data = encodeFunctionData({
                 abi: ERC20ABI,
                 functionName: "approve",
                 args: [CONTRACT_ADDRESS as Address, amountBI],
             })
 
-          
+
             const { hash } = await sendTransaction(
                 {
                     to: USDC_ADDRESS as Address,
@@ -120,26 +120,26 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
     }
 
     async function handleBuy() {
-      
+
         if (!ready) {
             toast.error("Wallet is initializing, please wait...")
             return
         }
 
-      
+
         if (!authenticated) {
             toast.info("Please connect your wallet first")
             login()
             return
         }
 
-     
+
         if (!wallet || !walletAddress) {
             toast.error("Wallet not available. Please reconnect your wallet.")
             return
         }
 
-       
+
         if (!amount || parseFloat(amount) <= 0) {
             toast.error("Enter a valid amount")
             return
@@ -147,17 +147,17 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
 
         try {
             setIsBuyPending(true)
-            
+
             const functionName = outcome === "YES" ? "buyYES" : "buyNO"
 
-          
+
             const data = encodeFunctionData({
                 abi: LMSRABI as any,
                 functionName: functionName,
                 args: [BigInt(marketId), amountBI],
             })
 
-        
+
             const { hash } = await sendTransaction(
                 {
                     to: CONTRACT_ADDRESS as Address,
@@ -180,11 +180,13 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
     }
 
     const isPending = isApprovePending || isBuyPending
-    const buttonLabel = isApprovePending
-        ? "Approving..."
-        : isAllowanceSufficient
-            ? (isBuyPending ? "Buying..." : `Buy ${outcome}`)
-            : "Approve USDC"
+    const buttonLabel = !authenticated
+        ? "Connect Wallet to Trade"
+        : isApprovePending
+            ? "Approving..."
+            : isAllowanceSufficient
+                ? (isBuyPending ? "Buying..." : `Buy ${outcome}`)
+                : "Approve USDC"
 
     const isGreen = outcome === "YES"
     const colorClass = isGreen ? "text-emerald-500" : "text-red-500"
@@ -226,8 +228,8 @@ export function TradingForm({ marketId, outcome, probability }: TradingFormProps
 
                 <Button
                     className={`w-full h-10 md:h-12 font-bold text-sm md:text-base transition-all ${isAllowanceSufficient ? bgClass : "bg-emerald-600 text-white hover:bg-emerald-700"}`}
-                    onClick={isAllowanceSufficient ? handleBuy : handleApprove}
-                    disabled={isPending || !amount || parseFloat(amount) <= 0}
+                    onClick={!authenticated ? login : (isAllowanceSufficient ? handleBuy : handleApprove)}
+                    disabled={isPending || (authenticated && (!amount || parseFloat(amount) <= 0))}
                     variant="default"
                 >
                     {isPending && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
