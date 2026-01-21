@@ -12,16 +12,27 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useBalance } from "wagmi"
+import { useBalance, useReadContract } from "wagmi"
 import { ThemeToggle } from "./theme-toggle"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { useUserRights } from "@/hooks/useUserRights"
+import { toast } from "sonner";
+import { parseEther, parseUnits, erc20Abi } from "viem";
 
 export default function Header() {
   const { hasCreationRights } = useUserRights()
   const { ready, authenticated, user, login, logout } = usePrivy();
   const { data: balanceData } = useBalance({
     address: user?.wallet?.address as `0x${string}`,
+  });
+  const { data: erc20Amount } = useReadContract({
+    address: '0x0215E78217115CAbeCa769c3c25DAAa4c27Ee6dC',
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: user?.wallet?.address ? [user.wallet.address as `0x${string}`] : undefined,
+    query: {
+      enabled: !!user?.wallet?.address,
+    }
   });
 
   // Disable login when Privy is not ready or the user is already authenticated
@@ -99,7 +110,7 @@ export default function Header() {
                   onClick={() => {
                     if (user?.wallet?.address) {
                       navigator.clipboard.writeText(user.wallet.address);
-                      // Optional: Add toast notification here if desired
+                      toast.success('Address copied to clipboard');
                     }
                   }}
                   className="cursor-pointer"
@@ -110,7 +121,13 @@ export default function Header() {
                 <DropdownMenuItem disabled className="opacity-100">
                   <Wallet className="mr-2 h-4 w-4" />
                   <span>
-                    {balanceData ? `${Number(balanceData.formatted).toFixed(4)} ${balanceData.symbol}` : 'Loading...'}
+                    {balanceData ? `${Number(Number(balanceData.value) / 10e17).toFixed(4)} ${balanceData.symbol}` : 'Loading...'}
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuItem disabled className="opacity-100">
+                  <Wallet className="mr-2 h-4 w-4" />
+                  <span>
+                    {erc20Amount !== undefined ? `${Number(Number(erc20Amount) / 10e5).toFixed(2)} USDC` : 'Loading...'}
                   </span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
