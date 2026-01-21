@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { useAccount, useReadContract } from "wagmi"
+import { useReadContract } from "wagmi"
 import { parseEther, parseUnits, encodeFunctionData, type Address } from "viem"
 import { baseSepolia } from "wagmi/chains"
 import { CONTRACT_ADDRESS, USDC_ADDRESS } from "@/lib/constants"
