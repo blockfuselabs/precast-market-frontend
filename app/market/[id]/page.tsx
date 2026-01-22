@@ -14,7 +14,6 @@ import { ClaimWinnings } from "@/components/market/claim-winnings"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MarketDetailSkeleton } from "@/components/skeletons/market-detail-skeleton"
 import { MarketChart } from "@/components/market/market-chart"
-import { MarketStatus } from "@/components/market/market-status"
 
 export default function EventPage() {
     const params = useParams()
