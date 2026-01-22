@@ -320,11 +320,11 @@ export function MarketCreationForm() {
                 abi: LMSRABI as any,
                 functionName: 'createMarket',
                 args: [
-                    parseUnits(values.liquidity.toString(), 6), // _b
+                    parseUnits(values.liquidity.toString(), 6),
                     BigInt(startTime),
                     BigInt(endTime),
                     values.question,
-                    metadataCid // _cId
+                    metadataCid
                 ],
             })
 

@@ -18,10 +18,10 @@ interface TradingFormProps {
     marketId: string
     outcome: "YES" | "NO"
     probability: number
-    isExpired: boolean
+    isExpired?: boolean
 }
 
-export function TradingForm({ marketId, outcome, probability, isExpired }: TradingFormProps) {
+export function TradingForm({ marketId, outcome, probability, isExpired = false }: TradingFormProps) {
     const { address } = useAccount()
     const { authenticated, login, ready, user } = usePrivy()
     const { sendTransaction } = useSendTransaction()
@@ -189,11 +189,13 @@ export function TradingForm({ marketId, outcome, probability, isExpired }: Tradi
     }
 
     const isPending = isApprovePending || isBuyPending
-    const buttonLabel = isApprovePending
-        ? "Approving..."
-        : isAllowanceSufficient
-            ? (isBuyPending ? "Buying..." : `Buy ${outcome}`)
-            : "Approve USDC"
+    const buttonLabel = !authenticated
+        ? "Connect Wallet to Trade"
+        : isApprovePending
+            ? "Approving..."
+            : isAllowanceSufficient
+                ? (isBuyPending ? "Buying..." : `Buy ${outcome}`)
+                : "Approve USDC"
 
     const isGreen = outcome === "YES"
     const colorClass = isGreen ? "text-emerald-500" : "text-red-500"
@@ -211,38 +213,40 @@ export function TradingForm({ marketId, outcome, probability, isExpired }: Tradi
             </div>
 
             {/* Input Section */}
-            <div className="space-y-3">
-                <div className="relative">
-                    <Input
-                        type="number"
-                        placeholder="0.00"
-                        className="pr-16 text-base md:text-lg font-medium border-border bg-secondary h-10 md:h-12 focus-visible:ring-1 focus-visible:ring-primary/50 text-foreground"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        disabled={isPending || isExpired}
-                        min={0}
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
-                        USDC
+            {!isExpired && (
+                <div className="space-y-3">
+                    <div className="relative">
+                        <Input
+                            type="number"
+                            placeholder="0.00"
+                            className="pr-16 text-base md:text-lg font-medium border-border bg-secondary h-10 md:h-12 focus-visible:ring-1 focus-visible:ring-primary/50 text-foreground"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            disabled={isPending}
+                            min={0}
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
+                            USDC
+                        </div>
                     </div>
-                </div>
 
-                {/* Simulated Output (Optional, could add later if logic existed) */}
-                {/* <div className="flex justify-between text-xs text-muted-foreground px-1">
+                    {/* Simulated Output (Optional, could add later if logic existed) */}
+                    {/* <div className="flex justify-between text-xs text-muted-foreground px-1">
                     <span>Est. Return</span>
                     <span className="text-green-400">+$0.00 (0%)</span>
                 </div> */}
 
-                <Button
-                    className={`w-full h-10 md:h-12 font-bold text-sm md:text-base transition-all ${isAllowanceSufficient ? bgClass : "bg-emerald-600 text-white hover:bg-emerald-700"}`}
-                    onClick={isAllowanceSufficient ? handleBuy : handleApprove}
-                    disabled={isPending || !amount || parseFloat(amount) <= 0 || isExpired}
-                    variant="default"
-                >
-                    {isPending && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-                    {buttonLabel}
-                </Button>
-            </div>
+                    <Button
+                        className={`w-full h-10 md:h-12 font-bold text-sm md:text-base transition-all ${isAllowanceSufficient ? bgClass : "bg-emerald-600 text-white hover:bg-emerald-700"}`}
+                        onClick={!authenticated ? login : (isAllowanceSufficient ? handleBuy : handleApprove)}
+                        disabled={isPending || (authenticated && (!amount || parseFloat(amount) <= 0))}
+                        variant="default"
+                    >
+                        {isPending && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+                        {buttonLabel}
+                    </Button>
+                </div>
+            )}
 
             {buyHash && (
                 <div className="p-3 rounded bg-blue-500/10 border border-blue-500/20 text-xs text-blue-200 break-all">
