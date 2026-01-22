@@ -29,7 +29,18 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return null
 }
 
+const timeRanges = {
+    '1H': 60 * 60,
+    '6H': 6 * 60 * 60,
+    '1D': 24 * 60 * 60,
+    '1W': 7 * 24 * 60 * 60,
+    '1M': 30 * 24 * 60 * 60,
+    'All': Infinity
+}
+
 export function MarketChart({ data }: MarketChartProps) {
+    const [timeRange, setTimeRange] = React.useState<keyof typeof timeRanges>('All')
+
     const chartData = React.useMemo(() => {
         if (!data || data.length === 0) {
             return [
@@ -39,7 +50,56 @@ export function MarketChart({ data }: MarketChartProps) {
             ]
         }
 
-        return data.map((item, index) => {
+        const now = Date.now() / 1000 // current timestamp in seconds
+        const rangeDuration = timeRanges[timeRange]
+        const cutoffTimestamp = rangeDuration === Infinity ? 0 : now - rangeDuration
+
+        // Sort data by timestamp just in case
+        const sortedData = [...data].sort((a, b) => Number(a.blockTimestamp || 0) - Number(b.blockTimestamp || 0))
+
+        // Find the "start" value - the last trade BEFORE the cutoff
+        // This ensures the line starts from the correct previous value instead of 0 or a gap
+        let startValueIndex = -1
+        for (let i = 0; i < sortedData.length; i++) {
+            if (Number(sortedData[i].blockTimestamp || 0) < cutoffTimestamp) {
+                startValueIndex = i
+            } else {
+                break
+            }
+        }
+
+        // Filter data points within range
+        const filteredRawData = sortedData.filter(item => Number(item.blockTimestamp || 0) >= cutoffTimestamp)
+
+        // Logic to ensure continuous line
+        let finalDataToMap = filteredRawData
+        if (startValueIndex !== -1 && rangeDuration !== Infinity) {
+            const startItem = sortedData[startValueIndex]
+
+            if (filteredRawData.length === 0) {
+                // If NO trades happened in the window, but we have prior history, 
+                // show a flat line from start to "now" at the last known price
+                finalDataToMap = [
+                    { ...startItem, blockTimestamp: cutoffTimestamp.toString() },
+                    { ...startItem, blockTimestamp: now.toString() }
+                ]
+            } else {
+                // If we have trades, prepend the "virtual" start point at the cutoff time
+                // so the chart shows the state at the beginning of the selected period
+                finalDataToMap = [
+                    { ...startItem, blockTimestamp: cutoffTimestamp.toString() },
+                    ...filteredRawData
+                ]
+            }
+        }
+
+        // If "All" or effectively showing everything, and we're just mapping
+        if (timeRange === 'All') {
+            finalDataToMap = sortedData
+        }
+
+
+        return finalDataToMap.map((item, index) => {
             const probability = Number(formatEther(BigInt(item.priceYES))) * 100
 
             let date = `Trade ${index + 1}`
@@ -57,10 +117,10 @@ export function MarketChart({ data }: MarketChartProps) {
                 probability: Number(probability.toFixed(1))
             }
         })
-    }, [data])
+    }, [data, timeRange])
 
-    const startProb = chartData[0].probability
-    const endProb = chartData[chartData.length - 1].probability
+    const startProb = chartData.length > 0 ? chartData[0].probability : 0
+    const endProb = chartData.length > 0 ? chartData[chartData.length - 1].probability : 0
     const isPositive = endProb >= startProb
     const color = isPositive ? "#10b981" : "#ef4444"
 
@@ -114,15 +174,15 @@ export function MarketChart({ data }: MarketChartProps) {
                 </ResponsiveContainer>
             </div>
 
-            {/* Time Range Selectors - could implement filtering logic later */}
+            {/* Time Range Selectors */}
             <div className="mt-4 flex justify-end gap-1">
-                {['1H', '6H', '1D', '1W', '1M', 'All'].map((range) => (
+                {(Object.keys(timeRanges) as Array<keyof typeof timeRanges>).map((range) => (
                     <button
                         key={range}
-                        disabled
-                        className={`cursor-not-allowed rounded px-3 py-1 text-[10px] font-medium transition-colors ${range === 'All'
+                        onClick={() => setTimeRange(range)}
+                        className={`cursor-pointer rounded px-3 py-1 text-[10px] font-medium transition-colors ${timeRange === range
                             ? 'bg-secondary text-primary'
-                            : 'text-muted-foreground opacity-50'
+                            : 'text-muted-foreground hover:text-foreground'
                             }`}
                     >
                         {range}
