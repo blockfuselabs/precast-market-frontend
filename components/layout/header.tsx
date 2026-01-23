@@ -26,10 +26,10 @@ export default function Header() {
   const { ready, authenticated, user, login, logout } = usePrivy();
   const { claimEth, claimTokens, hasClaimedEth, canClaimTokens, isClaiming } = useFaucet();
 
-  const { data: balanceData } = useBalance({
+  const { data: balanceData, refetch: refetchBalance } = useBalance({
     address: user?.wallet?.address as `0x${string}`,
   });
-  const { data: erc20Amount } = useReadContract({
+  const { data: erc20Amount, refetch: refetchUSDC } = useReadContract({
     address: USDC_ADDRESS as `0x${string}`,
     abi: erc20Abi,
     functionName: 'balanceOf',
@@ -53,6 +53,7 @@ export default function Header() {
       await claimEth();
       console.log("ETH claimed successfully!");
       toast.success("ETH claimed successfully!");
+      refetchBalance(); // Refresh ETH balance
     } catch (error) {
       console.error("Failed to claim ETH:", error);
       toast.error("Failed to claim ETH. Please try again.");
@@ -68,6 +69,7 @@ export default function Header() {
       toast.info("Claiming USDC...");
       await claimTokens();
       toast.success("USDC claimed successfully!");
+      refetchUSDC(); // Refresh USDC balance
     } catch (error) {
       console.error("Failed to claim USDC:", error);
       toast.error("Failed to claim USDC. Please try again.");
