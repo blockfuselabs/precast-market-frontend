@@ -37,6 +37,8 @@ const formSchema = z.object({
     token: z.enum(["ETH", "USDC"]),
 })
 
+type FormValues = z.infer<typeof formSchema>
+
 export function TransferForm() {
     // ETH Transfer
     const { sendTransactionAsync, isPending: isEthPending } = useSendTransaction()
@@ -52,7 +54,7 @@ export function TransferForm() {
 
     const isLoading = isEthPending || isUsdcPending || isConfirming
 
-    const form = useForm<z.infer<typeof formSchema>>({
+    const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             recipient: "",
@@ -61,7 +63,7 @@ export function TransferForm() {
         },
     })
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: FormValues) {
         try {
             let hash: `0x${string}`
 
@@ -99,7 +101,7 @@ export function TransferForm() {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
 
-                        <FormField
+                        <FormField<FormValues>
                             control={form.control}
                             name="token"
                             render={({ field }) => (
@@ -121,7 +123,7 @@ export function TransferForm() {
                             )}
                         />
 
-                        <FormField
+                        <FormField<FormValues>
                             control={form.control}
                             name="recipient"
                             render={({ field }) => (
@@ -139,7 +141,7 @@ export function TransferForm() {
                             )}
                         />
 
-                        <FormField
+                        <FormField<FormValues>
                             control={form.control}
                             name="amount"
                             render={({ field }) => (
