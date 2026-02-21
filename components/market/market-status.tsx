@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Market } from "@/lib/mock-data"
+import type { Market } from "@/lib/types/market"
 
 interface MarketStatusProps {
     market: Market

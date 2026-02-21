@@ -13,6 +13,7 @@ import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 import { usePrivy, useSendTransaction, useWallets } from "@privy-io/react-auth"
 import { useQueryClient } from "@tanstack/react-query"
+import { useUserPreferencesStore } from "@/stores/user-preferences-store"
 
 interface TradingFormProps {
     marketId: string
@@ -27,11 +28,18 @@ export function TradingForm({ marketId, outcome, probability, isExpired = false 
     const { sendTransaction } = useSendTransaction()
     const { wallets } = useWallets()
     const queryClient = useQueryClient()
+    const { defaultTradeAmount, setDefaultTradeAmount } = useUserPreferencesStore()
 
     const walletAddress = address || (user?.wallet?.address as `0x${string}` | undefined)
     const wallet = wallets[0]
 
     const [amount, setAmount] = useState("")
+    useEffect(() => {
+        if (!amount && defaultTradeAmount > 0) {
+            setAmount(String(defaultTradeAmount))
+        }
+    }, [amount, defaultTradeAmount])
+
 
     const [approveHash, setApproveHash] = useState<string | null>(null)
     const [isApprovePending, setIsApprovePending] = useState(false)
@@ -228,6 +236,26 @@ export function TradingForm({ marketId, outcome, probability, isExpired = false 
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
                             USDC
                         </div>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <button
+                            type="button"
+                            onClick={() => setDefaultTradeAmount(Number(amount))}
+                            className="rounded border border-border px-2 py-1 transition-colors hover:bg-secondary"
+                            disabled={!amount || parseFloat(amount) <= 0 || isPending}
+                        >
+                            Save as default amount
+                        </button>
+                        {defaultTradeAmount > 0 && (
+                            <button
+                                type="button"
+                                onClick={() => setAmount(String(defaultTradeAmount))}
+                                className="rounded border border-border px-2 py-1 transition-colors hover:bg-secondary"
+                                disabled={isPending}
+                            >
+                                Use default ({defaultTradeAmount})
+                            </button>
+                        )}
                     </div>
 
                     {/* Simulated Output (Optional, could add later if logic existed) */}

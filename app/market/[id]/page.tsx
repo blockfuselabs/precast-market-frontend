@@ -14,6 +14,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MarketDetailSkeleton } from "@/components/skeletons/market-detail-skeleton"
 import { MarketChart } from "@/components/market/market-chart"
 import { MarketStatus } from "@/components/market/market-status"
+import { useEffect } from "react"
+import { useUIStore } from "@/stores/ui-store"
 
 export default function EventPage() {
     const params = useParams()
@@ -22,6 +24,11 @@ export default function EventPage() {
     const defaultTab = outcome === "NO" ? "NO" : "YES"
     const id = params.id as string
     const { market, isLoading } = useMarket(id)
+    const { activeTab, setActiveTab } = useUIStore()
+
+    useEffect(() => {
+        setActiveTab(defaultTab)
+    }, [defaultTab, id, setActiveTab])
 
     // Subgraph Query for Shares Bought
     const query = gql`
@@ -49,8 +56,6 @@ export default function EventPage() {
         queryKey: ['sharesBoughts', id],
         queryFn: async () => fetchSubgraph(query, { marketId: id })
     })
-
-    console.log("Subgraph Response:", subgraphData)
 
     if (isLoading) {
         return <MarketDetailSkeleton />
@@ -154,7 +159,7 @@ export default function EventPage() {
                                 <MarketStatus market={market} />
                             ) : (
                                 <div className="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
-                                    <Tabs defaultValue={defaultTab} className="w-full">
+                                    <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "YES" | "NO")} className="w-full">
                                         <TabsList className="grid w-full grid-cols-2 rounded-t-xl bg-muted/50 p-0 h-auto">
                                             <TabsTrigger
                                                 value="YES"

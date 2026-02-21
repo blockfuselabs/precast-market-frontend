@@ -3,10 +3,11 @@
 import type { ComponentType } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, PlusCircle } from "lucide-react"
+import { ChevronLeft, Home, PlusCircle } from "lucide-react"
 
 import { useUserRights } from "@/hooks/useUserRights"
 import { cn } from "@/lib/utils"
+import { useUIStore } from "@/stores/ui-store"
 
 type NavItem = {
   href: string
@@ -50,6 +51,7 @@ function SidebarLink({
 export function SidebarNav() {
   const pathname = usePathname()
   const { hasCreationRights, isConnected } = useUserRights()
+  const { sidebarCollapsed, toggleSidebarCollapsed } = useUIStore()
   const canCreateMarket = Boolean(isConnected && hasCreationRights)
 
   const navItems: NavItem[] = [
@@ -76,15 +78,28 @@ export function SidebarNav() {
         </nav>
       </aside>
 
-      <aside className="hidden h-full border-r border-border bg-card/40 lg:flex lg:w-[260px]">
-        <nav className="flex w-full flex-col gap-2 p-4">
+      <aside className="hidden h-full border-r border-border bg-card/40 lg:flex">
+        <nav className={cn("flex w-full flex-col gap-2 p-4", sidebarCollapsed && "items-center")}>
+          <button
+            type="button"
+            onClick={toggleSidebarCollapsed}
+            className={cn(
+              "mb-2 h-8 w-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground flex",
+              sidebarCollapsed && "rotate-180",
+            )}
+            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+
           {visibleItems.map((item) => (
             <SidebarLink
               key={item.href}
               href={item.href}
               label={item.label}
               icon={item.icon}
-              compact={false}
+              compact={sidebarCollapsed}
               isActive={pathname === item.href}
             />
           ))}
