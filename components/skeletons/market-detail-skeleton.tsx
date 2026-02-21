@@ -1,10 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton"
-import Header from "@/components/layout/header"
 
 export function MarketDetailSkeleton() {
     return (
-        <div className="min-h-screen bg-background">
-            <Header />
+        <div className="bg-background">
             <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     {/* Left Column: Market Info (8 cols) */}

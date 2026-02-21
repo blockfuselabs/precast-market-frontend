@@ -1,7 +1,6 @@
 "use client"
 
 import { useMarket } from "@/hooks/useMarket"
-import Header from "@/components/layout/header"
 import { useQuery } from "@tanstack/react-query"
 import { gql } from "graphql-request"
 import { fetchSubgraph } from "@/lib/subgraph"
@@ -58,8 +57,7 @@ export default function EventPage() {
 
     if (!market) {
         return (
-            <div className="min-h-screen bg-background">
-                <Header />
+            <div className="bg-background">
                 <div className="flex justify-center py-20">
                     <div className="p-4 rounded-full bg-muted/20 text-muted-foreground">Market not found</div>
                 </div>
@@ -68,9 +66,7 @@ export default function EventPage() {
     }
 
     return (
-        <div className="min-h-screen bg-background">
-            <Header />
-
+        <div className="bg-background">
             <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 md:py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
 

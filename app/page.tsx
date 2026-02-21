@@ -1,6 +1,5 @@
 "use client"
 
-import Header from "@/components/layout/header"
 import MarketGrid from "@/components/market/market-grid"
 import { useMarkets } from "@/hooks/useMarkets"
 import { MarketGridSkeleton } from "@/components/skeletons/market-grid-skeleton"
@@ -12,11 +11,8 @@ export default function Home() {
 
   console.log(markets)
   return (
-
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 flex flex-col">
-      <Header />
-
-      <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+    <div className="bg-background text-foreground selection:bg-primary/20">
+      <main className="container mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-12">
         {isLoading && (
           <MarketGridSkeleton count={8} />
         )}
@@ -44,8 +40,6 @@ export default function Home() {
           </div>
         )}
       </main>
-
-
     </div>
   )
 }
