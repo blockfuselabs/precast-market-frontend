@@ -36,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans antialiased pb-24 md:pb-0`}>
+      <body className="font-sans antialiased">
         <Providers>
           {children}
           <Footer />
