@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { usePrivy } from '@privy-io/react-auth';
@@ -21,12 +22,15 @@ import { toast } from "sonner";
 import { erc20Abi } from "viem";
 import { USDC_ADDRESS } from "@/lib/constants";
 import { useFaucet } from "@/hooks/useFaucet";
+import { useUserPreferencesStore } from "@/stores/user-preferences-store";
 
 export default function Header() {
   const pathname = usePathname()
   const { hasCreationRights } = useUserRights()
   const { ready, authenticated, user, login, logout } = usePrivy();
   const { claimEth, claimTokens, hasClaimedEth, canClaimTokens, isClaiming } = useFaucet();
+  const { recentSearches, addRecentSearch } = useUserPreferencesStore()
+  const [searchQuery, setSearchQuery] = useState("")
 
   const { data: balanceData, refetch: refetchBalance } = useBalance({
     address: user?.wallet?.address as `0x${string}`,
@@ -41,19 +45,14 @@ export default function Header() {
     }
   });
 
-  console.log(`Amount`, erc20Amount);
-
   const claimETHFaucet = async () => {
     try {
       if (hasClaimedEth) {
-        console.log("You have already claimed ETH from the faucet.");
         toast.error("You have already claimed ETH from the faucet.");
         return;
       }
       toast.info("Claiming ETH...");
-      console.log("Claiming ETH...");
       await claimEth();
-      console.log("ETH claimed successfully!");
       toast.success("ETH claimed successfully!");
       refetchBalance(); // Refresh ETH balance
     } catch (error) {
@@ -101,7 +100,31 @@ export default function Header() {
                 type="text"
                 placeholder="Search..."
                 className="w-full rounded-full border border-black/5 dark:border-white/10 bg-black/5 dark:bg-white/5 py-2 pl-10 pr-4 text-sm text-foreground shadow-inner transition-all hover:bg-black/10 dark:hover:bg-white/10 focus:border-primary/30 focus:bg-white/50 dark:focus:bg-black/50 focus:outline-none focus:ring-1 focus:ring-primary/30"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    addRecentSearch(searchQuery)
+                  }
+                }}
               />
+              {recentSearches.length > 0 && (
+                <div className="absolute left-0 right-0 top-[calc(100%+6px)] rounded-md border border-border bg-background p-2 shadow-md">
+                  <div className="mb-1 text-[10px] uppercase tracking-wide text-muted-foreground">Recent</div>
+                  <div className="flex flex-wrap gap-1">
+                    {recentSearches.map((recent) => (
+                      <button
+                        key={recent}
+                        type="button"
+                        onClick={() => setSearchQuery(recent)}
+                        className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      >
+                        {recent}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -367,8 +390,29 @@ export default function Header() {
               type="text"
               placeholder="Search markets..."
               className="w-full rounded-lg border border-border bg-secondary py-2 pl-10 pr-4 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  addRecentSearch(searchQuery)
+                }
+              }}
             />
           </div>
+          {recentSearches.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {recentSearches.map((recent) => (
+                <button
+                  key={recent}
+                  type="button"
+                  onClick={() => setSearchQuery(recent)}
+                  className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground hover:bg-secondary hover:text-foreground"
+                >
+                  {recent}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </header>

@@ -1,7 +1,7 @@
 import { useReadContract } from "wagmi"
 import { CONTRACT_ADDRESS } from "@/lib/constants"
 import LMSRABI from "@/lib/LMSRABI.json"
-import { Market } from "@/lib/mock-data"
+import type { Market } from "@/lib/types/market"
 import { formatEther } from "viem"
 import { useEffect, useState } from "react"
 import { fetchIPFSMetadata, getIPFSUrl } from "@/lib/ipfs"
@@ -15,7 +15,16 @@ export function useMarket(marketId: string) {
         abi: LMSRABI as any,
         functionName: "markets",
         args: [id],
+        query: {
+            refetchOnWindowFocus: true,
+            refetchInterval: 15000,
+        },
     })
+
+    const marketStruct = marketData as any
+    const marketEndTime = marketStruct?.[5] ? Number(marketStruct[5]) : undefined
+    const marketResolved = Boolean(marketStruct?.[6])
+    const isMarketActive = Boolean(!marketResolved && marketEndTime && Date.now() / 1000 < marketEndTime)
 
     // 2. Fetch Price
     const { data: priceData, isLoading: isLoadingPrice } = useReadContract({
@@ -23,6 +32,10 @@ export function useMarket(marketId: string) {
         abi: LMSRABI as any,
         functionName: "priceYES",
         args: [id],
+        query: {
+            refetchOnWindowFocus: true,
+            refetchInterval: isMarketActive ? 10000 : false,
+        },
     })
 
     // 3. Fetch Metadata

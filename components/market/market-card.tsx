@@ -2,9 +2,10 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowUpRight, TrendingUp } from "lucide-react"
-import type { Market } from "@/lib/mock-data"
+import { Star } from "lucide-react"
+import type { Market } from "@/lib/types/market"
 import { MarketTimer } from "./market-timer"
+import { useUserPreferencesStore } from "@/stores/user-preferences-store"
 
 interface MarketCardProps {
   market: Market
@@ -14,6 +15,8 @@ export default function MarketCard({ market }: MarketCardProps) {
   const yesOutcome = market.outcomes.find(o => o.name === 'Yes') || market.outcomes[0];
   const noOutcome = market.outcomes.find(o => o.name === 'No') || market.outcomes[1];
   const router = useRouter();
+  const { favoriteMarkets, toggleFavoriteMarket } = useUserPreferencesStore()
+  const isFavorite = favoriteMarkets.includes(market.id)
 
   return (
     <Link href={`/market/${market.id}`} className="group block h-full">
@@ -36,6 +39,17 @@ export default function MarketCard({ market }: MarketCardProps) {
               {market.tag && <span className="uppercase tracking-wider font-medium opacity-80">{market.tag}</span>}
             </div>
           </div>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault()
+              toggleFavoriteMarket(market.id)
+            }}
+            className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          >
+            <Star className={`h-4 w-4 ${isFavorite ? "fill-current text-yellow-500" : ""}`} />
+          </button>
         </div>
 
         {/* Probabilities / Graph Area */}

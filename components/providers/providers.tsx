@@ -9,6 +9,8 @@ import { PrivyProvider } from '@privy-io/react-auth';
 import { getConfig, getSSRConfig } from '@/lib/wagmi';
 import { useTheme } from 'next-themes';
 import { ThemeProvider } from "./theme-provider"
+import { UIStoreProvider } from "@/stores/ui-store";
+import { UserPreferencesStoreProvider } from "@/stores/user-preferences-store";
 
 function PrivyProviderWrapper({ children, wagmiConfig }: { children: React.ReactNode; wagmiConfig: any }) {
     const { resolvedTheme } = useTheme();
@@ -44,7 +46,16 @@ function PrivyProviderWrapper({ children, wagmiConfig }: { children: React.React
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
-    const [queryClient] = React.useState(() => new QueryClient());
+    const [queryClient] = React.useState(
+        () =>
+            new QueryClient({
+                defaultOptions: {
+                    queries: {
+                        refetchOnWindowFocus: true,
+                    },
+                },
+            }),
+    );
     const [mounted, setMounted] = React.useState(false);
     const [config, setConfig] = React.useState(() => {
        
@@ -74,7 +85,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
                     disableTransitionOnChange
                 >
                     <PrivyProviderWrapper wagmiConfig={wagmiConfig}>
-                        {children}
+                        <UIStoreProvider>
+                            <UserPreferencesStoreProvider>
+                                {children}
+                            </UserPreferencesStoreProvider>
+                        </UIStoreProvider>
                     </PrivyProviderWrapper>
                 </ThemeProvider>
             </QueryClientProvider>

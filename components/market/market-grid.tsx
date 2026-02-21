@@ -1,7 +1,7 @@
 "use client"
 
 import MarketCard from "./market-card"
-import type { Market } from "@/lib/mock-data"
+import type { Market } from "@/lib/types/market"
 import { cn } from "@/lib/utils"
 
 interface MarketGridProps {

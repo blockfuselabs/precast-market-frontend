@@ -1,7 +1,6 @@
 "use client"
 
 import { useMarket } from "@/hooks/useMarket"
-import Header from "@/components/layout/header"
 import { useQuery } from "@tanstack/react-query"
 import { gql } from "graphql-request"
 import { fetchSubgraph } from "@/lib/subgraph"
@@ -15,6 +14,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MarketDetailSkeleton } from "@/components/skeletons/market-detail-skeleton"
 import { MarketChart } from "@/components/market/market-chart"
 import { MarketStatus } from "@/components/market/market-status"
+import { useEffect } from "react"
+import { useUIStore } from "@/stores/ui-store"
 
 export default function EventPage() {
     const params = useParams()
@@ -23,6 +24,11 @@ export default function EventPage() {
     const defaultTab = outcome === "NO" ? "NO" : "YES"
     const id = params.id as string
     const { market, isLoading } = useMarket(id)
+    const { activeTab, setActiveTab } = useUIStore()
+
+    useEffect(() => {
+        setActiveTab(defaultTab)
+    }, [defaultTab, id, setActiveTab])
 
     // Subgraph Query for Shares Bought
     const query = gql`
@@ -51,16 +57,13 @@ export default function EventPage() {
         queryFn: async () => fetchSubgraph(query, { marketId: id })
     })
 
-    console.log("Subgraph Response:", subgraphData)
-
     if (isLoading) {
         return <MarketDetailSkeleton />
     }
 
     if (!market) {
         return (
-            <div className="min-h-screen bg-background">
-                <Header />
+            <div className="bg-background">
                 <div className="flex justify-center py-20">
                     <div className="p-4 rounded-full bg-muted/20 text-muted-foreground">Market not found</div>
                 </div>
@@ -69,9 +72,7 @@ export default function EventPage() {
     }
 
     return (
-        <div className="min-h-screen bg-background">
-            <Header />
-
+        <div className="bg-background">
             <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 md:py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
 
@@ -158,7 +159,7 @@ export default function EventPage() {
                                 <MarketStatus market={market} />
                             ) : (
                                 <div className="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
-                                    <Tabs defaultValue={defaultTab} className="w-full">
+                                    <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "YES" | "NO")} className="w-full">
                                         <TabsList className="grid w-full grid-cols-2 rounded-t-xl bg-muted/50 p-0 h-auto">
                                             <TabsTrigger
                                                 value="YES"
