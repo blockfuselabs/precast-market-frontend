@@ -3,7 +3,9 @@ import type { Metadata } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { Providers } from "@/components/providers/providers"
-import { AppShell } from "@/components/layout/app-shell"
+import { BottomNav } from "@/components/layout/bottom-nav"
+import { Footer } from "@/components/layout/footer"
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
   title: "Precast | The World's Largest Prediction Market",
@@ -36,7 +38,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans antialiased">
         <Providers>
-          <AppShell>{children}</AppShell>
+          {children}
+          <Footer />
+          <BottomNav />
+          <Toaster position="top-right" />
         </Providers>
         <Analytics />
       </body>

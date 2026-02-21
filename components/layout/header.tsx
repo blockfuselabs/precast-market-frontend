@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { usePrivy } from '@privy-io/react-auth';
 import { Search, Trophy, Menu, Home, PlusCircle, LogOut, Copy, Wallet } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -17,16 +18,21 @@ import { ThemeToggle } from "./theme-toggle"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { useUserRights } from "@/hooks/useUserRights"
 import { toast } from "sonner";
-import { parseEther, parseUnits, erc20Abi } from "viem";
+import { erc20Abi } from "viem";
+import { USDC_ADDRESS } from "@/lib/constants";
+import { useFaucet } from "@/hooks/useFaucet";
 
 export default function Header() {
+  const pathname = usePathname()
   const { hasCreationRights } = useUserRights()
   const { ready, authenticated, user, login, logout } = usePrivy();
-  const { data: balanceData } = useBalance({
+  const { claimEth, claimTokens, hasClaimedEth, canClaimTokens, isClaiming } = useFaucet();
+
+  const { data: balanceData, refetch: refetchBalance } = useBalance({
     address: user?.wallet?.address as `0x${string}`,
   });
-  const { data: erc20Amount } = useReadContract({
-    address: '0x0215E78217115CAbeCa769c3c25DAAa4c27Ee6dC',
+  const { data: erc20Amount, refetch: refetchUSDC } = useReadContract({
+    address: USDC_ADDRESS as `0x${string}`,
     abi: erc20Abi,
     functionName: 'balanceOf',
     args: user?.wallet?.address ? [user.wallet.address as `0x${string}`] : undefined,
@@ -35,11 +41,48 @@ export default function Header() {
     }
   });
 
+  console.log(`Amount`, erc20Amount);
+
+  const claimETHFaucet = async () => {
+    try {
+      if (hasClaimedEth) {
+        console.log("You have already claimed ETH from the faucet.");
+        toast.error("You have already claimed ETH from the faucet.");
+        return;
+      }
+      toast.info("Claiming ETH...");
+      console.log("Claiming ETH...");
+      await claimEth();
+      console.log("ETH claimed successfully!");
+      toast.success("ETH claimed successfully!");
+      refetchBalance(); // Refresh ETH balance
+    } catch (error) {
+      console.error("Failed to claim ETH:", error);
+      toast.error("Failed to claim ETH. Please try again.");
+    }
+  };
+
+  const claimUSDCFaucet = async () => {
+    try {
+      if (!canClaimTokens) {
+        toast.error("You need to wait 24 hours between token claims.");
+        return;
+      }
+      toast.info("Claiming USDC...");
+      await claimTokens();
+      toast.success("USDC claimed successfully!");
+      refetchUSDC(); // Refresh USDC balance
+    } catch (error) {
+      console.error("Failed to claim USDC:", error);
+      toast.error("Failed to claim USDC. Please try again.");
+    }
+  };
+
   // Disable login when Privy is not ready or the user is already authenticated
   const disableLogin = !ready || (ready && authenticated);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 border-b border-white/5 bg-white/60 dark:bg-black/40 backdrop-blur-2xl supports-backdrop-filter:bg-white/40 dark:supports-backdrop-filter:bg-black/30 shadow-sm dark:shadow-none">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
@@ -50,25 +93,47 @@ export default function Header() {
         </Link>
 
         {/* Search Bar - Hidden on mobile, distinct on desktop */}
-        <div className="hidden flex-1 items-center justify-center md:flex">
-          <div className="relative w-full max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search markets (e.g. Crypto, Politics, Sports)..."
-              className="w-full rounded-full border border-border bg-secondary py-2 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground transition-all hover:bg-secondary/80 focus:border-primary/50 focus:bg-background focus:outline-none focus:ring-0"
-            />
+        {pathname === '/' && (
+          <div className="hidden flex-1 items-center justify-center md:flex">
+            <div className="relative w-full max-w-md">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="w-full rounded-full border border-black/5 dark:border-white/10 bg-black/5 dark:bg-white/5 py-2 pl-10 pr-4 text-sm text-foreground shadow-inner transition-all hover:bg-black/10 dark:hover:bg-white/10 focus:border-primary/30 focus:bg-white/50 dark:focus:bg-black/50 focus:outline-none focus:ring-1 focus:ring-primary/30"
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Right Side Actions */}
         <div className="ml-auto flex items-center gap-2 md:gap-4">
           <ThemeToggle className="h-8 w-8 md:h-9 md:w-9" />
 
+          {authenticated && (
+            <Link
+              href="/wallet"
+              className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 mr-1 ${pathname === '/wallet'
+                ? 'bg-linear-to-r from-violet-600/10 to-fuchsia-600/10 text-violet-600 dark:text-violet-400 border border-violet-500/20 shadow-[0_0_15px_rgba(124,58,237,0.1)]'
+                : 'text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5'
+                }`}
+            >
+              <Wallet className={`h-4 w-4 ${pathname === '/wallet' ? 'text-violet-500' : ''}`} />
+              Wallet
+            </Link>
+          )}
+
           {authenticated && hasCreationRights && (
-            <Button asChild size="sm" variant="outline" className="hidden sm:inline-flex border-border hover:bg-secondary hover:text-foreground">
-              <Link href="/create-market">Create Market</Link>
-            </Button>
+            <Link
+              href="/create-market"
+              className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${pathname === '/create-market'
+                ? 'bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.1)]'
+                : 'text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5'
+                }`}
+            >
+              <PlusCircle className={`h-4 w-4 ${pathname === '/create-market' ? 'text-primary' : ''}`} />
+              Create
+            </Link>
           )}
 
           {/* Privy Login/Logout */}
@@ -94,10 +159,12 @@ export default function Header() {
           ) : (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div className="hidden sm:flex items-center gap-2 rounded-lg border border-border bg-secondary px-3 py-1.5 text-sm font-medium cursor-pointer transition-colors hover:bg-secondary/80">
-                  <div className="h-5 w-5 rounded-full bg-gradient-to-tr from-primary to-primary/50" />
-                  <span className="text-foreground">
-                    {user?.email?.address ||
+                <div className="hidden sm:flex items-center gap-3 rounded-full border border-black/5 dark:border-white/10 bg-white/50 dark:bg-black/50 pl-2 pr-4 py-1.5 text-sm font-medium cursor-pointer transition-all hover:bg-black/5 dark:hover:bg-white/10 hover:border-black/10 dark:hover:border-white/20 backdrop-blur-md">
+                  <div className="h-6 w-6 rounded-full bg-gradient-to-tr from-violet-500 to-fuchsia-500 flex items-center justify-center text-[10px] text-white font-bold shadow-lg">
+                    {user?.email?.address?.[0].toUpperCase() || 'U'}
+                  </div>
+                  <span className="text-foreground/80">
+                    {user?.email?.address ? user.email.address.split('@')[0] :
                       user?.wallet?.address?.slice(0, 6) + '...' + user?.wallet?.address?.slice(-4) ||
                       'User'}
                   </span>
@@ -129,6 +196,39 @@ export default function Header() {
                   <span>
                     {erc20Amount !== undefined ? `${Number(Number(erc20Amount) / 10e5).toFixed(2)} USDC` : 'Loading...'}
                   </span>
+                </DropdownMenuItem>
+                {balanceData && Number(balanceData.value) == 0 ? (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={claimETHFaucet}
+                      disabled={isClaiming || hasClaimedEth}
+                      className={`cursor-pointer ${(isClaiming || hasClaimedEth) ? 'opacity-50' : ''}`}
+                    >
+                      <Wallet className="mr-2 h-4 w-4" />
+                      <span>{hasClaimedEth ? 'Eth Claimed' : 'Claim Faucet (ETH)'}</span>
+                    </DropdownMenuItem>
+                  </>
+                ) : null}
+                {erc20Amount !== undefined && Number(erc20Amount) == 0 ? (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={claimUSDCFaucet}
+                      disabled={isClaiming || !canClaimTokens}
+                      className={`cursor-pointer ${(isClaiming || !canClaimTokens) ? 'opacity-50' : ''}`}
+                    >
+                      <Wallet className="mr-2 h-4 w-4" />
+                      <span>{!canClaimTokens ? 'Cooldown Active' : 'Claim Faucet (USDC)'}</span>
+                    </DropdownMenuItem>
+                  </>
+                ) : null}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link href="/wallet">
+                    <Wallet className="mr-2 h-4 w-4" />
+                    Manage Wallet
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout} className="cursor-pointer text-destructive focus:text-destructive">
@@ -200,6 +300,33 @@ export default function Header() {
                           {erc20Amount !== undefined ? `${Number(Number(erc20Amount) / 10e5).toFixed(2)} USDC` : 'Loading...'}
                         </span>
                       </div>
+                      {balanceData && Number(balanceData.value) == 0 && (
+                        <div
+                          className={`flex items-center justify-between text-sm cursor-pointer hover:opacity-80 ${(isClaiming || hasClaimedEth) ? 'opacity-50' : ''}`}
+                          onClick={claimETHFaucet}
+                        >
+                          <span className="text-muted-foreground flex items-center gap-1">
+                            <Wallet className="h-3 w-3" /> ETH Faucet
+                          </span>
+                          <span className="font-medium text-primary">
+                            {hasClaimedEth ? 'Claimed' : 'Claim'}
+                          </span>
+                        </div>
+                      )}
+
+                      {erc20Amount !== undefined && Number(erc20Amount) == 0 && (
+                        <div
+                          className={`flex items-center justify-between text-sm cursor-pointer hover:opacity-80 ${(isClaiming || !canClaimTokens) ? 'opacity-50' : ''}`}
+                          onClick={claimUSDCFaucet}
+                        >
+                          <span className="text-muted-foreground flex items-center gap-1">
+                            USDC Faucet
+                          </span>
+                          <span className="font-medium text-primary">
+                            {!canClaimTokens ? 'Cooldown' : 'Claim'}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -232,16 +359,18 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="border-t border-border px-4 py-3 md:hidden bg-background/95 backdrop-blur-xl">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search markets..."
-            className="w-full rounded-lg border border-border bg-secondary py-2 pl-10 pr-4 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-          />
+      {pathname === '/' && (
+        <div className="border-t border-border px-4 py-3 md:hidden bg-background/95 backdrop-blur-xl">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search markets..."
+              className="w-full rounded-lg border border-border bg-secondary py-2 pl-10 pr-4 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
         </div>
-      </div>
+      )}
     </header>
   )
 }
