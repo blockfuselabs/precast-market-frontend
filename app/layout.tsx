@@ -14,6 +14,8 @@ export const metadata: Metadata = {
         "Trade on real-world events with Precast - the world's largest prediction market platform",
 }
 
+import { Providers } from "@/components/providers/providers"
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -22,7 +24,7 @@ export default function RootLayout({
     return (
         <html lang="en" className="dark" suppressHydrationWarning>
             <body className={`${inter.variable} font-sans antialiased`}>
-                {children}
+                <Providers>{children}</Providers>
             </body>
         </html>
     )
