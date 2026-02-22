@@ -1,0 +1,141 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* ── Precast Dark Theme (Figma-verified) ── */
+  /* Deep Fir — Page background */
+  --background: #000A00;
+  /* White — Primary text */
+  --foreground: #FFFFFF;
+
+  /* Hunter Green — Card/container surfaces */
+  --card: #141F14;
+  /* Alabaster — Card text */
+  --card-foreground: #FAFAFA;
+
+  /* Hunter Green — Popover surfaces */
+  --popover: #141F14;
+  --popover-foreground: #FAFAFA;
+
+  /* Forest Green — Primary accent (Yes buttons, active states) */
+  --primary: #1E993B;
+  --primary-foreground: #FFFFFF;
+
+  /* Shark — Secondary containers, inactive states */
+  --secondary: #1E2A1E;
+  /* Stack — Secondary text */
+  --secondary-foreground: #879287;
+
+  /* Log Cabin — Muted containers */
+  --muted: #0D160D;
+  /* Santas Gray — Muted text, timestamps */
+  --muted-foreground: #9F9FA8;
+
+  /* Forest Green — Accent (same as primary) */
+  --accent: #1E993B;
+  --accent-foreground: #FFFFFF;
+
+  /* Flamingo — Destructive / No buttons */
+  --destructive: #EF4343;
+  --destructive-foreground: #FFFFFF;
+
+  /* Border/Input — Subtle dark green-tinted border */
+  --border: #1A2E1A;
+  --input: #1A2E1A;
+  /* Forest Green — Focus ring */
+  --ring: #1E993B;
+
+  /* Chart Colors */
+  --chart-1: #1E993B;
+  --chart-2: #EAE243;
+  --chart-3: #6495ED;
+  --chart-4: #EF4343;
+  --chart-5: #879287;
+
+  /* Extras */
+  --warning: #EAE243;
+  --success: #1E993B;
+  --info: #6495ED;
+
+  --radius: 0.625rem;
+
+  /* Sidebar */
+  --sidebar-background: #000A00;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #1E993B;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #141F14;
+  --sidebar-accent-foreground: #FAFAFA;
+  --sidebar-border: #1A2E1A;
+  --sidebar-ring: #1E993B;
+}
+
+@theme inline {
+  --font-sans: 'Inter', 'Inter Fallback', ui-sans-serif, system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-info: var(--info);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  :focus-visible {
+    @apply ring-1 ring-primary ring-offset-0;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* Glassmorphism */
+  .glass {
+    @apply bg-background/90 backdrop-blur-md border-b border-border;
+  }
+
+  .glass-card {
+    @apply bg-card/90 backdrop-blur-md border border-border shadow-none;
+  }
+}
