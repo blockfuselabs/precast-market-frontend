@@ -3,48 +3,42 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ═══════════════════════════════════════════════════════
+   PRECAST DESIGN SYSTEM — Figma-verified tokens
+   Issue #19: Theme Tokens, Colors, Typography, Spacing
+   ═══════════════════════════════════════════════════════ */
+
 :root {
-  /* ── Precast Dark Theme (Figma-verified) ── */
-  /* Deep Fir — Page background */
+  /* ── Colors (Figma-verified) ────────────────────────── */
   --background: #000A00;
-  /* White — Primary text */
+  /* Deep Fir — Page bg */
   --foreground: #FFFFFF;
-
-  /* Hunter Green — Card/container surfaces */
+  /* White — Primary text */
   --card: #141F14;
-  /* Alabaster — Card text */
+  /* Hunter Green — Card surfaces */
   --card-foreground: #FAFAFA;
-
-  /* Hunter Green — Popover surfaces */
+  /* Alabaster — Card text */
   --popover: #141F14;
   --popover-foreground: #FAFAFA;
-
-  /* Forest Green — Primary accent (Yes buttons, active states) */
   --primary: #1E993B;
+  /* Forest Green — Yes/active */
   --primary-foreground: #FFFFFF;
-
-  /* Shark — Secondary containers, inactive states */
   --secondary: #1E2A1E;
-  /* Stack — Secondary text */
+  /* Shark — Inactive states */
   --secondary-foreground: #879287;
-
-  /* Log Cabin — Muted containers */
+  /* Stack */
   --muted: #0D160D;
-  /* Santas Gray — Muted text, timestamps */
+  /* Log Cabin — Muted containers */
   --muted-foreground: #9F9FA8;
-
-  /* Forest Green — Accent (same as primary) */
+  /* Santas Gray — Muted text */
   --accent: #1E993B;
+  /* Forest Green */
   --accent-foreground: #FFFFFF;
-
-  /* Flamingo — Destructive / No buttons */
   --destructive: #EF4343;
+  /* Flamingo — No/errors */
   --destructive-foreground: #FFFFFF;
-
-  /* Border/Input — Subtle dark green-tinted border */
   --border: #1A2E1A;
   --input: #1A2E1A;
-  /* Forest Green — Focus ring */
   --ring: #1E993B;
 
   /* Chart Colors */
@@ -54,12 +48,103 @@
   --chart-4: #EF4343;
   --chart-5: #879287;
 
-  /* Extras */
+  /* Semantic Colors */
   --warning: #EAE243;
+  /* Starship */
   --success: #1E993B;
   --info: #6495ED;
 
+  /* ── Typography (Figma "Precast" text styles) ──────── */
+  /* Font family: Inter (all styles) */
+  --font-family-sans: 'Inter', 'Inter Fallback', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-family-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+
+  /* Font sizes — from Figma text styles (size/line-height) */
+  --font-size-xs: 0.625rem;
+  /* 10px — Keyboard */
+  --font-size-sm: 0.75rem;
+  /* 12px — Keyboard, Medium labels */
+  --font-size-base: 0.875rem;
+  /* 14px — Body, Button sm, H3, Label, Input */
+  --font-size-lg: 1rem;
+  /* 16px — Button lg, Medium body */
+  --font-size-xl: 1.125rem;
+  /* 18px — H1, H2, Bold body */
+  --font-size-2xl: 1.25rem;
+  /* 20px — H2 variant, Bold */
+  --font-size-3xl: 1.5rem;
+  /* 24px — H2 large */
+  --font-size-4xl: 2.25rem;
+  /* 36px — Hero heading */
+
+  /* Line heights — from Figma text styles */
+  --line-height-none: 1;
+  /* 14/14 — Label */
+  --line-height-tight: 1.11;
+  /* 40/36 — Hero heading */
+  --line-height-snug: 1.33;
+  /* 16/12, 20/14 — Small text, body */
+  --line-height-normal: 1.5;
+  /* 24/16, 24/32 — Standard body */
+  --line-height-relaxed: 1.56;
+  /* 28/18 — Heading 1/2 */
+
+  /* Font weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ── Spacing (Figma layout tokens) ─────────────────── */
+  /* Base unit: 4px (Figma uses 4/8px grid) */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;
+  /* 4px */
+  --spacing-2: 0.5rem;
+  /* 8px */
+  --spacing-3: 0.75rem;
+  /* 12px */
+  --spacing-4: 1rem;
+  /* 16px — Horizontal page padding */
+  --spacing-5: 1.25rem;
+  /* 20px — Card internal padding */
+  --spacing-6: 1.5rem;
+  /* 24px — Vertical page padding, section gaps */
+  --spacing-8: 2rem;
+  /* 32px */
+  --spacing-10: 2.5rem;
+  /* 40px */
+  --spacing-12: 3rem;
+  /* 48px */
+  --spacing-16: 4rem;
+  /* 64px */
+  --spacing-20: 5rem;
+  /* 80px */
+  --spacing-24: 6rem;
+  /* 96px */
+
+  /* ── Layout (Figma "Main" container) ───────────────── */
+  --container-max-width: 1400px;
+  --container-padding-x: 1rem;
+  /* 16px */
+  --container-padding-y: 1.5rem;
+  /* 24px */
+
+  /* ── Border Radius ─────────────────────────────────── */
   --radius: 0.625rem;
+  /* 10px — Default */
+  --radius-sm: 0.375rem;
+  /* 6px */
+  --radius-md: 0.5rem;
+  /* 8px — Buttons */
+  --radius-lg: 0.625rem;
+  /* 10px */
+  --radius-xl: 0.875rem;
+  /* 14px — Cards */
+  --radius-2xl: 1rem;
+  /* 16px — Large cards */
+  --radius-full: 9999px;
+  /* Pill shape */
 
   /* Sidebar */
   --sidebar-background: #000A00;
@@ -72,8 +157,15 @@
   --sidebar-ring: #1E993B;
 }
 
+/* ═══════════════════════════════════════════════════════
+   Tailwind v4 Theme Mapping
+   ═══════════════════════════════════════════════════════ */
 @theme inline {
-  --font-sans: 'Inter', 'Inter Fallback', ui-sans-serif, system-ui, sans-serif;
+  /* Font families */
+  --font-sans: var(--font-family-sans);
+  --font-mono: var(--font-family-mono);
+
+  /* Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -101,10 +193,14 @@
   --color-warning: var(--warning);
   --color-success: var(--success);
   --color-info: var(--info);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Radius */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  /* Sidebar */
   --color-sidebar: var(--sidebar-background);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -115,6 +211,9 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* ═══════════════════════════════════════════════════════
+   Base Styles
+   ═══════════════════════════════════════════════════════ */
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -126,11 +225,213 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-family-sans);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── Semantic Typography Classes ─────────────────── */
+
+  /* Heading 1 — Figma: 18px/28px Bold */
+  h1,
+  .h1 {
+    font-size: var(--font-size-xl);
+    line-height: 1.56;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.01em;
+    color: var(--foreground);
+  }
+
+  /* Heading 2 — Figma: 24px/32px Bold (largest variant) */
+  h2,
+  .h2 {
+    font-size: var(--font-size-3xl);
+    line-height: 1.33;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.01em;
+    color: var(--foreground);
+  }
+
+  /* Heading 3 — Figma: 14px/20px Bold */
+  h3,
+  .h3 {
+    font-size: var(--font-size-base);
+    line-height: 1.43;
+    font-weight: var(--font-weight-bold);
+    color: var(--foreground);
+  }
+
+  /* Heading 4 */
+  h4,
+  .h4 {
+    font-size: var(--font-size-base);
+    line-height: 1.43;
+    font-weight: var(--font-weight-semibold);
+    color: var(--foreground);
+  }
+
+  /* Body */
+  p {
+    font-size: var(--font-size-base);
+    line-height: 1.43;
+    font-weight: var(--font-weight-regular);
+    color: var(--card-foreground);
+  }
+
+  /* Small text */
+  small {
+    font-size: var(--font-size-sm);
+    line-height: 1.33;
+    font-weight: var(--font-weight-regular);
+    color: var(--muted-foreground);
+  }
+
+  /* Labels */
+  label {
+    font-size: var(--font-size-base);
+    line-height: 1;
+    font-weight: var(--font-weight-medium);
+    color: var(--foreground);
   }
 }
 
+/* ═══════════════════════════════════════════════════════
+   Utility Classes
+   ═══════════════════════════════════════════════════════ */
 @layer utilities {
-  /* Glassmorphism */
+
+  /* ── Layout Utilities ────────────────────────────── */
+  .container-app {
+    max-width: var(--container-max-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--container-padding-x);
+    padding-right: var(--container-padding-x);
+    padding-top: var(--container-padding-y);
+    padding-bottom: var(--container-padding-y);
+  }
+
+  /* ── Typography Utilities (Figma semantic styles) ─ */
+
+  /* Hero — Figma: Inter Bold 36/40 */
+  .text-hero {
+    font-size: var(--font-size-4xl);
+    line-height: 1.11;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.02em;
+  }
+
+  /* Heading 1 — Figma: Inter Bold 18/28 */
+  .text-heading-1 {
+    font-size: var(--font-size-xl);
+    line-height: 1.56;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.01em;
+  }
+
+  /* Heading 2 (default) — Figma: Inter Bold 18/28 */
+  .text-heading-2 {
+    font-size: var(--font-size-xl);
+    line-height: 1.56;
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* Heading 2 (large) — Figma: Inter Bold 20/28 */
+  .text-heading-2-lg {
+    font-size: var(--font-size-2xl);
+    line-height: 1.4;
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* Heading 2 (xl) — Figma: Inter Bold 24/32 */
+  .text-heading-2-xl {
+    font-size: var(--font-size-3xl);
+    line-height: 1.33;
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* Heading 3 — Figma: Inter Bold 14/20 */
+  .text-heading-3 {
+    font-size: var(--font-size-base);
+    line-height: 1.43;
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* Body (large) — Figma: Inter Medium 16/24 */
+  .text-body-lg {
+    font-size: var(--font-size-lg);
+    line-height: 1.5;
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* Body (default) — Figma: Inter Regular 14/20 */
+  .text-body {
+    font-size: var(--font-size-base);
+    line-height: 1.43;
+    font-weight: var(--font-weight-regular);
+  }
+
+  /* Body (medium) — Figma: Inter Medium 14/20 */
+  .text-body-medium {
+    font-size: var(--font-size-base);
+    line-height: 1.43;
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* Label — Figma: Inter Medium 14/14 */
+  .text-label {
+    font-size: var(--font-size-base);
+    line-height: 1;
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* Button (lg) — Figma: Inter Bold 16/24 */
+  .text-btn-lg {
+    font-size: var(--font-size-lg);
+    line-height: 1.5;
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* Button (sm) — Figma: Inter Bold 14/20 */
+  .text-btn {
+    font-size: var(--font-size-base);
+    line-height: 1.43;
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* Input — Figma: Inter Regular 14/auto */
+  .text-input {
+    font-size: var(--font-size-base);
+    line-height: normal;
+    font-weight: var(--font-weight-regular);
+  }
+
+  /* Keyboard — Figma: Inter Regular 12/16 */
+  .text-kbd {
+    font-size: var(--font-size-sm);
+    line-height: 1.33;
+    font-weight: var(--font-weight-regular);
+    font-family: var(--font-family-mono);
+  }
+
+  /* Keyboard (small) — Figma: Inter Regular 10/15 */
+  .text-kbd-sm {
+    font-size: var(--font-size-xs);
+    line-height: 1.5;
+    font-weight: var(--font-weight-regular);
+    font-family: var(--font-family-mono);
+  }
+
+  /* Caption / Metadata — common in market cards */
+  .text-caption {
+    font-size: var(--font-size-sm);
+    line-height: 1.33;
+    font-weight: var(--font-weight-medium);
+    color: var(--muted-foreground);
+  }
+
+  /* ── Glassmorphism ───────────────────────────────── */
   .glass {
     @apply bg-background/90 backdrop-blur-md border-b border-border;
   }
