@@ -1,123 +1,165 @@
-"use client"
-
-import { useMemo } from "react"
-import MarketGrid from "@/components/market/market-grid"
-import { useMarkets } from "@/hooks/useMarkets"
-import { MarketGridSkeleton } from "@/components/skeletons/market-grid-skeleton"
-import { useUIStore } from "@/stores/ui-store"
-import { Button } from "@/components/ui/button"
-
 export default function Home() {
-  const { markets, isLoading } = useMarkets()
-  const { selectedCategory, setSelectedCategory, sortBy, setSortBy } = useUIStore()
+    return (
+        <main className="container-app min-h-screen">
+            {/* Hero Section */}
+            <section className="py-12 space-y-3">
+                <h1 className="text-hero text-foreground">Hello World</h1>
+                <p className="text-body-lg text-muted-foreground">
+                    Precast — The World&apos;s Largest Prediction Market
+                </p>
+            </section>
 
-  const categories = useMemo(() => {
-    const source = new Set<string>(["all"])
-    markets.forEach((market) => {
-      const category = (market.category || market.tag || "general").toLowerCase()
-      source.add(category)
-    })
-    return Array.from(source)
-  }, [markets])
+            {/* Typography Scale */}
+            <section className="py-8 space-y-6 border-t border-border">
+                <h2 className="text-heading-2-xl text-foreground">Typography Scale</h2>
 
-  const filteredMarkets = useMemo(() => {
-    if (selectedCategory === "all") return markets
-    return markets.filter((market) => {
-      const category = (market.category || market.tag || "general").toLowerCase()
-      return category === selectedCategory
-    })
-  }, [markets, selectedCategory])
+                <div className="space-y-4">
+                    <div className="space-y-1">
+                        <span className="text-caption">Hero — Inter Bold 36/40</span>
+                        <p className="text-hero">The quick brown fox</p>
+                    </div>
+                    <div className="space-y-1">
+                        <span className="text-caption">Heading 2 XL — Inter Bold 24/32</span>
+                        <p className="text-heading-2-xl">The quick brown fox</p>
+                    </div>
+                    <div className="space-y-1">
+                        <span className="text-caption">Heading 2 LG — Inter Bold 20/28</span>
+                        <p className="text-heading-2-lg">The quick brown fox</p>
+                    </div>
+                    <div className="space-y-1">
+                        <span className="text-caption">Heading 1 — Inter Bold 18/28</span>
+                        <p className="text-heading-1">The quick brown fox</p>
+                    </div>
+                    <div className="space-y-1">
+                        <span className="text-caption">Heading 3 — Inter Bold 14/20</span>
+                        <p className="text-heading-3">The quick brown fox</p>
+                    </div>
+                    <div className="space-y-1">
+                        <span className="text-caption">Body LG — Inter Medium 16/24</span>
+                        <p className="text-body-lg">The quick brown fox jumps over the lazy dog</p>
+                    </div>
+                    <div className="space-y-1">
+                        <span className="text-caption">Body — Inter Regular 14/20</span>
+                        <p className="text-body">The quick brown fox jumps over the lazy dog</p>
+                    </div>
+                    <div className="space-y-1">
+                        <span className="text-caption">Label — Inter Medium 14/14</span>
+                        <p className="text-label">Market Category</p>
+                    </div>
+                    <div className="space-y-1">
+                        <span className="text-caption">Caption — Inter Medium 12/16</span>
+                        <p className="text-caption">$15.7M Vol · 15,678 traders</p>
+                    </div>
+                </div>
+            </section>
 
-  const sortedMarkets = useMemo(() => {
-    const next = [...filteredMarkets]
+            {/* Color Swatches */}
+            <section className="py-8 space-y-6 border-t border-border">
+                <h2 className="text-heading-2-xl text-foreground">Color Palette</h2>
 
-    if (sortBy === "newest") {
-      return next.sort((a, b) => (b.startTime || 0) - (a.startTime || 0))
-    }
-    if (sortBy === "volume") {
-      return next.sort((a, b) => Number(b.volume || 0) - Number(a.volume || 0))
-    }
-    if (sortBy === "closing-soon") {
-      return next.sort((a, b) => {
-        const aEnd = a.endTime || Number.MAX_SAFE_INTEGER
-        const bEnd = b.endTime || Number.MAX_SAFE_INTEGER
-        return aEnd - bEnd
-      })
-    }
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    {[
+                        { name: "Background", var: "bg-background", hex: "#000A00" },
+                        { name: "Card", var: "bg-card", hex: "#141F14" },
+                        { name: "Primary", var: "bg-primary", hex: "#1E993B" },
+                        { name: "Destructive", var: "bg-destructive", hex: "#EF4343" },
+                        { name: "Warning", var: "bg-warning", hex: "#EAE243" },
+                        { name: "Secondary", var: "bg-secondary", hex: "#1E2A1E" },
+                        { name: "Muted", var: "bg-muted", hex: "#0D160D" },
+                        { name: "Border", var: "bg-border", hex: "#1A2E1A" },
+                        { name: "Info", var: "bg-info", hex: "#6495ED" },
+                    ].map((color) => (
+                        <div key={color.name} className="space-y-2">
+                            <div className={`h-16 rounded-xl ${color.var} border border-border`} />
+                            <div>
+                                <p className="text-heading-3 text-foreground">{color.name}</p>
+                                <p className="text-caption">{color.hex}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
 
-    // trending
-    return next.sort((a, b) => Number(b.volume || 0) - Number(a.volume || 0))
-  }, [filteredMarkets, sortBy])
+            {/* Button Styles */}
+            <section className="py-8 space-y-6 border-t border-border">
+                <h2 className="text-heading-2-xl text-foreground">Buttons</h2>
 
-  return (
-    <div className="bg-background text-foreground selection:bg-primary/20">
-      <main className="container mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-12">
-        {isLoading && (
-          <MarketGridSkeleton count={8} />
-        )}
+                <div className="flex flex-wrap gap-4">
+                    <button className="inline-flex items-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-btn-lg transition-opacity hover:opacity-90">
+                        Buy Yes
+                    </button>
+                    <button className="inline-flex items-center px-5 py-2.5 rounded-lg bg-destructive text-destructive-foreground text-btn-lg transition-opacity hover:opacity-90">
+                        Buy No
+                    </button>
+                    <button className="inline-flex items-center px-4 py-2 rounded-md bg-secondary text-secondary-foreground text-btn transition-opacity hover:opacity-90">
+                        Secondary
+                    </button>
+                    <button className="inline-flex items-center px-4 py-2 rounded-md border border-border text-muted-foreground text-btn transition-colors hover:text-foreground">
+                        Outline
+                    </button>
+                </div>
 
-        {/* All Markets Section */}
-        {!isLoading && markets.length > 0 && (
-          <section className="space-y-4">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <h2 className="text-2xl font-bold tracking-tight text-foreground">All Markets</h2>
+                <div className="flex flex-wrap gap-3">
+                    <span className="inline-flex items-center px-3 py-1 rounded-md bg-primary/10 text-primary text-btn">
+                        Yes 45¢
+                    </span>
+                    <span className="inline-flex items-center px-3 py-1 rounded-md bg-destructive/10 text-destructive text-btn">
+                        No 55¢
+                    </span>
+                    <span className="inline-flex items-center px-3 py-1 rounded-md bg-warning/10 text-warning text-label">
+                        Featured
+                    </span>
+                </div>
+            </section>
 
-              <div className="flex flex-wrap items-center gap-2">
-                <select
-                  className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-                  value={selectedCategory}
-                  onChange={(event) => setSelectedCategory(event.target.value)}
-                >
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category === "all" ? "All categories" : category}
-                    </option>
-                  ))}
-                </select>
+            {/* Spacing Scale */}
+            <section className="py-8 space-y-6 border-t border-border">
+                <h2 className="text-heading-2-xl text-foreground">Spacing Scale</h2>
 
-                <select
-                  className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-                  value={sortBy}
-                  onChange={(event) =>
-                    setSortBy(event.target.value as "trending" | "newest" | "volume" | "closing-soon")
-                  }
-                >
-                  <option value="trending">Trending</option>
-                  <option value="newest">Newest</option>
-                  <option value="volume">Volume</option>
-                  <option value="closing-soon">Closing soon</option>
-                </select>
+                <div className="space-y-2">
+                    {[4, 8, 12, 16, 20, 24, 32, 40, 48, 64].map((px) => (
+                        <div key={px} className="flex items-center gap-4">
+                            <span className="text-caption w-12 text-right">{px}px</span>
+                            <div
+                                className="h-3 rounded bg-primary/40"
+                                style={{ width: `${px * 3}px` }}
+                            />
+                        </div>
+                    ))}
+                </div>
+            </section>
 
-                {selectedCategory !== "all" && (
-                  <Button variant="outline" size="sm" onClick={() => setSelectedCategory("all")}>
-                    Clear
-                  </Button>
-                )}
-              </div>
-            </div>
-            {sortedMarkets.length > 0 ? (
-              <MarketGrid markets={sortedMarkets} />
-            ) : (
-              <div className="rounded-lg border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-                No markets match the current filters.
-              </div>
-            )}
-          </section>
-        )}
+            {/* Sample Card */}
+            <section className="py-8 space-y-6 border-t border-border">
+                <h2 className="text-heading-2-xl text-foreground">Sample Market Card</h2>
 
-        {/* Empty State */}
-        {!isLoading && markets.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-            <div className="p-4 rounded-full bg-black/5 dark:bg-white/5">
-              <span className="text-4xl">🤷‍♂️</span>
-            </div>
-            <h3 className="text-xl font-semibold">No markets yet</h3>
-            <p className="text-muted-foreground max-w-sm">
-              Be the first to predict the future. Create a market and start trading.
-            </p>
-          </div>
-        )}
-      </main>
-    </div>
-  )
+                <div className="max-w-md rounded-xl bg-card border border-border p-5 space-y-4">
+                    <div className="flex items-center gap-2">
+                        <span className="text-label text-primary">Finance</span>
+                        <span className="text-caption">· chance</span>
+                    </div>
+                    <h3 className="text-heading-2 text-foreground">
+                        Fed rate cut in March 2026?
+                    </h3>
+                    <div className="flex items-baseline gap-2">
+                        <span className="text-hero text-primary">45%</span>
+                        <span className="text-caption text-success">+2.1%</span>
+                    </div>
+                    <div className="flex gap-3">
+                        <button className="flex-1 py-2 rounded-md bg-primary text-primary-foreground text-btn">
+                            Yes 45¢
+                        </button>
+                        <button className="flex-1 py-2 rounded-md bg-destructive text-destructive-foreground text-btn">
+                            No 55¢
+                        </button>
+                    </div>
+                    <div className="flex gap-4 text-caption">
+                        <span>$6.3M Vol</span>
+                        <span>5,621 traders</span>
+                        <span>Mar 15</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    )
 }

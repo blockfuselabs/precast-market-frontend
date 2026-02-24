@@ -3,7 +3,7 @@
 import { useReadContract, useReadContracts } from "wagmi"
 import { CONTRACT_ADDRESS } from "@/lib/constants"
 import LMSRABI from "@/lib/LMSRABI.json"
-import type { Market } from "@/lib/types/market"
+import { Market } from "@/lib/types/market"
 import { formatEther } from "viem"
 import { useEffect, useState } from "react"
 import { fetchIPFSMetadata, getIPFSUrl } from "@/lib/ipfs"
@@ -15,8 +15,7 @@ export function useMarkets() {
         abi: LMSRABI as any,
         functionName: "marketCount",
         query: {
-            refetchOnWindowFocus: true,
-            refetchInterval: 30000,
+            refetchInterval: 30000, // Poll every 30 seconds
         },
     })
 
@@ -26,7 +25,9 @@ export function useMarkets() {
 
     // 2. Generate array of indices [0, 1, ..., marketCount-1]
     const count = marketCount ? Number(marketCount) : 0
+    console.log('Count', count)
     const marketIds = Array.from({ length: count }, (_, i) => BigInt(i + 1))
+    console.log('IDS', marketIds)
 
     // 3. Batch fetch market data
     const { data: marketsData, isLoading: isLoadingMarkets } = useReadContracts({
@@ -37,9 +38,7 @@ export function useMarkets() {
             args: [id],
         })),
         query: {
-            refetchOnWindowFocus: true,
-            refetchInterval: 15000,
-            enabled: marketIds.length > 0,
+            refetchInterval: 30000, // Poll every 30 seconds
         },
     })
 
@@ -53,9 +52,7 @@ export function useMarkets() {
             args: [id],
         })),
         query: {
-            refetchOnWindowFocus: true,
-            refetchInterval: 10000,
-            enabled: marketIds.length > 0,
+            refetchInterval: 15000, // Poll prices more frequently (15 seconds)
         },
     })
 
@@ -120,15 +117,20 @@ export function useMarkets() {
         const originalIndex = index - 1
         const priceResult = pricesData?.[originalIndex]
         let probability = 50
+        console.log('Price Result', priceResult)
         if (priceResult?.status === "success") {
             const priceWei = priceResult.result as bigint
             probability = parseFloat(formatEther(priceWei)) * 100
+            console.log('Price', probability)
         }
+
+        console.log('Result', result)
 
         // Mock Metadata Extraction
         let imageUrl = "/prediction-market-placeholder.png" // Default
 
         const metadata = metadataMap[cId]
+        console.log('Metadata', metadata)
         if (metadata?.image) {
             if(metadata?.imageSource === "cloudinary") {
                 imageUrl = metadata.image;

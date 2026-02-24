@@ -1,4 +1,4 @@
-import type { Market } from "@/lib/types/market"
+import { Market } from "@/lib/types/market"
 
 export const mockMarkets: Market[] = [
   {

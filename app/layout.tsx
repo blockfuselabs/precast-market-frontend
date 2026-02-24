@@ -1,11 +1,16 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Analytics } from "@vercel/analytics/next"
+import { Inter } from "next/font/google"
 import "./globals.css"
 import { Providers } from "@/components/providers/providers"
-import { BottomNav } from "@/components/layout/bottom-nav"
-import { Footer } from "@/components/layout/footer"
+import { AppShell } from "@/components/layout/app-shell"
 import { Toaster } from "@/components/ui/sonner"
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
 export const metadata: Metadata = {
   title: "Precast | The World's Largest Prediction Market",
@@ -35,12 +40,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="font-sans antialiased">
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className={`${inter.variable} font-sans antialiased`}>
         <Providers>
-          {children}
-          <Footer />
-          <BottomNav />
+          <AppShell>{children}</AppShell>
           <Toaster position="top-right" />
         </Providers>
         <Analytics />

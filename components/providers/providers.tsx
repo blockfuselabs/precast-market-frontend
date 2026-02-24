@@ -11,14 +11,26 @@ import { useTheme } from 'next-themes';
 import { ThemeProvider } from "./theme-provider"
 import { UIStoreProvider } from "@/stores/ui-store";
 import { UserPreferencesStoreProvider } from "@/stores/user-preferences-store";
+import { useInvalidateOnTransaction } from "@/hooks/useInvalidateOnTransaction";
+
+function TransactionWatcher() {
+    useInvalidateOnTransaction();
+    return null;
+}
 
 function PrivyProviderWrapper({ children, wagmiConfig }: { children: React.ReactNode; wagmiConfig: any }) {
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === 'dark';
 
+    const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
+
+    if (!appId || appId === 'clrt0b62e038234y8w9g9w0q' || appId === 'mock_id') {
+        return <>{children}</>;
+    }
+
     return (
         <PrivyProvider
-            appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
+            appId={appId}
             clientId={process.env.NEXT_PUBLIC_PRIVY_SIGNER_ID}
             config={{
                 // Appearance
@@ -28,7 +40,6 @@ function PrivyProviderWrapper({ children, wagmiConfig }: { children: React.React
                 },
                 // Login methods
                 loginMethods: ['email', 'wallet'],
-                
                 embeddedWallets: {
                     ethereum: {
                         createOnLogin: 'users-without-wallets',
@@ -58,7 +69,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
     );
     const [mounted, setMounted] = React.useState(false);
     const [config, setConfig] = React.useState(() => {
-       
         if (typeof window === 'undefined') {
             return getSSRConfig();
         }
@@ -67,7 +77,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
     React.useEffect(() => {
         setMounted(true);
-        
         if (typeof window !== 'undefined') {
             setConfig(getConfig());
         }
@@ -87,6 +96,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                     <PrivyProviderWrapper wagmiConfig={wagmiConfig}>
                         <UIStoreProvider>
                             <UserPreferencesStoreProvider>
+                                <TransactionWatcher />
                                 {children}
                             </UserPreferencesStoreProvider>
                         </UIStoreProvider>
