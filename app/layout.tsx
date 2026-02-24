@@ -3,8 +3,7 @@ import type { Metadata } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { Providers } from "@/components/providers/providers"
-import { BottomNav } from "@/components/layout/bottom-nav"
-import { Footer } from "@/components/layout/footer"
+import { AppShell } from "@/components/layout/app-shell"
 import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
@@ -38,9 +37,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans antialiased">
         <Providers>
-          {children}
-          <Footer />
-          <BottomNav />
+          <AppShell>{children}</AppShell>
           <Toaster position="top-right" />
         </Providers>
         <Analytics />
