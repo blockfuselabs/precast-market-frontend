@@ -11,8 +11,11 @@ export function MarketCard({ market }: MarketCardProps) {
     // Multi-outcome card (like Grammys)
     if (m.outcomes && m.outcomes.length > 0) {
         return (
-            <div className="rounded-xl bg-card border border-border p-4 space-y-3 hover:border-primary/30 transition-colors group">
+            <div className="rounded-xl bg-card border border-border p-4 space-y-3 hover:border-[#1A231A80] transition-colors group">
                 {/* Category */}
+
+
+
                 <div className="flex items-center gap-2">
                     {m.image && (
                         <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
@@ -45,7 +48,7 @@ export function MarketCard({ market }: MarketCardProps) {
                                 {outcome.name}
                             </span>
                             <div className="flex items-center gap-1.5">
-                                <span className="text-heading-3 text-foreground text-xs">
+                                <span className="text-lg font-semibold text-foreground text-xs">
                                     {outcome.odds}%
                                 </span>
                                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/15 text-primary font-bold">

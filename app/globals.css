@@ -14,7 +14,7 @@
   /* Deep Fir — Page bg */
   --foreground: #FFFFFF;
   /* White — Primary text */
-  --card: #141F14;
+  --card: #081208;
   /* Hunter Green — Card surfaces */
   --card-foreground: #FAFAFA;
   /* Alabaster — Card text */
@@ -341,7 +341,7 @@
   .text-heading-2-lg {
     font-size: var(--font-size-2xl);
     line-height: 1.4;
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-semibold);
   }
 
   /* Heading 2 (xl) — Figma: Inter Bold 24/32 */
@@ -445,6 +445,7 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
@@ -457,6 +458,7 @@
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }

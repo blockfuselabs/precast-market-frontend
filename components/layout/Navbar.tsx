@@ -33,7 +33,7 @@ export function Navbar() {
           >
             <Bell className="w-5 h-5" />
           </button>
-          <button className="inline-flex items-center px-6 py-2.5 rounded-full bg-white text-black font-medium transition-colors hover:bg-secondary  gap-2">
+          <button className="inline-flex items-center px-6 py-2 rounded-full bg-white text-black font-medium transition-colors hover:bg-secondary  gap-2">
             <svg
               width="16"
               height="16"

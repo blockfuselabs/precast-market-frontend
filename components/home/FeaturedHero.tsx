@@ -5,10 +5,10 @@ export function FeaturedHero() {
     const m = featuredMarket
 
     return (
-        <div className="relative rounded-2xl bg-card border border-border overflow-hidden">
-            <div className="flex flex-col md:flex-row">
+        <div className="relative rounded-2xl border border-[#1A231A80] bg-gradient-to-br from-[#081208] to-[#081208] to-[#1E993B0D]  overflow-hidden">
+            <div className="flex flex-col  p-5 md:p-6 md:flex-row gap-4 md:gap-5 ">
                 {/* Image */}
-                <div className="relative w-full md:w-48 h-40 md:h-auto flex-shrink-0 bg-secondary overflow-hidden">
+                <div className="relative w-full md:w-48 h-40 rounded-xl md:h-auto flex-shrink-0 bg-secondary overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5" />
                     <div className="absolute inset-0 flex items-center justify-center">
                         <div className="w-20 h-20 rounded-xl bg-primary/20 flex items-center justify-center">
@@ -18,15 +18,15 @@ export function FeaturedHero() {
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 p-5 md:p-6 space-y-3">
+                <div className="flex-1 space-y-3">
                     {/* Badges */}
                     <div className="flex items-center gap-2">
                         {m.badges.map((badge) => (
                             <span
                                 key={badge}
                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-caption ${badge === "Featured"
-                                        ? "bg-primary/15 text-primary"
-                                        : "bg-warning/15 text-warning"
+                                    ? "bg-primary/15 text-primary"
+                                    : "bg-warning/15 text-warning"
                                     }`}
                             >
                                 {badge}
