@@ -1,21 +1,33 @@
 import { TrendingDown, Users, MessageCircle, Calendar } from "lucide-react"
 import type { MarketCardData } from "@/lib/types"
+import Link from "next/link"
+import type { ReactNode } from "react"
 
 interface MarketCardProps {
     market: MarketCardData
+    href?: string
 }
 
-export function MarketCard({ market }: MarketCardProps) {
+function wrapWithLink(href: string | undefined, children: ReactNode) {
+    if (!href) return children
+    return (
+        <Link href={href} className="block">
+            {children}
+        </Link>
+    )
+}
+
+export function MarketCard({ market, href }: MarketCardProps) {
     const m = market
 
     // Multi-outcome card (like Grammys)
     if (m.outcomes && m.outcomes.length > 0) {
-        return (
-            <div className="rounded-xl bg-card border border-border p-4 space-y-3 hover:border-primary/30 transition-colors group">
+        const content = (
+            <div className="rounded-xl bg-card border border-border p-4 space-y-3 hover:border-primary/30 transition-colors group cursor-pointer">
                 {/* Category */}
                 <div className="flex items-center gap-2">
                     {m.image && (
-                        <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center shrink-0">
                             <span className="text-[10px] font-bold text-muted-foreground">
                                 {m.category.slice(0, 2).toUpperCase()}
                             </span>
@@ -77,15 +89,17 @@ export function MarketCard({ market }: MarketCardProps) {
                 </div>
             </div>
         )
+
+        return wrapWithLink(href, content)
     }
 
     // Standard binary card
-    return (
-        <div className="rounded-xl bg-card border border-border p-4 space-y-3 hover:border-primary/30 transition-colors group">
+    const content = (
+        <div className="rounded-xl bg-card border border-border p-4 space-y-3 hover:border-primary/30 transition-colors group cursor-pointer">
             {/* Category + Image */}
             <div className="flex items-start gap-3">
                 {m.image && (
-                    <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center shrink-0">
                         <span className="text-[10px] font-bold text-muted-foreground">
                             {m.category.slice(0, 2).toUpperCase()}
                         </span>
@@ -159,4 +173,6 @@ export function MarketCard({ market }: MarketCardProps) {
             </div>
         </div>
     )
+
+    return wrapWithLink(href, content)
 }

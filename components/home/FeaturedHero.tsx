@@ -1,5 +1,6 @@
 import { ArrowRight, Users, Calendar, Landmark } from "lucide-react"
 import { featuredMarket } from "@/lib/mock-data"
+import Link from "next/link"
 
 export function FeaturedHero() {
     const m = featuredMarket
@@ -8,8 +9,8 @@ export function FeaturedHero() {
         <div className="relative rounded-2xl bg-card border border-border overflow-hidden">
             <div className="flex flex-col md:flex-row">
                 {/* Image */}
-                <div className="relative w-full md:w-48 h-40 md:h-auto flex-shrink-0 bg-secondary overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5" />
+                <div className="relative w-full md:w-48 h-40 md:h-auto shrink-0 bg-secondary overflow-hidden">
+                    <div className="absolute inset-0 bg-linear-to-br from-primary/20 to-primary/5" />
                     <div className="absolute inset-0 flex items-center justify-center">
                         <div className="w-20 h-20 rounded-xl bg-primary/20 flex items-center justify-center">
                             <Landmark className="w-10 h-10 text-primary/60" />
@@ -76,12 +77,11 @@ export function FeaturedHero() {
                             <button className="inline-flex items-center px-6 py-2 rounded-lg bg-destructive text-destructive-foreground text-btn transition-all hover:brightness-110 active:scale-95">
                                 Buy No
                             </button>
-                            <button
-                                className="p-2 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-                                aria-label="View details"
-                            >
-                                <ArrowRight className="w-4 h-4" />
-                            </button>
+                            <Link href="/markets/1" aria-label="View details">
+                                <span className="p-2 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors inline-flex">
+                                    <ArrowRight className="w-4 h-4" />
+                                </span>
+                            </Link>
                         </div>
                     </div>
                 </div>

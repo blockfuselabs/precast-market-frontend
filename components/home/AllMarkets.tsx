@@ -67,9 +67,16 @@ export function AllMarkets() {
                         : "flex flex-col gap-3"
                 }
             >
-                {visibleMarkets.map((market) => (
-                    <MarketCard key={market.id} market={market} />
-                ))}
+                {visibleMarkets.map((market, index) => {
+                    const href = `/markets/${index + 1}`
+                    return (
+                        <MarketCard
+                            key={market.id}
+                            market={market}
+                            href={href}
+                        />
+                    )
+                })}
             </div>
 
             {/* Load More */}
