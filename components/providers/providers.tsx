@@ -12,37 +12,36 @@ import { ThemeProvider } from "./theme-provider"
 
 function PrivyProviderWrapper({ children, wagmiConfig }: { children: React.ReactNode; wagmiConfig: any }) {
     const { resolvedTheme } = useTheme();
-    const isDark = resolvedTheme === 'dark';
 
-    const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
+    // We stabilize the theme to prevent mismatch during hydration
+    const [mounted, setMounted] = React.useState(false);
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
-    if (!appId || appId === 'clrt0b62e038234y8w9g9w0q' || appId === 'mock_id') {
-        return <>{children}</>;
-    }
+    const isDark = mounted && resolvedTheme === 'dark';
+
+    const privyConfig = React.useMemo(() => ({
+        appearance: {
+            theme: (isDark ? 'dark' : 'light') as 'dark' | 'light',
+            accentColor: (isDark ? '#ffffff' : '#161616') as `#${string}`,
+            showWalletLoginFirst: true,
+        },
+        loginMethods: ['email', 'google', 'wallet'] as any,
+        embeddedWallets: {
+            ethereum: {
+                createOnLogin: 'users-without-wallets' as any,
+            },
+        },
+        defaultChain: wagmiConfig.chains[0],
+        supportedChains: [...wagmiConfig.chains] as any,
+    }), [isDark, wagmiConfig.chains]);
 
     return (
         <PrivyProvider
-            appId={appId}
+            appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
             clientId={process.env.NEXT_PUBLIC_PRIVY_SIGNER_ID}
-            config={{
-                // Appearance
-                appearance: {
-                    theme: isDark ? 'dark' : 'light',
-                    accentColor: isDark ? '#ffffff' : '#161616',
-                },
-                // Login methods
-                loginMethods: ['email', 'wallet'],
-
-                embeddedWallets: {
-                    ethereum: {
-                        createOnLogin: 'users-without-wallets',
-                    },
-                },
-                // Default chain
-                defaultChain: wagmiConfig.chains[0],
-                // Supported chains
-                supportedChains: [...wagmiConfig.chains],
-            }}
+            config={privyConfig as any}
         >
             {children}
         </PrivyProvider>
@@ -52,26 +51,19 @@ function PrivyProviderWrapper({ children, wagmiConfig }: { children: React.React
 export function Providers({ children }: { children: React.ReactNode }) {
     const [queryClient] = React.useState(() => new QueryClient());
     const [mounted, setMounted] = React.useState(false);
-    const [config, setConfig] = React.useState(() => {
 
-        if (typeof window === 'undefined') {
-            return getSSRConfig();
-        }
-        return null;
-    });
+    // Initialize with SSR config and update to client config after mount
+    const [config, setConfig] = React.useState(() => getSSRConfig());
 
     React.useEffect(() => {
         setMounted(true);
-
         if (typeof window !== 'undefined') {
             setConfig(getConfig());
         }
     }, []);
 
-    const wagmiConfig = config || getSSRConfig();
-
     return (
-        <WagmiProvider config={wagmiConfig}>
+        <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
                 <ThemeProvider
                     attribute="class"
@@ -79,8 +71,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
                     enableSystem
                     disableTransitionOnChange
                 >
-                    <PrivyProviderWrapper wagmiConfig={wagmiConfig}>
-                        {children}
+                    <PrivyProviderWrapper wagmiConfig={config}>
+                        {mounted ? children : <div style={{ visibility: 'hidden' }}>{children}</div>}
                     </PrivyProviderWrapper>
                 </ThemeProvider>
             </QueryClientProvider>
