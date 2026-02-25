@@ -1,160 +1,216 @@
-export interface Outcome {
-  name: string
-  probability: number
+import type {
+  TrendingItem,
+  FeaturedMarket,
+  SportMatch,
+  MarketCardData,
+  Category,
+} from "./types"
+
+/* ── Trending Ticker ───────────────────────────────── */
+export const trendingItems: TrendingItem[] = [
+  { label: "Super Bowl", change: "+12%", positive: true },
+  { label: "Fed Rate", change: "+8%", positive: true },
+  { label: "Trump", change: "+5%", positive: true },
+  { label: "Bitcoin $100k", change: "+3%", positive: true },
+  { label: "Grammys", change: "+2%", positive: true },
+]
+
+/* ── Category Tabs ─────────────────────────────────── */
+export const categories: Category[] = [
+  { id: "trending", label: "Trending", icon: "TrendingUp", active: true },
+  { id: "new", label: "New", icon: "Sparkles" },
+  { id: "politics", label: "Politics", icon: "Landmark" },
+  { id: "sports", label: "Sports", icon: "Trophy" },
+  { id: "crypto", label: "Crypto", icon: "Bitcoin" },
+  { id: "finance", label: "Finance", icon: "BarChart3" },
+  { id: "tech", label: "Tech", icon: "Cpu" },
+  { id: "culture", label: "Culture", icon: "Music" },
+  { id: "world", label: "World", icon: "Globe" },
+  { id: "weather", label: "Weather", icon: "CloudSun" },
+]
+
+/* ── Featured Hero Market ──────────────────────────── */
+export const featuredMarket: FeaturedMarket = {
+  id: "featured-1",
+  image: "/featured-government.jpg",
+  badges: ["Featured", "🔥 Hot"],
+  title: "US Government shutdown by February?",
+  description:
+    "Will the US federal government experience a partial or full shutdown before the end of February 2026?",
+  volume: "$45.2M",
+  traders: "12,453",
+  date: "Feb 28, 2026",
+  chance: 72,
 }
 
-export interface Market {
-  id: string
-  title: string
-  image: string
-  type: "binary"
-  outcomes: Outcome[]
-  volume: string
-  tag?: string
-  startTime?: number
-  endTime?: number
-  resolved?: boolean
-  yesWon?: boolean
-  description?: string
-  resolutionSource?: string
-  startDate?: string
-  endDate?: string
-  category?: string
-  isExpired?: boolean
-}
+/* ── Live & Upcoming Sports ────────────────────────── */
+export const sportsMatches: SportMatch[] = [
+  {
+    id: "sport-1",
+    league: "NFL",
+    leagueColor: "#1E993B",
+    time: "Feb 8, 6:30 PM",
+    teams: [
+      { name: "Seattle Seahawks", abbreviation: "SEA", odds: 69 },
+      { name: "New England Patriots", abbreviation: "NE", odds: 31 },
+    ],
+    volume: "$5.2M",
+    traders: "374",
+    isLive: false,
+  },
+  {
+    id: "sport-2",
+    league: "NBA",
+    leagueColor: "#EF4343",
+    liveIndicator: "3Q 4:23",
+    teams: [
+      { name: "LA Clippers", abbreviation: "LAC", score: 89, odds: 56 },
+      { name: "Denver Nuggets", abbreviation: "DEN", score: 82, odds: 44 },
+    ],
+    volume: "$3.1M",
+    traders: "401",
+    isLive: true,
+  },
+  {
+    id: "sport-3",
+    league: "Ligue 1",
+    leagueColor: "#6495ED",
+    liveIndicator: "2H 81'",
+    teams: [
+      { name: "Racing Club de Lens", abbreviation: "LENS", score: 1, odds: 87 },
+      { name: "Le Havre AC", abbreviation: "HAC", score: 0, odds: 13 },
+    ],
+    volume: "$890K",
+    traders: "273",
+    isLive: true,
+  },
+]
 
-export const mockMarkets: Market[] = [
+/* ── All Markets Grid ──────────────────────────────── */
+export const allMarkets: MarketCardData[] = [
   {
-    id: "1",
-    title: "Khamenei out as Supreme Leader of Iran by January 31?",
-    image: "/iran.jpg",
-    type: "binary",
-    outcomes: [
-      { name: "Yes", probability: 18 },
-      { name: "No", probability: 82 },
-    ],
-    volume: "6",
+    id: "market-1",
+    category: "Finance",
+    categoryColor: "#1E993B",
+    title: "Fed rate cut in March 2026?",
+    chance: 45,
+    trend: "2.1%",
+    trendPositive: false,
+    yesPrice: "45¢",
+    noPrice: "55¢",
+    volume: "$8.3M",
+    traders: "5621",
+    comments: "156",
+    date: "Mar 15",
   },
   {
-    id: "2",
-    title: "Will Trump acquire Greenland before 2027?",
-    image: "/greenland.jpg",
-    type: "binary",
-    outcomes: [
-      { name: "Yes", probability: 16 },
-      { name: "No", probability: 84 },
-    ],
-    volume: "4",
+    id: "market-2",
+    category: "Finance",
+    categoryColor: "#1E993B",
+    title: "Fed rate cut in March 2026?",
+    chance: 45,
+    trend: "2.1%",
+    trendPositive: false,
+    yesPrice: "45¢",
+    noPrice: "55¢",
+    volume: "$8.3M",
+    traders: "5621",
+    comments: "156",
+    date: "Mar 15",
   },
   {
-    id: "3",
-    title: "Israel strikes Iran by January 31, 2026?",
-    image: "/israel-iran.jpg",
-    type: "binary",
-    outcomes: [
-      { name: "Yes", probability: 32 },
-      { name: "No", probability: 68 },
-    ],
-    volume: "5",
+    id: "market-3",
+    category: "Tech",
+    categoryColor: "#6495ED",
+    title: "OpenAI releases GPT-5 by Q2 2026?",
+    chance: 67,
+    trend: "8.4%",
+    trendPositive: false,
+    yesPrice: "67¢",
+    noPrice: "33¢",
+    volume: "$5.8M",
+    traders: "9234",
+    comments: "567",
+    date: "Jun 30",
   },
   {
-    id: "4",
-    title: "Elon Musk # tweets January 2 - January 9, 2026?",
-    image: "/elon-musk-portrait.png",
-    type: "binary",
+    id: "market-4",
+    category: "Culture",
+    categoryColor: "#EAE243",
+    title: "Grammys 2026: Song of the Year Winner",
+    chance: 45,
+    trend: "",
+    trendPositive: true,
+    yesPrice: "",
+    noPrice: "",
+    volume: "$2.1M",
+    traders: "3421",
+    comments: "89",
+    date: "Feb 2",
     outcomes: [
-      { name: "Yes", probability: 70 },
-      { name: "No", probability: 30 },
+      { name: "Beyoncé - Texas Hold '...", odds: 45 },
+      { name: "Taylor Swift - Fortnight", odds: 28 },
+      { name: "Sabrina Carpenter - Esp...", odds: 18 },
     ],
-    volume: "16",
   },
   {
-    id: "5",
-    title: "US strikes Iran by...?",
-    image: "/us-iran.jpg",
-    type: "binary",
-    outcomes: [
-      { name: "Yes", probability: 6 },
-      { name: "No", probability: 94 },
-    ],
-    volume: "4",
+    id: "market-5",
+    category: "Politics",
+    categoryColor: "#EF4343",
+    title: "Will Elon Musk step down as DOGE lead?",
+    chance: 23,
+    trend: "1.8%",
+    trendPositive: false,
+    yesPrice: "23¢",
+    noPrice: "77¢",
+    volume: "$15.7M",
+    traders: "15678",
+    comments: "892",
+    date: "Jun 1",
   },
   {
-    id: "6",
-    title: "Super Bowl Champion 2026",
-    image: "/super-bowl-atmosphere.png",
-    type: "binary",
-    outcomes: [
-      { name: "Yes", probability: 19 },
-      { name: "No", probability: 81 },
-    ],
-    volume: "661",
+    id: "market-6",
+    category: "Finance",
+    categoryColor: "#1E993B",
+    title: "Tesla stock above $500 by March?",
+    chance: 41,
+    trend: "4.5%",
+    trendPositive: false,
+    yesPrice: "41¢",
+    noPrice: "59¢",
+    volume: "$9.4M",
+    traders: "7234",
+    comments: "345",
+    date: "Mar 31",
   },
   {
-    id: "7",
-    title: "Will Venezuelan regime fall before 2027?",
-    image: "/venezuela.jpg",
-    type: "binary",
-    outcomes: [
-      { name: "Yes", probability: 40 },
-      { name: "No", probability: 60 },
-    ],
-    volume: "2",
+    id: "market-7",
+    category: "World",
+    categoryColor: "#6495ED",
+    title: "Ukraine ceasefire agreement by April?",
+    chance: 28,
+    trend: "3.2%",
+    trendPositive: false,
+    yesPrice: "28¢",
+    noPrice: "72¢",
+    volume: "$22.1M",
+    traders: "18923",
+    comments: "1234",
+    date: "Apr 30",
   },
   {
-    id: "8",
-    title: "Portugal Presidential Election",
-    image: "/portugal-election.jpg",
-    type: "binary",
-    outcomes: [
-      { name: "Yes", probability: 42 },
-      { name: "No", probability: 58 },
-    ],
-    volume: "94",
-  },
-  {
-    id: "9",
-    title: "Presidential Election Winner 2028",
-    image: "/2028-election.jpg",
-    type: "binary",
-    outcomes: [
-      { name: "Yes", probability: 28 },
-      { name: "No", probability: 72 },
-    ],
-    volume: "178",
-  },
-  {
-    id: "10",
-    title: "S&P 500 (SPX) Up or Down on January 9?",
-    image: "/stock-market-analysis.png",
-    type: "binary",
-    outcomes: [
-      { name: "Yes", probability: 66 },
-      { name: "No", probability: 34 },
-    ],
-    volume: "14",
-    tag: "repeat-3",
-  },
-  {
-    id: "11",
-    title: "Bitcoin above ___ on January 9?",
-    image: "/bitcoin-concept.png",
-    type: "binary",
-    outcomes: [
-      { name: "Yes", probability: 50 },
-      { name: "No", probability: 50 },
-    ],
-    volume: "4",
-  },
-  {
-    id: "12",
-    title: "Will Silver (SI) hit__ by end of January?",
-    image: "/silver-commodity.png",
-    type: "binary",
-    outcomes: [
-      { name: "Yes", probability: 7 },
-      { name: "No", probability: 93 },
-    ],
-    volume: "2",
+    id: "market-8",
+    category: "Tech",
+    categoryColor: "#6495ED",
+    title: "Apple announces AR glasses in 2026?",
+    chance: 56,
+    trend: "0.8%",
+    trendPositive: false,
+    yesPrice: "56¢",
+    noPrice: "44¢",
+    volume: "$4.2M",
+    traders: "4567",
+    comments: "234",
+    date: "Dec 31",
   },
 ]

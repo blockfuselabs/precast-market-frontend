@@ -3,7 +3,7 @@
 import { useReadContract, useReadContracts } from "wagmi"
 import { CONTRACT_ADDRESS } from "@/lib/constants"
 import LMSRABI from "@/lib/LMSRABI.json"
-import { Market } from "@/lib/mock-data"
+import { Market } from "@/lib/types"
 import { formatEther } from "viem"
 import { useEffect, useState } from "react"
 import { fetchIPFSMetadata, getIPFSUrl } from "@/lib/ipfs"
@@ -123,11 +123,11 @@ export function useMarkets() {
         const metadata = metadataMap[cId]
         console.log('Metadata', metadata)
         if (metadata?.image) {
-            if(metadata?.imageSource === "cloudinary") {
+            if (metadata?.imageSource === "cloudinary") {
                 imageUrl = metadata.image;
             } else {
 
-             imageUrl = getIPFSUrl(metadata.image)
+                imageUrl = getIPFSUrl(metadata.image)
             }
         } else if (cId && cId.includes("TestImageCid")) {
             imageUrl = "/super-bowl-atmosphere.png"
