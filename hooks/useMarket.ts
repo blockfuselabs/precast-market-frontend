@@ -1,7 +1,7 @@
 import { useReadContract } from "wagmi"
 import { CONTRACT_ADDRESS } from "@/lib/constants"
 import LMSRABI from "@/lib/LMSRABI.json"
-import { Market } from "@/lib/mock-data"
+import { Market } from "@/lib/types"
 import { formatEther } from "viem"
 import { useEffect, useState } from "react"
 import { fetchIPFSMetadata, getIPFSUrl } from "@/lib/ipfs"
