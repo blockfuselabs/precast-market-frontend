@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { usePrivy } from '@privy-io/react-auth'
-import { Search, Trophy, Bell, Menu, Home, PlusCircle, LogOut, Copy, Wallet, LogIn } from "lucide-react"
+import { Search, Trophy, Bell, Menu, Home, PlusCircle, LogOut, Copy, Wallet } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -164,19 +164,19 @@ export default function Header() {
               onClick={login}
               disabled={disableLogin}
               size="sm"
-              className="ml-1 flex items-center gap-2 rounded-lg border border-white/[0.1] bg-white/[0.06] px-4 py-2 text-sm font-medium text-white shadow-none transition-all hover:bg-white/[0.1] hover:border-white/[0.15]"
+              className="ml-1 flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#0a0f0a] shadow-none transition-all hover:bg-white/90 disabled:opacity-50"
             >
-              <LogIn className="h-4 w-4" />
+              <Wallet className="h-4 w-4" />
               Sign In
             </Button>
           ) : (
-            <>
+            <React.Fragment key="auth-actions">
               {/* Wallet Link */}
               <Link
                 href="/wallet"
                 className={`hidden sm:flex items-center gap-2 h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${pathname === '/wallet'
-                    ? 'bg-white/[0.1] text-white'
-                    : 'text-white/50 hover:text-white/80 hover:bg-white/[0.06]'
+                  ? 'bg-white/[0.1] text-white'
+                  : 'text-white/50 hover:text-white/80 hover:bg-white/[0.06]'
                   }`}
               >
                 <Wallet className="h-4 w-4" />
@@ -187,8 +187,8 @@ export default function Header() {
                 <Link
                   href="/create-market"
                   className={`hidden sm:flex items-center gap-2 h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${pathname === '/create-market'
-                      ? 'bg-white/[0.1] text-white'
-                      : 'text-white/50 hover:text-white/80 hover:bg-white/[0.06]'
+                    ? 'bg-white/[0.1] text-white'
+                    : 'text-white/50 hover:text-white/80 hover:bg-white/[0.06]'
                     }`}
                 >
                   <PlusCircle className="h-4 w-4" />
@@ -241,7 +241,7 @@ export default function Header() {
                     </span>
                   </DropdownMenuItem>
                   {balanceData && Number(balanceData.value) == 0 ? (
-                    <>
+                    <React.Fragment key="eth-faucet">
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={claimETHFaucet}
@@ -251,10 +251,10 @@ export default function Header() {
                         <Wallet className="mr-2 h-4 w-4" />
                         <span>{hasClaimedEth ? 'Eth Claimed' : 'Claim Faucet (ETH)'}</span>
                       </DropdownMenuItem>
-                    </>
+                    </React.Fragment>
                   ) : null}
                   {erc20Amount !== undefined && Number(erc20Amount) == 0 ? (
-                    <>
+                    <React.Fragment key="usdc-faucet">
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={claimUSDCFaucet}
@@ -264,7 +264,7 @@ export default function Header() {
                         <Wallet className="mr-2 h-4 w-4" />
                         <span>{!canClaimTokens ? 'Cooldown Active' : 'Claim Faucet (USDC)'}</span>
                       </DropdownMenuItem>
-                    </>
+                    </React.Fragment>
                   ) : null}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild className="cursor-pointer">
@@ -280,7 +280,7 @@ export default function Header() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </>
+            </React.Fragment>
           )}
 
           {/* Mobile Hamburger Menu */}
@@ -417,10 +417,10 @@ export default function Header() {
                   <button
                     onClick={login}
                     disabled={disableLogin}
-                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/[0.06] border border-white/[0.1] transition-colors text-white hover:bg-white/[0.1] w-full text-left"
+                    className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-white text-[#0a0f0a] transition-all hover:bg-white/90 w-full text-left font-semibold disabled:opacity-50"
                   >
-                    <LogIn className="h-5 w-5" />
-                    <span className="font-medium">Sign In</span>
+                    <Wallet className="h-5 w-5" />
+                    <span className="font-semibold">Sign In</span>
                   </button>
                 )}
               </div>
