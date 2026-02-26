@@ -1,10 +1,8 @@
 import { useState } from "react"
-import { cn } from "@/lib/utils"
 
 const TIMEFRAMES = ["1H", "24H", "7D", "1M", "ALL"] as const
 
 type Timeframe = (typeof TIMEFRAMES)[number]
-type Side = "yes" | "no"
 
 interface MarketPriceHistoryCardProps {
     // In future we can pass real historical data here.
@@ -15,7 +13,6 @@ export function MarketPriceHistoryCard({
     isLoading,
 }: MarketPriceHistoryCardProps) {
     const [timeframe, setTimeframe] = useState<Timeframe>("1M")
-    const [side, setSide] = useState<Side>("yes")
 
     if (isLoading) {
         return (
@@ -26,42 +23,12 @@ export function MarketPriceHistoryCard({
         )
     }
 
-    const isYes = side === "yes"
-
     return (
         <section className="rounded-2xl bg-card border border-border px-4 py-3 md:px-5 md:py-4 space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                    <h2 className="text-heading-3 text-foreground">
-                        Price History
-                    </h2>
-                    <div className="inline-flex items-center rounded-full bg-secondary border border-border p-0.5 text-caption">
-                        <button
-                            type="button"
-                            onClick={() => setSide("yes")}
-                            className={cn(
-                                "px-2.5 py-0.5 rounded-full transition-colors",
-                                isYes
-                                    ? "bg-primary text-primary-foreground"
-                                    : "text-secondary-foreground hover:text-foreground",
-                            )}
-                        >
-                            Yes
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setSide("no")}
-                            className={cn(
-                                "px-2.5 py-0.5 rounded-full transition-colors",
-                                !isYes
-                                    ? "bg-destructive text-destructive-foreground"
-                                    : "text-secondary-foreground hover:text-foreground",
-                            )}
-                        >
-                            No
-                        </button>
-                    </div>
-                </div>
+                <h2 className="text-heading-3 text-foreground">
+                    Price History
+                </h2>
 
                 <div className="flex items-center gap-2 text-caption">
                     {TIMEFRAMES.map((tf) => (

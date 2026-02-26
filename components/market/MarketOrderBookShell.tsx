@@ -1,10 +1,18 @@
+"use client"
+
+import { useState } from "react"
 import { cn } from "@/lib/utils"
+import type { Market } from "@/lib/types"
 
-const TABS = ["Order Book", "Comments (892)", "Resolution"] as const
+const TABS = ["Description", "Resolution"] as const
+type Tab = (typeof TABS)[number]
 
-export function MarketOrderBookShell() {
-    // Static UI only – LMSR binary markets do not use a traditional order book.
-    const activeTab = "Order Book"
+interface MarketOrderBookShellProps {
+    market: Market | null
+}
+
+export function MarketOrderBookShell({ market }: MarketOrderBookShellProps) {
+    const [activeTab, setActiveTab] = useState<Tab>("Description")
 
     return (
         <section className="rounded-2xl bg-card border border-border px-4 py-3 md:px-5 md:py-4 space-y-4">
@@ -16,6 +24,7 @@ export function MarketOrderBookShell() {
                         <button
                             key={tab}
                             type="button"
+                            onClick={() => setActiveTab(tab)}
                             className={cn(
                                 "relative pb-1 text-caption transition-colors",
                                 isActive
@@ -32,18 +41,44 @@ export function MarketOrderBookShell() {
                 })}
             </div>
 
-            {/* LMSR info row instead of real order book */}
-            <div className="rounded-xl bg-secondary px-4 py-3 text-caption text-secondary-foreground">
-                <p className="mb-1 font-semibold text-foreground">
-                    This market uses an LMSR automated market maker.
-                </p>
-                <p>
-                    Prices and liquidity are determined by the LMSR curve, not a
-                    traditional limit-order book. Depth and quotes are computed
-                    from outstanding YES/NO shares rather than individual limit
-                    orders.
-                </p>
-            </div>
+            {/* Tab content */}
+            {activeTab === "Description" && (
+                <div className="rounded-xl bg-secondary px-4 py-3 text-caption text-secondary-foreground">
+                    {market?.description ? (
+                        <p className="whitespace-pre-line text-foreground">
+                            {market.description}
+                        </p>
+                    ) : (
+                        <p className="text-muted-foreground">
+                            No description provided for this market.
+                        </p>
+                    )}
+                </div>
+            )}
+
+            {activeTab === "Resolution" && (
+                <div className="rounded-xl bg-secondary px-4 py-3 text-caption text-secondary-foreground">
+                    {market?.resolved ? (
+                        <div className="space-y-1">
+                            <p className="font-semibold text-foreground">
+                                This market has been resolved.
+                            </p>
+                            <p>
+                                Outcome:{" "}
+                                {market.yesWon === true
+                                    ? "Yes"
+                                    : market.yesWon === false
+                                      ? "No"
+                                      : "—"}
+                            </p>
+                        </div>
+                    ) : (
+                        <p className="text-muted-foreground">
+                            This market has not been resolved yet.
+                        </p>
+                    )}
+                </div>
+            )}
         </section>
     )
 }

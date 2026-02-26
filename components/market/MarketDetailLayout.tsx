@@ -2,9 +2,8 @@ import type { Market } from "@/lib/types"
 import { MarketDetailHeader } from "./MarketDetailHeader"
 import { MarketPriceHistoryCard } from "./MarketPriceHistoryCard"
 import { MarketTradePanel } from "./MarketTradePanel"
-import { MarketRightRailRelated } from "./MarketRightRailRelated"
+import { MarketResolutionCard } from "./MarketResolutionCard"
 import { MarketOrderBookShell } from "./MarketOrderBookShell"
-import { MarketRelatedMain } from "./MarketRelatedMain"
 
 interface MarketDetailLayoutProps {
     market: Market | null
@@ -15,6 +14,10 @@ export function MarketDetailLayout({
     market,
     isLoading,
 }: MarketDetailLayoutProps) {
+    const showTradePanel = market && !market.resolved && !market.isExpired
+    const showResolutionCard = market?.resolved === true
+    const showRightColumn = showTradePanel || showResolutionCard
+
     return (
         <div className="space-y-5">
             {market && <MarketDetailHeader market={market} />}
@@ -28,17 +31,31 @@ export function MarketDetailLayout({
             )}
 
             {/* Main grid */}
-            <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,2.1fr)_minmax(0,1fr)]">
+            <div
+                className={
+                    showRightColumn
+                        ? "grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,2.1fr)_minmax(0,1fr)]"
+                        : "block space-y-5"
+                }
+            >
                 <div className="space-y-5">
                     <MarketPriceHistoryCard isLoading={isLoading || !market} />
-                    <MarketOrderBookShell />
-                    <MarketRelatedMain />
+                    <MarketOrderBookShell market={market} />
                 </div>
 
-                <div className="space-y-4">
-                    <MarketTradePanel market={market} isLoading={isLoading} />
-                    <MarketRightRailRelated />
-                </div>
+                {showRightColumn && (
+                    <div className="space-y-4">
+                        {showTradePanel && (
+                            <MarketTradePanel
+                                market={market}
+                                isLoading={isLoading}
+                            />
+                        )}
+                        {showResolutionCard && market && (
+                            <MarketResolutionCard market={market} />
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     )

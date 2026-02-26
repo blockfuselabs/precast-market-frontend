@@ -60,6 +60,10 @@ export function MarketTradePanel({ market, isLoading }: MarketTradePanelProps) {
         )
     }
 
+    if (market.resolved || market.isExpired) {
+        return null
+    }
+
     return (
         <aside className="rounded-2xl bg-card border border-border p-4 md:p-5 space-y-4">
             <h2 className="text-heading-3 text-foreground">Place trade</h2>
