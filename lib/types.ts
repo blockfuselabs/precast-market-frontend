@@ -15,6 +15,7 @@ export interface Market {
     endTime?: number
     resolved?: boolean
     yesWon?: boolean
+    isExpired?: boolean
     description?: string
     resolutionSource?: string
     startDate?: string

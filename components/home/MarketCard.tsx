@@ -97,4 +97,6 @@ export function MarketCard({ market }: MarketCardProps) {
             </div>
         </Link>
     )
+
+    return wrapWithLink(href, content)
 }
