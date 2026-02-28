@@ -2,14 +2,15 @@
 
 import { useState } from "react"
 import { ArrowUpDown, SlidersHorizontal, LayoutGrid, List } from "lucide-react"
-import { allMarkets } from "@/lib/mock-data"
+import { useMarkets } from "@/hooks/useMarkets"
 import { MarketCard } from "./MarketCard"
 
 export function AllMarkets() {
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
     const [visibleCount, setVisibleCount] = useState(8)
 
-    const visibleMarkets = allMarkets.slice(0, visibleCount)
+    const { markets, isLoading } = useMarkets()
+    const visibleMarkets = markets.slice(0, visibleCount)
 
     return (
         <section className="space-y-5">
@@ -59,26 +60,62 @@ export function AllMarkets() {
                 </div>
             </div>
 
+            {/* Loading skeletons */}
+            {isLoading && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {Array.from({ length: 8 }).map((_, i) => (
+                        <div
+                            key={i}
+                            className="rounded-xl bg-card border border-border p-4 space-y-3 animate-pulse"
+                        >
+                            <div className="flex items-start gap-3">
+                                <div className="w-10 h-10 rounded-lg bg-secondary shrink-0" />
+                                <div className="flex-1 space-y-2">
+                                    <div className="h-3 w-16 bg-secondary rounded" />
+                                    <div className="h-4 w-full bg-secondary rounded" />
+                                    <div className="h-4 w-3/4 bg-secondary rounded" />
+                                </div>
+                            </div>
+                            <div className="h-7 w-20 bg-secondary rounded" />
+                            <div className="h-1 w-full bg-secondary rounded-full" />
+                            <div className="grid grid-cols-2 gap-2">
+                                <div className="h-8 bg-secondary rounded-md" />
+                                <div className="h-8 bg-secondary rounded-md" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
             {/* Market Grid */}
-            <div
-                className={
-                    viewMode === "grid"
-                        ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-                        : "flex flex-col gap-3"
-                }
-            >
-                {visibleMarkets.map((market) => (
-                    <MarketCard key={market.id} market={market} />
-                ))}
-            </div>
+            {!isLoading && markets.length > 0 && (
+                <div
+                    className={
+                        viewMode === "grid"
+                            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                            : "flex flex-col gap-3"
+                    }
+                >
+                    {visibleMarkets.map((market) => (
+                        <MarketCard key={market.id} market={market} />
+                    ))}
+                </div>
+            )}
+
+            {/* Empty state */}
+            {!isLoading && markets.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+                    <p className="text-body">No markets found.</p>
+                </div>
+            )}
 
             {/* Load More */}
-            {visibleCount < allMarkets.length && (
+            {!isLoading && visibleCount < markets.length && (
                 <div className="flex justify-center pt-4">
                     <button
                         onClick={() =>
                             setVisibleCount((c) =>
-                                Math.min(c + 8, allMarkets.length)
+                                Math.min(c + 8, markets.length)
                             )
                         }
                         className="inline-flex items-center px-8 py-2.5 rounded-full border border-border text-body text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
