@@ -42,7 +42,7 @@ export function CategoryTabs() {
                         key={cat.id}
                         onClick={() => setActiveId(cat.id)}
                         className={cn(
-                            "inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-btn whitespace-nowrap transition-all",
+                            "inline-flex items-center gap-1.5 px-4 text-sm py-1.5 rounded-full text-btn whitespace-nowrap transition-all",
                             isActive
                                 ? "bg-primary/15 text-primary border border-primary/40"
                                 : "bg-secondary text-muted-foreground border border-border hover:text-foreground hover:border-muted-foreground/30"
