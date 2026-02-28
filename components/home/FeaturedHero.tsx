@@ -25,6 +25,8 @@ export function FeaturedHero() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [markets.length])
 
+    const [imgError, setImgError] = useState(false)
+
     if (isLoading || !featured) {
         return (
             <div className="relative rounded-2xl border border-[#1A231A80] bg-gradient-to-br from-[#081208] to-[#081208] overflow-hidden animate-pulse">
@@ -42,7 +44,6 @@ export function FeaturedHero() {
     }
 
     const yesProb = featured.outcomes.find((o) => o.name.toLowerCase() === "yes")?.probability ?? 50
-    const [imgError, setImgError] = useState(false)
     const showImage = !!featured.image && !imgError
 
     return (
