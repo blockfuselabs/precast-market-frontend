@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { ArrowRight, Users, Calendar } from "lucide-react"
 import { useMarkets } from "@/hooks/useMarkets"
 import Image from "next/image"
@@ -42,19 +42,22 @@ export function FeaturedHero() {
     }
 
     const yesProb = featured.outcomes.find((o) => o.name.toLowerCase() === "yes")?.probability ?? 50
+    const [imgError, setImgError] = useState(false)
+    const showImage = !!featured.image && !imgError
 
     return (
         <div className="relative rounded-2xl border border-[#1A231A80] bg-gradient-to-br from-[#081208] to-[#081208] to-[#1E993B0D] overflow-hidden">
             <div className="flex flex-col p-5 md:p-6 md:flex-row gap-4 md:gap-5">
-                {/* Image */}
-                <div className="relative w-full md:w-48 h-40 md:h-auto rounded-xl shrink-0 overflow-hidden bg-secondary">
-                    {featured.image ? (
+                {/* Image — fixed h-48 so next/image fill always has a concrete parent height */}
+                <div className="relative w-full md:w-48 h-48 rounded-xl shrink-0 overflow-hidden bg-secondary">
+                    {showImage ? (
                         <Image
                             src={featured.image}
                             alt={featured.title}
                             fill
                             className="object-cover"
                             unoptimized
+                            onError={() => setImgError(true)}
                         />
                     ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5" />
