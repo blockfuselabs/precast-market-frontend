@@ -17,8 +17,10 @@ function PrivyProviderWrapper({ children, wagmiConfig }: { children: React.React
     const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
 
     if (!appId || appId === 'clrt0b62e038234y8w9g9w0q' || appId === 'mock_id') {
+        console.warn("PrivyProvider disabled: missing or mock appId", { appId });
         return <>{children}</>;
     }
+    console.log("PrivyProvider enabled with appId", appId);
 
     return (
         <PrivyProvider
@@ -28,10 +30,11 @@ function PrivyProviderWrapper({ children, wagmiConfig }: { children: React.React
                 // Appearance
                 appearance: {
                     theme: isDark ? 'dark' : 'light',
-                    accentColor: isDark ? '#ffffff' : '#161616',
+                    accentColor: '#1E993B',
+                    walletList: ['phantom', 'metamask', 'coinbase_wallet'],
                 },
                 // Login methods
-                loginMethods: ['email', 'wallet'],
+                loginMethods: ['email', 'google', 'apple', 'wallet'],
 
                 embeddedWallets: {
                     ethereum: {

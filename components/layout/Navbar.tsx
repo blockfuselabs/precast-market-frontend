@@ -3,8 +3,11 @@
 import Image from "next/image";
 import { Search, Bell, Command } from "lucide-react";
 import Precastlogo from "../icons/precastlogo";
+import { usePrivy } from "@privy-io/react-auth";
 
 export function Navbar() {
+  const { login, authenticated, user } = usePrivy();
+
   return (
     <nav className="glass sticky top-0 z-50 w-full">
       <div className="container-app flex items-center justify-between py-3">
@@ -33,7 +36,16 @@ export function Navbar() {
           >
             <Bell className="w-5 h-5" />
           </button>
-          <button className="inline-flex items-center px-6 py-2 rounded-full bg-white text-black font-medium transition-colors hover:bg-secondary  gap-2">
+          <button
+            onClick={() => {
+              console.log("Sign In clicked!", { authenticated, user, appId: process.env.NEXT_PUBLIC_PRIVY_APP_ID });
+              if (!authenticated) {
+                console.log("Calling privy login()...");
+                login();
+              }
+            }}
+            className="inline-flex items-center px-6 py-2 rounded-full bg-white text-black font-medium transition-colors hover:bg-secondary  gap-2"
+          >
             <svg
               width="16"
               height="16"
@@ -56,7 +68,9 @@ export function Navbar() {
                 strokeLinejoin="round"
               />
             </svg>
-            Sign In
+            {authenticated
+              ? (user?.wallet?.address ? `${user.wallet.address.slice(0, 4)}...${user.wallet.address.slice(-4)}` : "Connected")
+              : "Sign In"}
           </button>
         </div>
       </div>
