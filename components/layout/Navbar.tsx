@@ -1,20 +1,23 @@
 "use client";
 
+import { Search, Bell, Command, Plus } from "lucide-react";
+import Link from "next/link";
 import Image from "next/image";
-import { Search, Bell, Command } from "lucide-react";
 import Precastlogo from "../icons/precastlogo";
 import { usePrivy } from "@privy-io/react-auth";
+import { useUserRights } from "@/hooks/useUserRights";
 
 export function Navbar() {
   const { login, authenticated, user } = usePrivy();
+  const { hasCreationRights } = useUserRights();
 
   return (
     <nav className="glass sticky top-0 z-50 w-full">
       <div className="container-app flex items-center justify-between py-3">
         {/* Logo */}
-        <div className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <Precastlogo />
-        </div>
+        </Link>
 
         {/* Search Bar */}
         <div className="hidden md:flex items-center gap-2 bg-card border border-border rounded-full px-4 py-2 w-full max-w-md mx-8">
@@ -30,6 +33,15 @@ export function Navbar() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-3">
+          {authenticated && hasCreationRights && (
+            <Link
+              href="/admin/create-market"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-btn"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">Create Market</span>
+            </Link>
+          )}
           <button
             className="relative p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             aria-label="Notifications"
