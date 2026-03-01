@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 }
 
 import { Providers } from "@/components/providers/providers"
+import { Toaster } from "sonner"
 
 export default function RootLayout({
     children,
@@ -25,6 +26,7 @@ export default function RootLayout({
         <html lang="en" className="dark" suppressHydrationWarning>
             <body className={`${inter.variable} font-sans antialiased`}>
                 <Providers>{children}</Providers>
+                <Toaster theme="dark" position="top-center" richColors />
             </body>
         </html>
     )
