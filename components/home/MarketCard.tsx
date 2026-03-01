@@ -1,123 +1,63 @@
-import { TrendingDown, Users, MessageCircle, Calendar } from "lucide-react"
-import type { MarketCardData } from "@/lib/types"
+import { TrendingDown, Users, Calendar } from "lucide-react"
+import type { Market } from "@/lib/types"
+import Link from "next/link"
+import Image from "next/image"
 
 interface MarketCardProps {
-    market: MarketCardData
+    market: Market
+}
+
+function formatEndDate(endTime?: number): string {
+    if (!endTime) return "TBD"
+    const date = new Date(endTime * 1000)
+    return date.toLocaleDateString(undefined, { month: "short", day: "numeric" })
 }
 
 export function MarketCard({ market }: MarketCardProps) {
-    const m = market
+    const yesOutcome = market.outcomes.find((o) => o.name.toLowerCase() === "yes")
+    const noOutcome = market.outcomes.find((o) => o.name.toLowerCase() === "no")
+    const yesProb = yesOutcome?.probability ?? 50
+    const noProb = noOutcome?.probability ?? 50
 
-    // Multi-outcome card (like Grammys)
-    if (m.outcomes && m.outcomes.length > 0) {
-        return (
-            <div className="rounded-xl bg-card border border-border p-4 space-y-3 hover:border-primary/30 transition-colors group">
-                {/* Category */}
-                <div className="flex items-center gap-2">
-                    {m.image && (
-                        <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
-                            <span className="text-[10px] font-bold text-muted-foreground">
-                                {m.category.slice(0, 2).toUpperCase()}
-                            </span>
-                        </div>
-                    )}
-                    <div>
-                        <span
-                            className="text-caption font-bold"
-                            style={{ color: m.categoryColor }}
-                        >
-                            {m.category}
-                        </span>
-                        <h3 className="text-heading-3 text-foreground leading-tight text-sm">
-                            {m.title}
-                        </h3>
-                    </div>
-                </div>
-
-                {/* Outcomes list */}
-                <div className="space-y-2">
-                    {m.outcomes.map((outcome) => (
-                        <div
-                            key={outcome.name}
-                            className="flex items-center justify-between"
-                        >
-                            <span className="text-body text-muted-foreground text-xs truncate mr-2">
-                                {outcome.name}
-                            </span>
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-heading-3 text-foreground text-xs">
-                                    {outcome.odds}%
-                                </span>
-                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/15 text-primary font-bold">
-                                    Yes
-                                </span>
-                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-destructive/15 text-destructive font-bold">
-                                    No
-                                </span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Footer */}
-                <div className="flex items-center gap-3 text-caption pt-1">
-                    <span>{m.volume} Vol.</span>
-                    <span className="flex items-center gap-0.5">
-                        <Users className="w-3 h-3" />
-                        {m.traders}
-                    </span>
-                    <span className="flex items-center gap-0.5">
-                        <MessageCircle className="w-3 h-3" />
-                        {m.comments}
-                    </span>
-                    <span className="flex items-center gap-0.5 ml-auto">
-                        <Calendar className="w-3 h-3" />
-                        {m.date}
-                    </span>
-                </div>
-            </div>
-        )
-    }
-
-    // Standard binary card
     return (
-        <div className="rounded-xl bg-card border border-border p-4 space-y-3 hover:border-primary/30 transition-colors group">
-            {/* Category + Image */}
+        <Link
+            href={`/markets/${market.id}`}
+            className="block rounded-xl bg-card border border-border p-4 space-y-3 hover:border-primary/30 transition-colors group cursor-pointer"
+        >
+            {/* Image + Title */}
             <div className="flex items-start gap-3">
-                {m.image && (
-                    <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
-                        <span className="text-[10px] font-bold text-muted-foreground">
-                            {m.category.slice(0, 2).toUpperCase()}
+                <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-secondary border border-border shrink-0">
+                    {market.image ? (
+                        <Image
+                            src={market.image}
+                            alt={market.title}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                        />
+                    ) : (
+                        <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-muted-foreground">
+                            {(market.category ?? market.tag ?? "").slice(0, 2).toUpperCase() || "MK"}
                         </span>
-                    </div>
-                )}
+                    )}
+                </div>
                 <div className="flex-1 min-w-0">
-                    <span
-                        className="text-caption font-bold"
-                        style={{ color: m.categoryColor }}
-                    >
-                        {m.category}
-                    </span>
-                    <h3 className="text-heading-3 text-foreground leading-snug mt-0.5">
-                        {m.title}
+                    {(market.category || market.tag) && (
+                        <span className="text-caption font-bold text-primary">
+                            {market.category || market.tag}
+                        </span>
+                    )}
+                    <h3 className="text-heading-3 text-foreground leading-snug mt-0.5 line-clamp-2">
+                        {market.title}
                     </h3>
                 </div>
             </div>
 
-            {/* Chance + Trend */}
+            {/* Chance */}
             <div className="flex items-baseline gap-2">
                 <span className="text-2xl font-bold text-primary">
-                    {m.chance}%
+                    {yesProb}%
                 </span>
-                {m.trend && (
-                    <span
-                        className={`flex items-center gap-0.5 text-caption ${m.trendPositive ? "text-primary" : "text-destructive"
-                            }`}
-                    >
-                        <TrendingDown className="w-3 h-3" />
-                        {m.trend}
-                    </span>
-                )}
                 <span className="text-caption ml-auto">chance</span>
             </div>
 
@@ -125,38 +65,38 @@ export function MarketCard({ market }: MarketCardProps) {
             <div className="w-full h-1 rounded-full bg-secondary overflow-hidden">
                 <div
                     className="h-full rounded-full bg-primary transition-all"
-                    style={{ width: `${m.chance}%` }}
+                    style={{ width: `${yesProb}%` }}
                 />
             </div>
 
             {/* Yes/No Buttons */}
             <div className="grid grid-cols-2 gap-2">
-                <button className="py-1.5 rounded-md bg-primary text-primary-foreground text-btn text-xs transition-all hover:brightness-110 active:scale-95">
-                    Yes {m.yesPrice}
+                <button
+                    type="button"
+                    onClick={(e) => e.preventDefault()}
+                    className="py-1.5 rounded-md bg-primary text-primary-foreground text-btn text-xs transition-all hover:brightness-110 active:scale-95"
+                >
+                    Yes {yesProb}¢
                 </button>
-                <button className="py-1.5 rounded-md bg-destructive text-destructive-foreground text-btn text-xs transition-all hover:brightness-110 active:scale-95">
-                    No {m.noPrice}
+                <button
+                    type="button"
+                    onClick={(e) => e.preventDefault()}
+                    className="py-1.5 rounded-md bg-destructive text-destructive-foreground text-btn text-xs transition-all hover:brightness-110 active:scale-95"
+                >
+                    No {noProb}¢
                 </button>
             </div>
 
             {/* Footer Stats */}
             <div className="flex items-center gap-3 text-caption pt-1">
-                <span>{m.volume} Vol.</span>
-                <span className="flex items-center gap-0.5">
-                    <Users className="w-3 h-3" />
-                    {m.traders}
-                </span>
-                {m.comments && (
-                    <span className="flex items-center gap-0.5">
-                        <MessageCircle className="w-3 h-3" />
-                        {m.comments}
-                    </span>
-                )}
+                <span>{market.volume} Vol.</span>
                 <span className="flex items-center gap-0.5 ml-auto">
                     <Calendar className="w-3 h-3" />
-                    {m.date}
+                    {formatEndDate(market.endTime)}
                 </span>
             </div>
-        </div>
+        </Link>
     )
+
+    return wrapWithLink(href, content)
 }

@@ -7,6 +7,7 @@ import { LiveSports } from "@/components/home/LiveSports"
 import { AllMarkets } from "@/components/home/AllMarkets"
 
 export default function Home() {
+    const showLiveSports = false
     return (
         <>
             <Navbar />
@@ -15,7 +16,7 @@ export default function Home() {
             <main className="container-app space-y-8 py-6">
                 <CategoryTabs />
                 <FeaturedHero />
-                <LiveSports />
+                {showLiveSports && <LiveSports />}
                 <AllMarkets />
             </main>
 

@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Precastlogo from "../icons/precastlogo"
 
 const footerLinks = {
     categories: [
@@ -29,14 +30,7 @@ export function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
                     {/* Logo */}
                     <div className="flex items-start">
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary">
-                                <span className="text-white text-sm font-bold">P</span>
-                            </div>
-                            <span className="text-heading-3 text-foreground">
-                                precast
-                            </span>
-                        </div>
+                        <Precastlogo />
                     </div>
 
                     {/* Market Categories */}
