@@ -16,7 +16,7 @@ interface MarketPageProps {
 
 export default function MarketPage({ params }: MarketPageProps) {
     const resolvedParams = use(params)
-    const { market, isLoading } = useMarket(resolvedParams.id)
+    const { market, isLoading, refetchMarket } = useMarket(resolvedParams.id)
 
     return (
         <>
@@ -24,7 +24,7 @@ export default function MarketPage({ params }: MarketPageProps) {
             <TrendingTicker />
 
             <main className="container-app space-y-6 py-6">
-                <MarketDetailLayout market={market} isLoading={isLoading} />
+                <MarketDetailLayout market={market} isLoading={isLoading} refetchMarket={refetchMarket} />
             </main>
 
             <Footer />

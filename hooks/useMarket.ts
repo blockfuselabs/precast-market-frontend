@@ -9,8 +9,7 @@ import { fetchIPFSMetadata, getIPFSUrl } from "@/lib/ipfs"
 export function useMarket(marketId: string) {
     const id = BigInt(marketId)
 
-    // 1. Fetch Market Data
-    const { data: marketData, isLoading: isLoadingMarket } = useReadContract({
+    const { data: marketData, isLoading: isLoadingMarket, refetch: refetchMarketData } = useReadContract({
         address: CONTRACT_ADDRESS as `0x${string}`,
         abi: LMSRABI as any,
         functionName: "markets",
@@ -18,7 +17,7 @@ export function useMarket(marketId: string) {
     })
 
     // 2. Fetch Price
-    const { data: priceData, isLoading: isLoadingPrice } = useReadContract({
+    const { data: priceData, isLoading: isLoadingPrice, refetch: refetchPriceData } = useReadContract({
         address: CONTRACT_ADDRESS as `0x${string}`,
         abi: LMSRABI as any,
         functionName: "priceYES",
@@ -100,8 +99,13 @@ export function useMarket(marketId: string) {
         } as Market
     }
 
+    const refetchMarket = async () => {
+        await Promise.all([refetchMarketData(), refetchPriceData()])
+    }
+
     return {
         market,
-        isLoading: isLoadingMarket || isLoadingPrice || isLoadingMetadata
+        isLoading: isLoadingMarket || isLoadingPrice || isLoadingMetadata,
+        refetchMarket
     }
 }

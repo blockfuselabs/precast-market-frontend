@@ -8,11 +8,13 @@ import { MarketOrderBookShell } from "./MarketOrderBookShell"
 interface MarketDetailLayoutProps {
     market: Market | null
     isLoading: boolean
+    refetchMarket?: () => void
 }
 
 export function MarketDetailLayout({
     market,
     isLoading,
+    refetchMarket,
 }: MarketDetailLayoutProps) {
     const showTradePanel = market && !market.resolved && !market.isExpired
     const showResolutionCard = market?.resolved === true || market?.isExpired === true
@@ -49,6 +51,7 @@ export function MarketDetailLayout({
                             <MarketTradePanel
                                 market={market}
                                 isLoading={isLoading}
+                                refetchMarket={refetchMarket}
                             />
                         )}
                         {showResolutionCard && market && (

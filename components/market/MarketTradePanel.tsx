@@ -3,20 +3,53 @@ import type { Market } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { CircleHelp, Minus, Plus, Wallet, Loader2 } from "lucide-react"
 import { useTrade } from "@/hooks/useTrade"
+import { usePrivy, useSendTransaction, useWallets } from "@privy-io/react-auth"
+import { useReadContract } from "wagmi"
+import { CONTRACT_ADDRESS, USDC_ADDRESS } from "@/lib/constants"
+import { erc20ABI } from "@/lib/erc20-abi"
+import { formatUnits, type Address } from "viem"
+import { toast } from "sonner"
 
 type Side = "yes" | "no"
 
 interface MarketTradePanelProps {
     market: Market | null
     isLoading: boolean
+    refetchMarket?: () => void
 }
 
 const QUICK_AMOUNTS = [25, 50, 100, 250, 500]
 const MAX_AMOUNT = 500
 
-export function MarketTradePanel({ market, isLoading }: MarketTradePanelProps) {
+export function MarketTradePanel({ market, isLoading, refetchMarket }: MarketTradePanelProps) {
     const [side, setSide] = useState<Side>("yes")
     const [amount, setAmount] = useState<number>(100)
+
+    const { authenticated, login, user } = usePrivy()
+    const walletAddress = user?.wallet?.address as Address | undefined
+    const { sendTransaction } = useSendTransaction()
+    const { wallets } = useWallets()
+    const wallet = wallets?.[0]
+
+    const { data: rawAllowance, refetch: refetchAllowance } = useReadContract({
+        address: USDC_ADDRESS as Address,
+        abi: erc20ABI,
+        functionName: "allowance",
+        args: [walletAddress as Address, CONTRACT_ADDRESS as Address],
+        query: { enabled: !!walletAddress }
+    })
+
+    const allowance = rawAllowance as unknown as bigint
+
+    const { data: balanceData } = useReadContract({
+        address: USDC_ADDRESS as Address,
+        abi: erc20ABI,
+        functionName: "balanceOf",
+        args: [walletAddress as Address],
+        query: { enabled: !!walletAddress }
+    })
+
+    const balance = balanceData ? Number(formatUnits(balanceData as bigint, 6)) : 0
 
     // Trading Hook
     const { executeTrade, isPending, isApproving, isTrading } = useTrade()
@@ -205,31 +238,52 @@ export function MarketTradePanel({ market, isLoading }: MarketTradePanelProps) {
                 </div>
             </div>
 
-            {/* Submit button (UI only for now) */}
+            {/* Submit button */}
             <button
                 type="button"
                 onClick={async () => {
-                    const result = await executeTrade(market.id, amount, side)
+                    if (!authenticated) {
+                        login()
+                        return
+                    }
+                    if (!wallet) {
+                        toast.error("Wallet not available")
+                        return
+                    }
+                    const result = await executeTrade(
+                        market.id,
+                        amount,
+                        side,
+                        allowance ? (allowance as bigint) : BigInt(0),
+                        sendTransaction,
+                        wallet
+                    )
                     if (result.success) {
-                        alert(`Trade successful! Tx Hash: ${result.tradeTxHash}`)
+                        toast.success(`Trade successful!`)
                         setAmount(0) // Reset after trade
+                        refetchAllowance()
+                        refetchMarket?.()
                     } else {
-                        alert("Trade failed. See console for details.")
+                        toast.error(`Trade failed. ${(result.error as any)?.message || ""}`)
                     }
                 }}
                 className={cn(
                     "w-full rounded-xl py-2.5 text-btn font-semibold transition-all flex items-center justify-center gap-2",
-                    side === "yes"
+                    (!authenticated)
                         ? "bg-primary text-primary-foreground hover:brightness-110"
-                        : "bg-destructive text-destructive-foreground hover:brightness-110",
+                        : side === "yes"
+                            ? "bg-primary text-primary-foreground hover:brightness-110"
+                            : "bg-destructive text-destructive-foreground hover:brightness-110",
                     isPending && "opacity-70 cursor-not-allowed"
                 )}
-                disabled={!amount || amount <= 0 || isPending}
+                disabled={isPending || (authenticated && (!amount || amount <= 0))}
             >
                 {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-                {isPending
-                    ? (isApproving ? "Approving USDC..." : "Confirming Trade...")
-                    : (side === "yes" ? "Buy Yes Shares" : "Buy No Shares")}
+                {!authenticated
+                    ? "Connect Wallet"
+                    : isPending
+                        ? (isApproving ? "Approving USDC..." : "Confirming Trade...")
+                        : (side === "yes" ? "Buy Yes Shares" : "Buy No Shares")}
             </button>
 
             <div className="flex items-center justify-between text-caption text-secondary-foreground pt-1">
@@ -237,7 +291,9 @@ export function MarketTradePanel({ market, isLoading }: MarketTradePanelProps) {
                     <Wallet className="w-3.5 h-3.5" />
                     <span>Balance</span>
                 </div>
-                <span className="text-foreground">$1,234.56</span>
+                <span className="text-foreground">
+                    {!authenticated ? "--" : `$${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                </span>
             </div>
         </aside>
     )
