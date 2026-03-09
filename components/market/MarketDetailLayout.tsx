@@ -4,6 +4,7 @@ import { MarketPriceHistoryCard } from "./MarketPriceHistoryCard"
 import { MarketTradePanel } from "./MarketTradePanel"
 import { MarketResolutionCard } from "./MarketResolutionCard"
 import { MarketOrderBookShell } from "./MarketOrderBookShell"
+import { AdminResolvePanel } from "../admin/AdminResolvePanel"
 
 interface MarketDetailLayoutProps {
     market: Market | null
@@ -47,6 +48,9 @@ export function MarketDetailLayout({
 
                 {showRightColumn && (
                     <div className="space-y-4">
+                        {market && !market.resolved && (
+                            <AdminResolvePanel market={market} refetchMarket={refetchMarket} />
+                        )}
                         {showTradePanel && (
                             <MarketTradePanel
                                 market={market}

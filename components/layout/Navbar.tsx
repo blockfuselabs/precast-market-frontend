@@ -42,6 +42,14 @@ export function Navbar() {
               <span className="hidden sm:inline">Create Market</span>
             </Link>
           )}
+          {authenticated && (
+            <Link
+              href="/portfolio"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors text-btn"
+            >
+              <span className="hidden sm:inline">Portfolio</span>
+            </Link>
+          )}
           <button
             className="relative p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             aria-label="Notifications"
