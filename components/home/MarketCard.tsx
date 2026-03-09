@@ -53,19 +53,26 @@ export function MarketCard({ market }: MarketCardProps) {
                 </div>
             </div>
 
-            {/* Chance */}
-            <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-primary">
-                    {yesProb}%
-                </span>
-                <span className="text-caption ml-auto">chance</span>
+            {/* Chance — YES left (green), NO right (red) */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-bold text-emerald-500">{yesProb}%</span>
+                    <span className="text-caption text-emerald-500/70">Yes</span>
+                </div>
+                <div className="flex items-baseline gap-1">
+                    <span className="text-caption text-rose-500/70">No</span>
+                    <span className="text-2xl font-bold text-rose-500">{noProb}%</span>
+                </div>
             </div>
 
-            {/* Progress bar */}
-            <div className="w-full h-1 rounded-full bg-secondary overflow-hidden">
+            {/* Progress bar — green YES | red NO */}
+            <div className="w-full h-1.5 rounded-full bg-secondary overflow-hidden flex">
                 <div
-                    className="h-full rounded-full bg-primary transition-all"
+                    className="h-full bg-emerald-500 transition-all"
                     style={{ width: `${yesProb}%` }}
+                />
+                <div
+                    className="h-full bg-rose-500 transition-all flex-1"
                 />
             </div>
 

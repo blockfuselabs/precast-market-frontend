@@ -103,25 +103,30 @@ export function useMarkets() {
         const startTime = data[4] ? Number(data[4]) : undefined
         const endTime = data[5] ? Number(data[5]) : undefined
 
-        // Parse price
-        // Use the original index because pricesData matches marketsData array order
+        const qYes = data[2] ? BigInt(data[2]) : BigInt(0)
+        const qNo = data[3] ? BigInt(data[3]) : BigInt(0)
+        const totalShares = qYes + qNo
+        // qYes/qNo are in 18-decimal token units; convert to readable number
+        const volumeNum = Number(totalShares) / 1e18
+        const volumeStr = volumeNum >= 1_000_000
+            ? `$${(volumeNum / 1_000_000).toFixed(1)}M`
+            : volumeNum >= 1_000
+                ? `$${(volumeNum / 1_000).toFixed(1)}K`
+                : `$${volumeNum.toFixed(2)}`
+
+        // Parse price probability
         const originalIndex = index - 1
         const priceResult = pricesData?.[originalIndex]
         let probability = 50
-        console.log('Price Result', priceResult)
         if (priceResult?.status === "success") {
             const priceWei = priceResult.result as bigint
             probability = parseFloat(formatEther(priceWei)) * 100
-            console.log('Price', probability)
         }
-
-        console.log('Result', result)
 
         // Mock Metadata Extraction
         let imageUrl = "/prediction-market-placeholder.png" // Default
 
         const metadata = metadataMap[cId]
-        console.log('Metadata', metadata)
         if (metadata?.image) {
             if (metadata?.imageSource === "cloudinary") {
                 imageUrl = metadata.image;
@@ -142,7 +147,7 @@ export function useMarkets() {
                 { name: "Yes", probability: Math.round(probability) },
                 { name: "No", probability: 100 - Math.round(probability) },
             ],
-            volume: "0",
+            volume: volumeStr,
             tag: "",
             startTime,
             endTime,
