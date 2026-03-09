@@ -4,8 +4,8 @@ import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { useReadContract } from "wagmi"
-import { parseEther, parseUnits, encodeFunctionData, type Address } from "viem"
+import { useReadContract, usePublicClient } from "wagmi"
+import { parseUnits, encodeFunctionData, type Address } from "viem"
 import { baseSepolia } from "wagmi/chains"
 import { usePrivy, useSendTransaction, useWallets } from "@privy-io/react-auth"
 import { useRouter } from "next/navigation"
@@ -44,6 +44,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function MarketCreationForm() {
     const router = useRouter()
+    const publicClient = usePublicClient()
     const { authenticated, login, ready, user } = usePrivy()
     const { sendTransaction } = useSendTransaction()
     const { wallets } = useWallets()
@@ -52,14 +53,13 @@ export function MarketCreationForm() {
     const wallet = wallets?.[0]
 
     const [approveHash, setApproveHash] = useState<string | null>(null)
-    const [isApprovePending, setIsApprovePending] = useState(false)
     const [createHash, setCreateHash] = useState<string | null>(null)
     const [isCreatePending, setIsCreatePending] = useState(false)
     const [createStep, setCreateStep] = useState<string>("")
     const [imagePreview, setImagePreview] = useState<string | null>(null)
 
     const form = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(formSchema) as any,
         defaultValues: {
             question: "",
             description: "",
@@ -96,52 +96,12 @@ export function MarketCreationForm() {
     })
 
     useEffect(() => {
-        if (approveHash && !isApprovePending) {
+        if (approveHash) {
             setTimeout(() => {
                 refetchAllowance()
             }, 2000)
         }
-    }, [approveHash, isApprovePending, refetchAllowance])
-
-    const isAllowanceSufficient = allowance ? allowance >= parseEther(liquidity?.toString() || "0") : false
-
-    async function handleApprove() {
-        if (!ready) {
-            toast.error("Wallet is initializing, please wait...")
-            return
-        }
-        if (!authenticated) {
-            toast.info("Please connect your wallet first")
-            login()
-            return
-        }
-        if (!wallet || !walletAddress) {
-            toast.error("Wallet not available. Please reconnect your wallet.")
-            return
-        }
-
-        try {
-            setIsApprovePending(true)
-            const approveAmount = parseEther(liquidity.toString())
-            const data = encodeFunctionData({
-                abi: erc20ABI,
-                functionName: "approve",
-                args: [CONTRACT_ADDRESS as Address, approveAmount],
-            })
-
-            const { hash } = await sendTransaction(
-                { to: USDC_ADDRESS as Address, data, chainId: baseSepolia.id },
-                { address: wallet.address as `0x${string}` }
-            )
-
-            setApproveHash(hash)
-            toast.success("Approval transaction sent!")
-            setIsApprovePending(false)
-        } catch (error: any) {
-            setIsApprovePending(false)
-            toast.error(`Failed to approve USDC: ${error?.message || "Unknown error"}`)
-        }
-    }
+    }, [approveHash, refetchAllowance])
 
     async function onSubmit(values: FormValues) {
         if (!ready) return toast.error("Wallet is initializing, please wait...")
@@ -150,10 +110,40 @@ export function MarketCreationForm() {
             return login();
         }
         if (!walletAddress) return toast.error("Wallet address not available. Please reconnect.")
-        if (!isAllowanceSufficient) return handleApprove();
 
         try {
             setIsCreatePending(true)
+
+            const approveAmount = parseUnits(values.liquidity.toString(), 6)
+            const currentAllowance = (allowance as bigint) || BigInt(0)
+
+            if (currentAllowance < approveAmount) {
+                setCreateStep("Approving USDC...")
+                const data = encodeFunctionData({
+                    abi: erc20ABI,
+                    functionName: "approve",
+                    args: [CONTRACT_ADDRESS as Address, approveAmount],
+                })
+
+                if (!wallet) throw new Error("Wallet not found")
+
+                const { hash } = await sendTransaction(
+                    { to: USDC_ADDRESS as Address, data, chainId: baseSepolia.id },
+                    { address: wallet.address as `0x${string}` }
+                )
+
+                setApproveHash(hash)
+                toast.success("Approval sent! Waiting for confirmation...")
+
+                if (publicClient) {
+                    await publicClient.waitForTransactionReceipt({ hash: hash as `0x${string}` })
+                } else {
+                    await new Promise(resolve => setTimeout(resolve, 4000))
+                }
+
+                toast.success("USDC Approved successfully!")
+                refetchAllowance()
+            }
 
             // 1. Upload Image
             setCreateStep("Uploading image...")
@@ -200,7 +190,7 @@ export function MarketCreationForm() {
 
             // 3. Create Market
             setCreateStep("Creating market...")
-            const createToast = toast.loading("Creating market on blockchain...");
+            const createToast = toast.loading("Creating market...");
 
             let startTime = Math.floor(new Date(values.startDate).getTime() / 1000)
             const endTime = Math.floor(new Date(values.endDate).getTime() / 1000)
@@ -254,11 +244,11 @@ export function MarketCreationForm() {
         }
     }
 
-    const inputClasses = "w-full bg-secondary border border-border rounded-lg px-4 py-2.5 text-input focus:ring-1 focus:ring-primary focus:outline-none transition-all placeholder:text-muted-foreground"
+    const inputClasses = "w-full bg-secondary border border-border rounded-lg px-4 py-2.5 text-input text-white focus:ring-1 focus:ring-primary focus:outline-none transition-all placeholder:text-muted-foreground"
     const labelClasses = "block text-label mb-2"
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-8">
             {/* Section 1: Basic Info */}
             <div className="space-y-4">
                 <h3 className="text-heading-3 border-b border-border pb-2 text-foreground">1. Market Details</h3>
@@ -391,24 +381,13 @@ export function MarketCreationForm() {
             </div>
 
             <div className="pt-4">
-                {isAllowanceSufficient ? (
-                    <button
-                        type="submit"
-                        disabled={isCreatePending}
-                        className="w-full text-btn bg-primary text-primary-foreground hover:bg-primary/90 transition-colors h-12 rounded-lg font-semibold flex items-center justify-center disabled:opacity-50"
-                    >
-                        {isCreatePending ? (createStep || "Processing...") : "Create Market"}
-                    </button>
-                ) : (
-                    <button
-                        type="button"
-                        onClick={handleApprove}
-                        disabled={isApprovePending}
-                        className="w-full text-btn bg-success text-white hover:bg-success/90 transition-colors h-12 rounded-lg font-semibold flex items-center justify-center disabled:opacity-50"
-                    >
-                        {isApprovePending ? "Processing Approval..." : "Approve USDC"}
-                    </button>
-                )}
+                <button
+                    type="submit"
+                    disabled={isCreatePending}
+                    className="w-full text-btn bg-primary text-primary-foreground hover:bg-primary/90 transition-colors h-12 rounded-lg font-semibold flex items-center justify-center disabled:opacity-50"
+                >
+                    {isCreatePending ? (createStep || "Processing...") : "Create Market"}
+                </button>
             </div>
 
             {createHash && <div className="p-3 rounded bg-success/10 border border-success/20 text-xs text-success break-all">Create Tx: {createHash}</div>}
