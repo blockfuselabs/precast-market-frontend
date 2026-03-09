@@ -15,7 +15,7 @@ export function MarketDetailLayout({
     isLoading,
 }: MarketDetailLayoutProps) {
     const showTradePanel = market && !market.resolved && !market.isExpired
-    const showResolutionCard = market?.resolved === true
+    const showResolutionCard = market?.resolved === true || market?.isExpired === true
     const showRightColumn = showTradePanel || showResolutionCard
 
     return (

@@ -6,14 +6,17 @@ import { Footer } from "@/components/layout/Footer"
 import { useMarket } from "@/hooks/useMarket"
 import { MarketDetailLayout } from "@/components/market/MarketDetailLayout"
 
+import { use } from "react"
+
 interface MarketPageProps {
-    params: {
+    params: Promise<{
         id: string
-    }
+    }>
 }
 
 export default function MarketPage({ params }: MarketPageProps) {
-    const { market, isLoading } = useMarket(params.id)
+    const resolvedParams = use(params)
+    const { market, isLoading } = useMarket(resolvedParams.id)
 
     return (
         <>

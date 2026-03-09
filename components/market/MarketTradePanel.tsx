@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react"
 import type { Market } from "@/lib/types"
 import { cn } from "@/lib/utils"
-import { CircleHelp, Minus, Plus, Wallet } from "lucide-react"
+import { CircleHelp, Minus, Plus, Wallet, Loader2 } from "lucide-react"
+import { useTrade } from "@/hooks/useTrade"
 
 type Side = "yes" | "no"
 
@@ -16,6 +17,9 @@ const MAX_AMOUNT = 500
 export function MarketTradePanel({ market, isLoading }: MarketTradePanelProps) {
     const [side, setSide] = useState<Side>("yes")
     const [amount, setAmount] = useState<number>(100)
+
+    // Trading Hook
+    const { executeTrade, isPending, isApproving, isTrading } = useTrade()
 
     const { yesProb, noProb } = useMemo(() => {
         const yesOutcome = market?.outcomes.find(
@@ -204,15 +208,28 @@ export function MarketTradePanel({ market, isLoading }: MarketTradePanelProps) {
             {/* Submit button (UI only for now) */}
             <button
                 type="button"
+                onClick={async () => {
+                    const result = await executeTrade(market.id, amount, side)
+                    if (result.success) {
+                        alert(`Trade successful! Tx Hash: ${result.tradeTxHash}`)
+                        setAmount(0) // Reset after trade
+                    } else {
+                        alert("Trade failed. See console for details.")
+                    }
+                }}
                 className={cn(
-                    "w-full rounded-xl py-2.5 text-btn font-semibold transition-all",
+                    "w-full rounded-xl py-2.5 text-btn font-semibold transition-all flex items-center justify-center gap-2",
                     side === "yes"
                         ? "bg-primary text-primary-foreground hover:brightness-110"
                         : "bg-destructive text-destructive-foreground hover:brightness-110",
+                    isPending && "opacity-70 cursor-not-allowed"
                 )}
-                disabled={!amount || amount <= 0}
+                disabled={!amount || amount <= 0 || isPending}
             >
-                {side === "yes" ? "Buy Yes Shares" : "Buy No Shares"}
+                {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+                {isPending
+                    ? (isApproving ? "Approving USDC..." : "Confirming Trade...")
+                    : (side === "yes" ? "Buy Yes Shares" : "Buy No Shares")}
             </button>
 
             <div className="flex items-center justify-between text-caption text-secondary-foreground pt-1">
