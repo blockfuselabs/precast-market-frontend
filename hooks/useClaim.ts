@@ -1,33 +1,44 @@
-import { useWriteContract, useWaitForTransactionReceipt } from "wagmi"
+import { usePublicClient } from "wagmi"
 import { CONTRACT_ADDRESS } from "@/lib/constants"
 import LMSRABI from "@/lib/LMSRABI.json"
-import { useState, useEffect } from "react"
-import { Address } from "viem"
+import { useState } from "react"
+import { encodeFunctionData } from "viem"
+import { baseSepolia } from "wagmi/chains"
+import type { ConnectedWallet } from "@privy-io/react-auth"
 
 export function useClaim() {
     const [isClaiming, setIsClaiming] = useState(false)
-    const [claimHash, setClaimHash] = useState<string | null>(null)
+    const publicClient = usePublicClient()
 
-    // Setup write contract
-    const { writeContractAsync } = useWriteContract()
-
-    const executeClaim = async (marketId: string | number) => {
+    const executeClaim = async (
+        marketId: string | number,
+        sendTransaction: any,
+        wallet: ConnectedWallet
+    ) => {
         try {
             setIsClaiming(true)
 
-            const txHash = await writeContractAsync({
-                address: CONTRACT_ADDRESS as Address,
+            const claimData = encodeFunctionData({
                 abi: LMSRABI as any,
                 functionName: "claim",
                 args: [BigInt(marketId)],
             })
 
-            setClaimHash(txHash)
-            setIsClaiming(false)
+            const { hash: claimTxHash } = await sendTransaction(
+                { to: CONTRACT_ADDRESS as `0x${string}`, data: claimData, chainId: baseSepolia.id },
+                { address: wallet.address as `0x${string}` }
+            )
 
+            if (publicClient) {
+                await publicClient.waitForTransactionReceipt({ hash: claimTxHash as `0x${string}` })
+            } else {
+                await new Promise(resolve => setTimeout(resolve, 4000))
+            }
+
+            setIsClaiming(false)
             return {
                 success: true,
-                claimTxHash: txHash
+                claimTxHash
             }
 
         } catch (error) {
@@ -43,6 +54,6 @@ export function useClaim() {
     return {
         executeClaim,
         isClaiming,
-        claimHash
     }
 }
+

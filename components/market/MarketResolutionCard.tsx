@@ -1,7 +1,8 @@
 import type { Market } from "@/lib/types"
 import { useClaim } from "@/hooks/useClaim"
-import { usePrivy } from "@privy-io/react-auth"
+import { usePrivy, useSendTransaction, useWallets } from "@privy-io/react-auth"
 import { Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 interface MarketResolutionCardProps {
     market: Market
@@ -13,18 +14,25 @@ export function MarketResolutionCard({ market }: MarketResolutionCardProps) {
 
     const { executeClaim, isClaiming } = useClaim()
     const { authenticated, login } = usePrivy()
+    const { sendTransaction } = useSendTransaction()
+    const { wallets } = useWallets()
+    const wallet = wallets?.[0]
 
     const handleClaim = async () => {
         if (!authenticated) {
             login()
             return
         }
+        if (!wallet) {
+            toast.error("Wallet not available. Please reconnect.")
+            return
+        }
 
-        const result = await executeClaim(market.id)
+        const result = await executeClaim(market.id, sendTransaction, wallet)
         if (result.success) {
-            alert(`Claim transaction successful!\nHash: ${result.claimTxHash}`)
+            toast.success("Winnings claimed successfully!")
         } else {
-            alert(`Claim failed. See console for details.`)
+            toast.error(`Claim failed: ${(result.error as any)?.message || "Unknown error"}`)
         }
     }
 
@@ -50,8 +58,8 @@ export function MarketResolutionCard({ market }: MarketResolutionCardProps) {
                             onClick={handleClaim}
                             disabled={isClaiming}
                             className={`w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all ${yesWon
-                                    ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                                    : "bg-red-600 hover:bg-red-700 text-white"
+                                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                                : "bg-red-600 hover:bg-red-700 text-white"
                                 } ${isClaiming ? "opacity-70 cursor-not-allowed" : ""}`}
                         >
                             {isClaiming && <Loader2 className="w-4 h-4 animate-spin" />}
@@ -72,3 +80,5 @@ export function MarketResolutionCard({ market }: MarketResolutionCardProps) {
         </aside>
     )
 }
+
+

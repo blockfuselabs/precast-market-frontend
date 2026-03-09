@@ -6,6 +6,7 @@ import Image from "next/image";
 import Precastlogo from "../icons/precastlogo";
 import { usePrivy } from "@privy-io/react-auth";
 import { useUserRights } from "@/hooks/useUserRights";
+import { FaucetButton } from "./FaucetButton";
 
 export function Navbar() {
   const { login, authenticated, user } = usePrivy();
@@ -49,6 +50,9 @@ export function Navbar() {
             >
               <span className="hidden sm:inline">Portfolio</span>
             </Link>
+          )}
+          {authenticated && (
+            <FaucetButton />
           )}
           <button
             className="relative p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"

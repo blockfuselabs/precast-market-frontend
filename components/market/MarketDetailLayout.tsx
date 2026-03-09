@@ -1,10 +1,23 @@
 import type { Market } from "@/lib/types"
+import dynamic from "next/dynamic"
 import { MarketDetailHeader } from "./MarketDetailHeader"
-import { MarketPriceHistoryCard } from "./MarketPriceHistoryCard"
 import { MarketTradePanel } from "./MarketTradePanel"
 import { MarketResolutionCard } from "./MarketResolutionCard"
 import { MarketOrderBookShell } from "./MarketOrderBookShell"
 import { AdminResolvePanel } from "../admin/AdminResolvePanel"
+
+const MarketPriceHistoryCard = dynamic(
+    () => import("./MarketPriceHistoryCard").then(m => m.MarketPriceHistoryCard),
+    {
+        ssr: false,
+        loading: () => (
+            <div className="rounded-2xl bg-card border border-border p-4 md:p-5 animate-pulse">
+                <div className="h-4 w-32 bg-secondary rounded mb-4" />
+                <div className="h-52 w-full bg-secondary rounded" />
+            </div>
+        )
+    }
+)
 
 interface MarketDetailLayoutProps {
     market: Market | null
@@ -42,7 +55,7 @@ export function MarketDetailLayout({
                 }
             >
                 <div className="space-y-5">
-                    <MarketPriceHistoryCard isLoading={isLoading || !market} />
+                    <MarketPriceHistoryCard isLoading={isLoading || !market} marketId={market?.id} />
                     <MarketOrderBookShell market={market} />
                 </div>
 
