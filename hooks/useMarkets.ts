@@ -1,76 +1,46 @@
 "use client"
 
-import { useReadContract, useReadContracts } from "wagmi"
-import { CONTRACT_ADDRESS } from "@/lib/constants"
-import LMSRABI from "@/lib/LMSRABI.json"
+import { useQuery } from "@tanstack/react-query"
 import { Market } from "@/lib/types"
 import { formatEther } from "viem"
 import { useEffect, useState } from "react"
 import { fetchIPFSMetadata, getIPFSUrl } from "@/lib/ipfs"
+import {
+    fetchSubgraph,
+    MARKETS_QUERY,
+    MarketsQueryResult,
+} from "@/lib/subgraph"
 
 export function useMarkets() {
-    // 1. Fetch total market count
-    const { data: marketCount, isLoading: isLoadingMarketCount } = useReadContract({
-        address: CONTRACT_ADDRESS as `0x${string}`,
-        abi: LMSRABI as any,
-        functionName: "marketCount",
-    })
+    // 1. Fetch all market events from the subgraph in one request
+    const { data: subgraphData, isLoading: isLoadingSubgraph } =
+        useQuery<MarketsQueryResult>({
+            queryKey: ["markets"],
+            queryFn: () => fetchSubgraph<MarketsQueryResult>(MARKETS_QUERY),
+            staleTime: 30_000, // consider fresh for 30s
+        })
 
-    // ... (existing code)
-
-
-
-    // 2. Generate array of indices [0, 1, ..., marketCount-1]
-    const count = marketCount ? Number(marketCount) : 0
-    console.log('Count', count)
-    const marketIds = Array.from({ length: count }, (_, i) => BigInt(i + 1))
-    console.log('IDS', marketIds)
-
-    // 3. Batch fetch market data
-    const { data: marketsData, isLoading: isLoadingMarkets } = useReadContracts({
-        contracts: marketIds.map((id) => ({
-            address: CONTRACT_ADDRESS as `0x${string}`,
-            abi: LMSRABI as any,
-            functionName: "markets",
-            args: [id],
-        })),
-    })
-
-    // 4. Batch fetch prices (priceYES)
-    // Note: Cost to buy 1 full share of YES is roughly the probability
-    const { data: pricesData, isLoading: isLoadingPrices } = useReadContracts({
-        contracts: marketIds.map((id) => ({
-            address: CONTRACT_ADDRESS as `0x${string}`,
-            abi: LMSRABI as any,
-            functionName: "priceYES",
-            args: [id],
-        })),
-    })
-
-    // 5. Fetch IPFS Metadata
+    // 2. Fetch IPFS metadata for each unique cId
     const [metadataMap, setMetadataMap] = useState<Record<string, any>>({})
 
     useEffect(() => {
-        if (!marketsData) return
+        if (!subgraphData?.marketCreateds) return
 
         const fetchAll = async () => {
             const cidsToFetch = new Set<string>()
-            marketsData.forEach((result) => {
-                if (result.status === "success") {
-                    const data = result.result as any
-                    const cId = data[9] || data.cId
-                    if (cId && !metadataMap[cId]) {
-                        cidsToFetch.add(cId)
-                    }
+            subgraphData.marketCreateds.forEach((m) => {
+                if (m.cId && !metadataMap[m.cId]) {
+                    cidsToFetch.add(m.cId)
                 }
             })
 
             if (cidsToFetch.size === 0) return
 
             const results = await Promise.all(
-                Array.from(cidsToFetch).map(async (cid) => {
-                    return { cid, data: await fetchIPFSMetadata(cid) }
-                })
+                Array.from(cidsToFetch).map(async (cid) => ({
+                    cid,
+                    data: await fetchIPFSMetadata(cid),
+                }))
             )
 
             setMetadataMap((prev) => {
@@ -87,60 +57,76 @@ export function useMarkets() {
         }
 
         fetchAll()
-    }, [marketsData, metadataMap])
+    }, [subgraphData, metadataMap])
 
-    // 6. Transform data
-    const markets = marketsData?.map((result, index): Market | null => {
-        if (result.status !== "success") return null
+    // 3. Build lookup tables from price and resolution events
+    const latestPriceByMarket: Record<string, { priceYES: string; priceNO: string }> = {}
+    if (subgraphData?.priceUpdateds) {
+        // priceUpdateds are already ordered desc by blockTimestamp — first entry per market is the latest
+        for (const p of subgraphData.priceUpdateds) {
+            if (!latestPriceByMarket[p.marketId]) {
+                latestPriceByMarket[p.marketId] = { priceYES: p.priceYES, priceNO: p.priceNO }
+            }
+        }
+    }
 
-        index = index + 1
+    const resolvedByMarket: Record<string, boolean> = {}
+    if (subgraphData?.marketResolveds) {
+        for (const r of subgraphData.marketResolveds) {
+            resolvedByMarket[r.marketId] = r.yesWon
+        }
+    }
 
-        // result.result matches the struct:
-        // [exists, b, qYes, qNo, startTime, endTime, resolved, yesWon, question, cId]
-        const data = result.result as any
-        const question = data[8] || data.question
-        const cId = data[9] || data.cId
-        const startTime = data[4] ? Number(data[4]) : undefined
-        const endTime = data[5] ? Number(data[5]) : undefined
+    // Real volume: sum of USDC `cost` across all SharesBought events per market
+    const volumeByMarket: Record<string, bigint> = {}
+    if (subgraphData?.sharesBoughts) {
+        for (const s of subgraphData.sharesBoughts) {
+            const prev = volumeByMarket[s.marketId] ?? BigInt(0)
+            volumeByMarket[s.marketId] = prev + BigInt(s.cost)
+        }
+    }
 
-        const qYes = data[2] ? BigInt(data[2]) : BigInt(0)
-        const qNo = data[3] ? BigInt(data[3]) : BigInt(0)
-        const totalShares = qYes + qNo
-        // qYes/qNo are in 18-decimal token units; convert to readable number
-        const volumeNum = Number(totalShares) / 1e18
-        const volumeStr = volumeNum >= 1_000_000
-            ? `$${(volumeNum / 1_000_000).toFixed(1)}M`
-            : volumeNum >= 1_000
-                ? `$${(volumeNum / 1_000).toFixed(1)}K`
-                : `$${volumeNum.toFixed(2)}`
+    // 4. Transform into Market[]  (marketCreateds is already newest-first)
+    const markets: Market[] = (subgraphData?.marketCreateds ?? []).map((m) => {
+        const startTime = Number(m.startTime)
+        const endTime = Number(m.endTime)
+        const now = Date.now() / 1000
 
-        // Parse price probability
-        const originalIndex = index - 1
-        const priceResult = pricesData?.[originalIndex]
+        // Price / probability
+        const price = latestPriceByMarket[m.marketId]
         let probability = 50
-        if (priceResult?.status === "success") {
-            const priceWei = priceResult.result as bigint
-            probability = parseFloat(formatEther(priceWei)) * 100
+        if (price) {
+            probability = parseFloat(formatEther(BigInt(price.priceYES))) * 100
         }
 
-        // Mock Metadata Extraction
-        let imageUrl = "/prediction-market-placeholder.png" // Default
+        // Volume
+        const rawVolume = volumeByMarket[m.marketId] ?? BigInt(0)
+        const volumeNum = Number(rawVolume) / 1e18
+        const volumeStr =
+            volumeNum >= 1_000_000
+                ? `$${(volumeNum / 1_000_000).toFixed(1)}M`
+                : volumeNum >= 1_000
+                    ? `$${(volumeNum / 1_000).toFixed(1)}K`
+                    : `$${volumeNum.toFixed(2)}`
 
-        const metadata = metadataMap[cId]
+        // Image
+        const metadata = metadataMap[m.cId]
+        let imageUrl = "/prediction-market-placeholder.png"
         if (metadata?.image) {
-            if (metadata?.imageSource === "cloudinary") {
-                imageUrl = metadata.image;
-            } else {
-
-                imageUrl = getIPFSUrl(metadata.image)
-            }
-        } else if (cId && cId.includes("TestImageCid")) {
+            imageUrl =
+                metadata.imageSource === "cloudinary"
+                    ? metadata.image
+                    : getIPFSUrl(metadata.image)
+        } else if (m.cId?.includes("TestImageCid")) {
             imageUrl = "/super-bowl-atmosphere.png"
         }
 
+        const isResolved = m.marketId in resolvedByMarket
+        const yesWon = resolvedByMarket[m.marketId]
+
         return {
-            id: index.toString(),
-            title: question,
+            id: m.marketId,
+            title: m.question,
             image: imageUrl,
             type: "binary",
             outcomes: [
@@ -151,11 +137,19 @@ export function useMarkets() {
             tag: "",
             startTime,
             endTime,
-        }
-    }).filter((m): m is Market => m !== null) || []
+            startDate: new Date(startTime * 1000).toLocaleString(),
+            endDate: new Date(endTime * 1000).toLocaleString(),
+            resolved: isResolved,
+            yesWon,
+            isExpired: now > endTime,
+            description: metadata?.description ?? "",
+            resolutionSource: metadata?.resolutionSource ?? "",
+            category: metadata?.category ?? "General",
+        } satisfies Market
+    })
 
     return {
         markets,
-        isLoading: isLoadingMarketCount || isLoadingMarkets || isLoadingPrices,
+        isLoading: isLoadingSubgraph,
     }
 }
