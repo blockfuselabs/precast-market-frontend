@@ -61,6 +61,17 @@ export function useMarkets() {
 
     // 3. Build lookup tables from price and resolution events
     const latestPriceByMarket: Record<string, { priceYES: string; priceNO: string }> = {}
+
+    // First, populate from sharesBoughts (the most frequent price source)
+    if (subgraphData?.sharesBoughts) {
+        for (const s of subgraphData.sharesBoughts) {
+            if (!latestPriceByMarket[s.marketId]) {
+                latestPriceByMarket[s.marketId] = { priceYES: s.priceYES, priceNO: s.priceNO }
+            }
+        }
+    }
+
+    // Then, overlay with priceUpdateds (if any) - these take precedence if they exist for the same timestamp/block
     if (subgraphData?.priceUpdateds) {
         // priceUpdateds are already ordered desc by blockTimestamp — first entry per market is the latest
         for (const p of subgraphData.priceUpdateds) {
@@ -88,6 +99,7 @@ export function useMarkets() {
 
     // 4. Transform into Market[]  (marketCreateds is already newest-first)
     const markets: Market[] = (subgraphData?.marketCreateds ?? []).map((m) => {
+        console.log('Market:', m)
         const startTime = Number(m.startTime)
         const endTime = Number(m.endTime)
         const now = Date.now() / 1000

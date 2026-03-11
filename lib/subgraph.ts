@@ -43,6 +43,9 @@ export interface SubgraphMarketResolved {
 export interface SubgraphSharesBought {
     marketId: string;
     cost: string; // USDC (18-decimal) spent on this trade
+    priceYES: string;
+    priceNO: string;
+    blockTimestamp: string;
 }
 
 export interface MarketsQueryResult {
@@ -85,9 +88,15 @@ export const MARKETS_QUERY = /* GraphQL */ `
             yesWon
         }
 
-        sharesBoughts(first: 1000) {
+        sharesBoughts(
+            first: 1000
+            orderBy: blockTimestamp
+            orderDirection: desc
+        ) {
             marketId
             cost
+            priceYES
+            priceNO
         }
     }
 `;

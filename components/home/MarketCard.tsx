@@ -14,6 +14,7 @@ function formatEndDate(endTime?: number): string {
 }
 
 export function MarketCard({ market }: MarketCardProps) {
+    console.log(market)
     const yesOutcome = market.outcomes.find((o) => o.name.toLowerCase() === "yes")
     const noOutcome = market.outcomes.find((o) => o.name.toLowerCase() === "no")
     const yesProb = yesOutcome?.probability ?? 50
