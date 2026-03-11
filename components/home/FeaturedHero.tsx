@@ -44,7 +44,8 @@ export function FeaturedHero() {
     }
 
     const yesProb = featured.outcomes.find((o) => o.name.toLowerCase() === "yes")?.probability ?? 50
-    const showImage = !!featured.image && !imgError
+    const showImage = !!featured.image
+    console.log('Featured:', !!featured.image)
 
     return (
         <div className="relative rounded-2xl border border-[#2A2D3580] bg-gradient-to-br from-[#1C1F26] to-[#1C1F26] to-[#34D3990D] overflow-hidden">
@@ -58,7 +59,6 @@ export function FeaturedHero() {
                             fill
                             className="object-cover"
                             unoptimized
-                            onError={() => setImgError(true)}
                         />
                     ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5" />
