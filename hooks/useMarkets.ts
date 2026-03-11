@@ -11,12 +11,12 @@ import {
     MarketsQueryResult,
 } from "@/lib/subgraph"
 
-export function useMarkets() {
+export function useMarkets(search?: string) {
     // 1. Fetch all market events from the subgraph in one request
     const { data: subgraphData, isLoading: isLoadingSubgraph } =
         useQuery<MarketsQueryResult>({
-            queryKey: ["markets"],
-            queryFn: () => fetchSubgraph<MarketsQueryResult>(MARKETS_QUERY),
+            queryKey: ["markets", search],
+            queryFn: () => fetchSubgraph<MarketsQueryResult>(MARKETS_QUERY, search ? { search } : {}),
             staleTime: 30_000, // consider fresh for 30s
         })
 

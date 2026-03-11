@@ -58,11 +58,12 @@ export interface MarketsQueryResult {
 // ── Queries ──────────────────────────────────────────────────────────────────
 
 export const MARKETS_QUERY = /* GraphQL */ `
-    query GetMarkets {
+    query GetMarkets($search: String) {
         marketCreateds(
             first: 1000
             orderBy: blockTimestamp
             orderDirection: desc
+            where: { question_contains_nocase: $search }
         ) {
             marketId
             question
