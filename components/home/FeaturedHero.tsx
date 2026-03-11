@@ -29,7 +29,7 @@ export function FeaturedHero() {
 
     if (isLoading || !featured) {
         return (
-            <div className="relative rounded-2xl border border-[#1A231A80] bg-gradient-to-br from-[#081208] to-[#081208] overflow-hidden animate-pulse">
+            <div className="relative rounded-2xl border border-[#2A2D3580] bg-gradient-to-br from-[#1C1F26] to-[#1C1F26] overflow-hidden animate-pulse">
                 <div className="flex flex-col p-5 md:p-6 md:flex-row gap-4 md:gap-5">
                     <div className="w-full md:w-48 h-40 md:h-auto rounded-xl bg-secondary shrink-0" />
                     <div className="flex-1 space-y-3 py-2">
@@ -47,7 +47,7 @@ export function FeaturedHero() {
     const showImage = !!featured.image && !imgError
 
     return (
-        <div className="relative rounded-2xl border border-[#1A231A80] bg-gradient-to-br from-[#081208] to-[#081208] to-[#1E993B0D] overflow-hidden">
+        <div className="relative rounded-2xl border border-[#2A2D3580] bg-gradient-to-br from-[#1C1F26] to-[#1C1F26] to-[#34D3990D] overflow-hidden">
             <div className="flex flex-col p-5 md:p-6 md:flex-row gap-4 md:gap-5">
                 {/* Image — fixed h-48 so next/image fill always has a concrete parent height */}
                 <div className="relative w-full md:w-48 h-48 rounded-xl shrink-0 overflow-hidden bg-secondary">
@@ -115,10 +115,10 @@ export function FeaturedHero() {
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <button className="inline-flex items-center px-6 py-2 rounded-lg bg-primary text-primary-foreground text-btn transition-all hover:brightness-110 active:scale-95">
+                            <button className="inline-flex items-center px-6 py-2 rounded-lg bg-primary/10 text-primary text-btn transition-all hover:bg-primary/20 active:scale-95">
                                 Buy Yes
                             </button>
-                            <button className="inline-flex items-center px-6 py-2 rounded-lg bg-destructive text-destructive-foreground text-btn transition-all hover:brightness-110 active:scale-95">
+                            <button className="inline-flex items-center px-6 py-2 rounded-lg bg-destructive/10 text-destructive text-btn transition-all hover:bg-destructive/20 active:scale-95">
                                 Buy No
                             </button>
                             <Link

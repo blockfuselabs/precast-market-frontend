@@ -30,7 +30,7 @@ function PrivyProviderWrapper({ children, wagmiConfig }: { children: React.React
                 // Appearance
                 appearance: {
                     theme: isDark ? 'dark' : 'light',
-                    accentColor: '#1E993B',
+                    accentColor: '#34D399',
                     walletList: ['phantom', 'metamask', 'coinbase_wallet'],
                 },
                 // Login methods

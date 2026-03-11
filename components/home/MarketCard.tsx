@@ -56,23 +56,23 @@ export function MarketCard({ market }: MarketCardProps) {
             {/* Chance — YES left (green), NO right (red) */}
             <div className="flex items-center justify-between">
                 <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-bold text-emerald-500">{yesProb}%</span>
-                    <span className="text-caption text-emerald-500/70">Yes</span>
+                    <span className="text-2xl font-bold text-primary">{yesProb}%</span>
+                    <span className="text-caption text-primary/70">Yes</span>
                 </div>
                 <div className="flex items-baseline gap-1">
-                    <span className="text-caption text-rose-500/70">No</span>
-                    <span className="text-2xl font-bold text-rose-500">{noProb}%</span>
+                    <span className="text-caption text-destructive/70">No</span>
+                    <span className="text-2xl font-bold text-destructive">{noProb}%</span>
                 </div>
             </div>
 
             {/* Progress bar — green YES | red NO */}
             <div className="w-full h-1.5 rounded-full bg-secondary overflow-hidden flex">
                 <div
-                    className="h-full bg-emerald-500 transition-all"
+                    className="h-full bg-primary/15 transition-all"
                     style={{ width: `${yesProb}%` }}
                 />
                 <div
-                    className="h-full bg-rose-500 transition-all flex-1"
+                    className="h-full bg-destructive/15 transition-all flex-1"
                 />
             </div>
 
@@ -81,14 +81,14 @@ export function MarketCard({ market }: MarketCardProps) {
                 <button
                     type="button"
                     onClick={(e) => e.preventDefault()}
-                    className="py-1.5 rounded-md bg-primary text-primary-foreground text-btn text-xs transition-all hover:brightness-110 active:scale-95"
+                    className="py-1.5 rounded-md bg-primary/10 text-primary text-btn text-xs transition-all hover:bg-primary/20 active:scale-95"
                 >
                     Yes {yesProb}¢
                 </button>
                 <button
                     type="button"
                     onClick={(e) => e.preventDefault()}
-                    className="py-1.5 rounded-md bg-destructive text-destructive-foreground text-btn text-xs transition-all hover:brightness-110 active:scale-95"
+                    className="py-1.5 rounded-md bg-destructive/10 text-destructive text-btn text-xs transition-all hover:bg-destructive/20 active:scale-95"
                 >
                     No {noProb}¢
                 </button>

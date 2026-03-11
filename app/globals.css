@@ -9,49 +9,49 @@
    ═══════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Colors (Figma-verified) ────────────────────────── */
-  --background: #000A00;
-  /* Deep Fir — Page bg */
+  /* ── Colors (Polymarket-inspired palette) ────────────── */
+  --background: #141519;
+  /* Charcoal — Page bg */
   --foreground: #FFFFFF;
   /* White — Primary text */
-  --card: #081208;
-  /* Hunter Green — Card surfaces */
-  --card-foreground: #FAFAFA;
-  /* Alabaster — Card text */
-  --popover: #141F14;
-  --popover-foreground: #FAFAFA;
-  --primary: #1E993B;
-  /* Forest Green — Yes/active */
+  --card: #1C1F26;
+  /* Dark Slate — Card surfaces */
+  --card-foreground: #F0F0F2;
+  /* Snow — Card text */
+  --popover: #22252D;
+  --popover-foreground: #F0F0F2;
+  --primary: #34D399;
+  /* Emerald — Yes/active (Polymarket) */
   --primary-foreground: #FFFFFF;
-  --secondary: #1E2A1E;
-  /* Shark — Inactive states */
-  --secondary-foreground: #879287;
-  /* Stack */
-  --muted: #0D160D;
-  /* Log Cabin — Muted containers */
-  --muted-foreground: #9F9FA8;
-  /* Santas Gray — Muted text */
-  --accent: #1E993B;
-  /* Forest Green */
+  --secondary: #252830;
+  /* Gunmetal — Inactive states */
+  --secondary-foreground: #858D95;
+  /* Slate Gray */
+  --muted: #191C22;
+  /* Mirage — Muted containers */
+  --muted-foreground: #9A9EA6;
+  /* Manatee — Muted text */
+  --accent: #34D399;
+  /* Emerald */
   --accent-foreground: #FFFFFF;
-  --destructive: #EF4343;
-  /* Flamingo — No/errors */
+  --destructive: #EF4444;
+  /* Red — No/errors (Polymarket) */
   --destructive-foreground: #FFFFFF;
-  --border: #1A2E1A;
-  --input: #1A2E1A;
-  --ring: #1E993B;
+  --border: #2A2D35;
+  --input: #2A2D35;
+  --ring: #34D399;
 
   /* Chart Colors */
-  --chart-1: #1E993B;
+  --chart-1: #34D399;
   --chart-2: #EAE243;
   --chart-3: #6495ED;
-  --chart-4: #EF4343;
-  --chart-5: #879287;
+  --chart-4: #EF4444;
+  --chart-5: #858D95;
 
   /* Semantic Colors */
   --warning: #EAE243;
   /* Starship */
-  --success: #1E993B;
+  --success: #34D399;
   --info: #6495ED;
 
   /* ── Typography (Figma "Precast" text styles) ──────── */
@@ -147,14 +147,14 @@
   /* Pill shape */
 
   /* Sidebar */
-  --sidebar-background: #000A00;
+  --sidebar-background: #141519;
   --sidebar-foreground: #FFFFFF;
-  --sidebar-primary: #1E993B;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #141F14;
-  --sidebar-accent-foreground: #FAFAFA;
-  --sidebar-border: #1A2E1A;
-  --sidebar-ring: #1E993B;
+  --sidebar-primary: #34D399;
+  --sidebar-primary-foreground: #0A1A10;
+  --sidebar-accent: #22252D;
+  --sidebar-accent-foreground: #F0F0F2;
+  --sidebar-border: #2A2D35;
+  --sidebar-ring: #34D399;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -465,7 +465,11 @@
 }
 
 .ticker-track {
-  animation: ticker-scroll 30s linear infinite;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  width: max-content;
+  animation: ticker-scroll 40s linear infinite;
 }
 
 .ticker-track:hover {

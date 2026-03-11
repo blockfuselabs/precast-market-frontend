@@ -21,7 +21,7 @@ export default function MarketPage({ params }: MarketPageProps) {
     return (
         <>
             <Navbar />
-            <TrendingTicker />
+            {/* <TrendingTicker /> */}
 
             <main className="container-app space-y-6 py-6">
                 <MarketDetailLayout market={market} isLoading={isLoading} refetchMarket={refetchMarket} />
