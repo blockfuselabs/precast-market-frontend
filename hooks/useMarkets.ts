@@ -13,10 +13,11 @@ import {
 
 export function useMarkets(search?: string) {
     // 1. Fetch all market events from the subgraph in one request
+    const where = search ? { question_contains_nocase: search } : {}
     const { data: subgraphData, isLoading: isLoadingSubgraph } =
         useQuery<MarketsQueryResult>({
             queryKey: ["markets", search],
-            queryFn: () => fetchSubgraph<MarketsQueryResult>(MARKETS_QUERY, search ? { search } : {}),
+            queryFn: () => fetchSubgraph<MarketsQueryResult>(MARKETS_QUERY, { where }),
             staleTime: 30_000, // consider fresh for 30s
         })
 
