@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState, useEffect } from "react"
 import { Search, Bell, Command, Plus } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,10 +8,33 @@ import Precastlogo from "../icons/precastlogo";
 import { usePrivy } from "@privy-io/react-auth";
 import { useUserRights } from "@/hooks/useUserRights";
 import { FaucetButton } from "./FaucetButton";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
   const { login, authenticated, user } = usePrivy();
   const { hasCreationRights } = useUserRights();
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   return (
     <nav className="glass sticky top-0 z-50 w-full">
@@ -21,16 +45,24 @@ export function Navbar() {
         </Link>
 
         {/* Search Bar */}
-        <div className="hidden md:flex items-center gap-2 bg-card border border-border rounded-full px-4 py-2 w-full max-w-md mx-8">
+        <form
+          onSubmit={handleSearch}
+          className="hidden md:flex items-center gap-2 bg-card border border-border rounded-full px-4 py-2 w-full max-w-md mx-8 focus-within:border-primary/50 transition-colors"
+        >
           <Search className="w-4 h-4 text-muted-foreground" />
-          <span className="text-body text-muted-foreground flex-1">
-            Search markets...
-          </span>
-          <div className="flex items-center gap-0.5 px-1.5 py-0.5 bg-secondary rounded border border-border">
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="Search markets..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-transparent border-none outline-none text-body text-foreground placeholder:text-muted-foreground flex-1"
+          />
+          <div className="flex items-center gap-0.5 px-1.5 py-0.5 bg-secondary rounded border border-border pointer-events-none">
             <Command className="w-3 h-3 text-muted-foreground" />
             <span className="text-kbd-sm text-muted-foreground">K</span>
           </div>
-        </div>
+        </form>
 
         {/* Right Actions */}
         <div className="flex items-center gap-3">
