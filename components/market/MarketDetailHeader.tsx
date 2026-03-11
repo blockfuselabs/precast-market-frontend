@@ -52,7 +52,7 @@ export function MarketDetailHeader({ market }: MarketDetailHeaderProps) {
 
             {/* Main card */}
             <div className="relative overflow-hidden rounded-2xl border border-border bg-card">
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0_0,#1E993B22,transparent_55%)]" />
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0_0,#34D39922,transparent_55%)]" />
                 <div className="relative px-5 py-4 md:px-6 md:py-5 space-y-4">
                     <div className="flex items-start justify-between gap-4">
                         <div className="flex items-start gap-3">

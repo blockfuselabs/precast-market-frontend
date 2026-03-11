@@ -18,7 +18,7 @@ export default function PortfolioPage() {
     return (
         <>
             <Navbar />
-            <TrendingTicker />
+            {/* <TrendingTicker /> */}
             <main className="container-app py-8 space-y-6">
                 <div className="space-y-1">
                     <h1 className="text-heading-1 text-foreground">My Portfolio</h1>
@@ -143,8 +143,8 @@ export default function PortfolioPage() {
                                                         </td>
                                                         <td className="px-4 py-3">
                                                             <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${trade.yes
-                                                                    ? "bg-primary/10 text-primary"
-                                                                    : "bg-destructive/10 text-destructive"
+                                                                ? "bg-primary/10 text-primary"
+                                                                : "bg-destructive/10 text-destructive"
                                                                 }`}>
                                                                 {trade.yes ? "YES" : "NO"}
                                                             </span>

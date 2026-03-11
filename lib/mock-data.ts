@@ -48,7 +48,7 @@ export const sportsMatches: SportMatch[] = [
   {
     id: "sport-1",
     league: "NFL",
-    leagueColor: "#1E993B",
+    leagueColor: "#34D399",
     time: "Feb 8, 6:30 PM",
     teams: [
       { name: "Seattle Seahawks", abbreviation: "SEA", odds: 69 },
@@ -91,7 +91,7 @@ export const allMarkets: MarketCardData[] = [
   {
     id: "market-1",
     category: "Finance",
-    categoryColor: "#1E993B",
+    categoryColor: "#34D399",
     title: "Fed rate cut in March 2026?",
     chance: 45,
     trend: "2.1%",
@@ -106,7 +106,7 @@ export const allMarkets: MarketCardData[] = [
   {
     id: "market-2",
     category: "Finance",
-    categoryColor: "#1E993B",
+    categoryColor: "#34D399",
     title: "Fed rate cut in March 2026?",
     chance: 45,
     trend: "2.1%",
@@ -171,7 +171,7 @@ export const allMarkets: MarketCardData[] = [
   {
     id: "market-6",
     category: "Finance",
-    categoryColor: "#1E993B",
+    categoryColor: "#34D399",
     title: "Tesla stock above $500 by March?",
     chance: 41,
     trend: "4.5%",

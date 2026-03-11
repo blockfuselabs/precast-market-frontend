@@ -113,7 +113,7 @@ export function MarketTradePanel({ market, isLoading, refetchMarket }: MarketTra
                     className={cn(
                         "flex items-center justify-center gap-1.5 rounded-[0.625rem] px-3 py-2 text-left text-sm font-semibold transition-all",
                         side === "yes"
-                            ? "bg-primary text-primary-foreground"
+                            ? "bg-primary/15 text-primary"
                             : "text-secondary-foreground hover:text-foreground",
                     )}
                 >
@@ -128,7 +128,7 @@ export function MarketTradePanel({ market, isLoading, refetchMarket }: MarketTra
                     className={cn(
                         "flex items-center justify-center gap-1.5 rounded-[0.625rem] px-3 py-2 text-left text-sm font-semibold transition-all",
                         side === "no"
-                            ? "bg-destructive text-destructive-foreground"
+                            ? "bg-destructive/15 text-destructive"
                             : "text-secondary-foreground hover:text-foreground",
                     )}
                 >
@@ -228,10 +228,10 @@ export function MarketTradePanel({ market, isLoading, refetchMarket }: MarketTra
                         <CircleHelp className="w-3 h-3" />
                     </span>
                     <div className="flex items-center gap-1">
-                        <span className="text-emerald-400 font-semibold">
+                        <span className="text-primary font-semibold">
                             ${Math.max(potentialProfit, 0).toFixed(2)}
                         </span>
-                        <span className="text-emerald-400 font-semibold">
+                        <span className="text-primary font-semibold">
                             ({Math.max(potentialReturnPct, 0).toFixed(1)}%)
                         </span>
                     </div>
@@ -270,10 +270,10 @@ export function MarketTradePanel({ market, isLoading, refetchMarket }: MarketTra
                 className={cn(
                     "w-full rounded-xl py-2.5 text-btn font-semibold transition-all flex items-center justify-center gap-2",
                     (!authenticated)
-                        ? "bg-primary text-primary-foreground hover:brightness-110"
+                        ? "bg-primary/15 text-primary hover:bg-primary/25"
                         : side === "yes"
-                            ? "bg-primary text-primary-foreground hover:brightness-110"
-                            : "bg-destructive text-destructive-foreground hover:brightness-110",
+                            ? "bg-primary/15 text-primary hover:bg-primary/25"
+                            : "bg-destructive/15 text-destructive hover:bg-destructive/25",
                     isPending && "opacity-70 cursor-not-allowed"
                 )}
                 disabled={isPending || (authenticated && (!amount || amount <= 0))}

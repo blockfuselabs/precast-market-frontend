@@ -23,7 +23,7 @@ export function LiveSports() {
                 {sportsMatches.map((match) => (
                     <div
                         key={match.id}
-                        className="rounded-xl bg-[#081208] border border-[#1A231A80] p-4 space-y-4 hover:border-primary/30 transition-colors"
+                        className="rounded-xl bg-[#1C1F26] border border-[#2A2D3580] p-4 space-y-4 hover:border-primary/30 transition-colors"
                     >
                         {/* League + Time */}
                         <div className="flex items-center gap-2">
@@ -82,7 +82,7 @@ export function LiveSports() {
 
                         {/* Bet Buttons */}
                         <div className="grid grid-cols-3 gap-2">
-                            <button className="py-1.5 rounded-md text-btn text-xs bg-[#1E993B1A] border border-[#1E993B4D] text-primary-foreground transition-all hover:brightness-110 active:scale-95">
+                            <button className="py-1.5 rounded-md text-btn text-xs bg-primary/10 border border-primary/30 text-primary transition-all hover:bg-primary/20 active:scale-95">
                                 {match.teams[0].abbreviation}
                             </button>
                             <button className="py-1.5 rounded-md text-btn text-xs bg-secondary text-secondary-foreground hover:text-foreground transition-colors">

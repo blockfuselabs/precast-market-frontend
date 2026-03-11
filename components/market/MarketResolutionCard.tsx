@@ -37,8 +37,8 @@ export function MarketResolutionCard({ market }: MarketResolutionCardProps) {
     }
 
     return (
-        <aside className={`rounded-2xl border-2 p-5 md:p-6 bg-card ${isResolved ? (yesWon ? "border-emerald-500/50 bg-emerald-950/10" : "border-red-500/50 bg-red-950/10") : "border-amber-500/50 bg-amber-950/10"}`}>
-            <h2 className={`text-lg font-bold ${isResolved ? (yesWon ? "text-emerald-500" : "text-red-500") : "text-amber-500"}`}>
+        <aside className={`rounded-2xl border-2 p-5 md:p-6 bg-card ${isResolved ? (yesWon ? "border-primary/30 bg-primary/5" : "border-destructive/30 bg-destructive/5") : "border-warning/30 bg-warning/5"}`}>
+            <h2 className={`text-lg font-bold ${isResolved ? (yesWon ? "text-primary" : "text-destructive") : "text-warning"}`}>
                 {isResolved ? "Market Resolved" : "Market Ended"}
             </h2>
 
@@ -47,7 +47,7 @@ export function MarketResolutionCard({ market }: MarketResolutionCardProps) {
                     <div className="space-y-4">
                         <div>
                             <p className="text-body font-semibold text-foreground">
-                                Winning Outcome: <span className={yesWon ? "text-emerald-500 font-bold" : "text-red-500 font-bold"}>{yesWon ? "YES" : "NO"}</span>
+                                Winning Outcome: <span className={yesWon ? "text-primary font-bold" : "text-destructive font-bold"}>{yesWon ? "YES" : "NO"}</span>
                             </p>
                             <p className="text-caption text-muted-foreground leading-relaxed mt-2">
                                 This market has been resolved. You can now claim your winnings if you hold shares of the winning outcome.
@@ -58,8 +58,8 @@ export function MarketResolutionCard({ market }: MarketResolutionCardProps) {
                             onClick={handleClaim}
                             disabled={isClaiming}
                             className={`w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all ${yesWon
-                                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                                : "bg-red-600 hover:bg-red-700 text-white"
+                                ? "bg-primary/15 text-primary hover:bg-primary/25"
+                                : "bg-destructive/15 text-destructive hover:bg-destructive/25"
                                 } ${isClaiming ? "opacity-70 cursor-not-allowed" : ""}`}
                         >
                             {isClaiming && <Loader2 className="w-4 h-4 animate-spin" />}

@@ -11,7 +11,7 @@ export default function Home() {
     return (
         <>
             <Navbar />
-            <TrendingTicker />
+            {/* <TrendingTicker /> */}
 
             <main className="container-app space-y-8 py-6">
                 <CategoryTabs />
