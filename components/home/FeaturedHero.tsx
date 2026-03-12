@@ -92,21 +92,21 @@ export function FeaturedHero() {
                     )}
 
                     {/* Stats */}
-                    <div className="flex items-center gap-4 text-caption">
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-caption">
                         <span className="text-primary font-bold">{featured.volume || "$0"}</span>
                         <span>Volume</span>
                         {featured.endTime && (
                             <span className="flex items-center gap-1">
-                                <Calendar className="w-3 h-3" />
+                                <Calendar className="w-3 h-3 shrink-0" />
                                 {formatEndDate(featured.endTime)}
                             </span>
                         )}
                     </div>
 
                     {/* Chance + Buttons */}
-                    <div className="flex items-center justify-between pt-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
                         <div className="flex items-baseline gap-2">
-                            <span className="text-3xl font-bold text-primary">
+                            <span className="text-3xl sm:text-4xl font-bold text-primary">
                                 {yesProb}%
                             </span>
                             <span className="text-body text-muted-foreground">
@@ -114,16 +114,16 @@ export function FeaturedHero() {
                             </span>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                            <button className="inline-flex items-center px-6 py-2 rounded-lg bg-primary/10 text-primary text-btn transition-all hover:bg-primary/20 active:scale-95">
+                        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                            <button className="flex-1 sm:flex-none inline-flex justify-center items-center px-4 sm:px-6 py-2 rounded-lg bg-primary/10 text-primary text-btn transition-all hover:bg-primary/20 active:scale-95 whitespace-nowrap">
                                 Buy Yes
                             </button>
-                            <button className="inline-flex items-center px-6 py-2 rounded-lg bg-destructive/10 text-destructive text-btn transition-all hover:bg-destructive/20 active:scale-95">
+                            <button className="flex-1 sm:flex-none inline-flex justify-center items-center px-4 sm:px-6 py-2 rounded-lg bg-destructive/10 text-destructive text-btn transition-all hover:bg-destructive/20 active:scale-95 whitespace-nowrap">
                                 Buy No
                             </button>
                             <Link
                                 href={`/markets/${featured.id}`}
-                                className="p-2 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                                className="p-2 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors shrink-0"
                                 aria-label="View details"
                             >
                                 <ArrowRight className="w-4 h-4" />
