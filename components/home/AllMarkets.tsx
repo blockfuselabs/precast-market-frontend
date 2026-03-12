@@ -15,29 +15,29 @@ export function AllMarkets() {
     return (
         <section className="space-y-5">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h2 className="text-heading-2-xl text-foreground">
                     All Markets
                 </h2>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     {/* Sort */}
                     <button className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary border border-border text-body text-muted-foreground hover:text-foreground transition-colors">
-                        <ArrowUpDown className="w-3.5 h-3.5" />
-                        <span className="text-caption">Sort by:</span>
-                        <span className="text-caption text-foreground">
+                        <ArrowUpDown className="w-3.5 h-3.5 shrink-0" />
+                        <span className="text-caption whitespace-nowrap">Sort by:</span>
+                        <span className="text-caption text-foreground whitespace-nowrap">
                             24h Volume
                         </span>
                     </button>
 
                     {/* Filters */}
                     <button className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary border border-border text-caption text-muted-foreground hover:text-foreground transition-colors">
-                        <SlidersHorizontal className="w-3.5 h-3.5" />
+                        <SlidersHorizontal className="w-3.5 h-3.5 shrink-0" />
                         Filters
                     </button>
 
                     {/* View Toggle */}
-                    <div className="flex items-center bg-secondary rounded-lg border border-border overflow-hidden">
+                    <div className="flex items-center bg-secondary rounded-lg border border-border overflow-hidden shrink-0">
                         <button
                             onClick={() => setViewMode("grid")}
                             className={`p-1.5 transition-colors ${viewMode === "grid"
