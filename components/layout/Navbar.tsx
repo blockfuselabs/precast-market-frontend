@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react"
-import { Search, Bell, Command, Plus } from "lucide-react";
+import React, { useRef, useState, useEffect } from "react"
+import { Search, Bell, Command, Plus, Wallet, Copy, LogOut, ChevronDown, Droplets, Loader2, Check, Clock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import Precastlogo from "../icons/precastlogo";
@@ -9,14 +9,39 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useUserRights } from "@/hooks/useUserRights";
 import { FaucetButton } from "./FaucetButton";
 import { useRouter } from "next/navigation";
+import { useBalance, useReadContract } from "wagmi";
+import { erc20Abi, formatUnits } from "viem";
+import { USDC_ADDRESS } from "@/lib/constants";
+import { useFaucet } from "@/hooks/useFaucet";
+import { toast } from "sonner";
 
 export function Navbar() {
-  const { login, authenticated, user } = usePrivy();
+  const { login, authenticated, user, logout } = usePrivy();
   const { hasCreationRights } = useUserRights();
+  const router = useRouter();
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAccountOpen, setIsAccountOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
+  const accountRef = useRef<HTMLDivElement>(null);
+
+  const { data: ethBalance } = useBalance({
+    address: user?.wallet?.address as `0x${string}`,
+  });
+
+  const { data: usdcBalance } = useReadContract({
+    address: USDC_ADDRESS as `0x${string}`,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: user?.wallet?.address ? [user.wallet.address as `0x${string}`] : undefined,
+    query: {
+      enabled: !!user?.wallet?.address,
+    }
+  });
+
+  console.log(usdcBalance);
+
+  const { claimEth, claimTokens, hasClaimedEth, canClaimTokens, isClaiming } = useFaucet();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -29,10 +54,28 @@ export function Navbar() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (accountRef.current && !accountRef.current.contains(e.target as Node)) {
+        setIsAccountOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  const copyAddress = () => {
+    if (user?.wallet?.address) {
+      navigator.clipboard.writeText(user.wallet.address);
+      toast.success("Address copied to clipboard");
     }
   };
 
@@ -92,42 +135,117 @@ export function Navbar() {
           >
             <Bell className="w-5 h-5" />
           </button>
-          <button
-            onClick={() => {
-              console.log("Sign In clicked!", { authenticated, user, appId: process.env.NEXT_PUBLIC_PRIVY_APP_ID });
-              if (!authenticated) {
-                console.log("Calling privy login()...");
-                login();
-              }
-            }}
-            className="inline-flex items-center px-6 py-2 rounded-full bg-white text-black font-medium transition-colors hover:bg-secondary  gap-2"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+
+          {!authenticated ? (
+            <button
+              onClick={login}
+              className="inline-flex items-center px-6 py-2 rounded-full bg-white text-black font-medium transition-colors hover:bg-secondary gap-2"
             >
-              <path
-                d="M12.6667 4.66667V2.66667C12.6667 2.48986 12.5964 2.32029 12.4714 2.19526C12.3464 2.07024 12.1768 2 12 2H3.33333C2.97971 2 2.64057 2.14048 2.39052 2.39052C2.14048 2.64057 2 2.97971 2 3.33333C2 3.68696 2.14048 4.02609 2.39052 4.27614C2.64057 4.52619 2.97971 4.66667 3.33333 4.66667H13.3333C13.5101 4.66667 13.6797 4.7369 13.8047 4.86193C13.9298 4.98695 14 5.15652 14 5.33333V8M14 8H12C11.6464 8 11.3072 8.14048 11.0572 8.39052C10.8071 8.64057 10.6667 8.97971 10.6667 9.33333C10.6667 9.68696 10.8071 10.0261 11.0572 10.2761C11.3072 10.5262 11.6464 10.6667 12 10.6667H14C14.1768 10.6667 14.3464 10.5964 14.4714 10.4714C14.5964 10.3464 14.6667 10.1768 14.6667 10V8.66667C14.6667 8.48986 14.5964 8.32029 14.4714 8.19526C14.3464 8.07024 14.1768 8 14 8Z"
-                stroke="#141519"
-                strokeWidth="1.33333"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M2 3.33301V12.6663C2 13.02 2.14048 13.3591 2.39052 13.6092C2.64057 13.8592 2.97971 13.9997 3.33333 13.9997H13.3333C13.5101 13.9997 13.6797 13.9294 13.8047 13.8044C13.9298 13.6794 14 13.5098 14 13.333V10.6663"
-                stroke="#141519"
-                strokeWidth="1.33333"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            {authenticated
-              ? (user?.wallet?.address ? `${user.wallet.address.slice(0, 4)}...${user.wallet.address.slice(-4)}` : "Connected")
-              : "Sign In"}
-          </button>
+              Sign In
+            </button>
+          ) : (
+            <div className="relative" ref={accountRef}>
+              <button
+                onClick={() => setIsAccountOpen(!isAccountOpen)}
+                className="flex items-center gap-2 rounded-full border border-border bg-card pr-4 pl-2 py-1.5 text-sm font-medium hover:border-primary/50 transition-colors"
+              >
+                <div className="h-6 w-6 rounded-full bg-gradient-to-tr from-primary to-primary/50 flex items-center justify-center text-[10px] text-white font-bold shadow-sm">
+                  {user?.email?.address?.[0].toUpperCase() || user?.wallet?.address?.slice(2, 3).toUpperCase() || 'U'}
+                </div>
+                <span className="text-foreground">
+                  {user?.wallet?.address ? `${user.wallet.address.slice(0, 4)}...${user.wallet.address.slice(-4)}` : "Connected"}
+                </span>
+                <ChevronDown className={`w-3 h-3 text-muted-foreground transition-transform ${isAccountOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {isAccountOpen && (
+                <div className="absolute right-0 mt-2 w-64 rounded-xl border border-border bg-card shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  {/* Account Header */}
+                  <div className="px-4 py-3 border-b border-border bg-secondary/30">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">My Account</p>
+                    <div className="flex items-center justify-between mt-1">
+                      <p className="text-sm font-mono text-foreground">
+                        {user?.wallet?.address?.slice(0, 6)}...{user?.wallet?.address?.slice(-4)}
+                      </p>
+                      <button onClick={copyAddress} className="p-1 hover:bg-secondary rounded transition-colors text-muted-foreground hover:text-foreground">
+                        <Copy className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Balances */}
+                  <div className="px-4 py-3 space-y-3 border-b border-border">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-sm text-foreground">
+                        <Wallet className="w-4 h-4 text-muted-foreground" />
+                        <span>ETH</span>
+                      </div>
+                      <span className="text-sm font-semibold">
+                        {ethBalance ? Number(formatUnits(ethBalance.value, ethBalance.decimals)).toFixed(4) : "0.0000"} {ethBalance?.symbol}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-sm text-foreground">
+                        <Wallet className="w-4 h-4 text-muted-foreground" />
+                        <span>USDC</span>
+                      </div>
+                      <span className="text-sm font-semibold">
+                        {usdcBalance !== undefined ? Number(formatUnits(usdcBalance as bigint, 18)).toFixed(2) : "0.00"} USDC
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Faucets (Quick Action) */}
+                  {((ethBalance?.value || BigInt(0)) === BigInt(0) || (usdcBalance as bigint || BigInt(0)) === BigInt(0)) && (
+                    <div className="px-2 py-2 border-b border-border space-y-1">
+                      {(ethBalance?.value || BigInt(0)) === BigInt(0) && !hasClaimedEth && (
+                        <button
+                          onClick={claimEth}
+                          disabled={isClaiming}
+                          className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors"
+                        >
+                          <span className="flex items-center gap-2"><Droplets className="w-3 h-3" /> Get Test ETH</span>
+                          {isClaiming ? <Loader2 className="w-3 h-3 animate-spin" /> : "Claim"}
+                        </button>
+                      )}
+                      {Number(usdcBalance || 0) === 0 && canClaimTokens && (
+                        <button
+                          onClick={claimTokens}
+                          disabled={isClaiming}
+                          className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors"
+                        >
+                          <span className="flex items-center gap-2"><Droplets className="w-3 h-3" /> Get Test USDC</span>
+                          {isClaiming ? <Loader2 className="w-3 h-3 animate-spin" /> : "Claim"}
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Menu Links */}
+                  <div className="py-1">
+                    <Link
+                      href="/portfolio"
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-secondary transition-colors"
+                      onClick={() => setIsAccountOpen(false)}
+                    >
+                      <Wallet className="w-4 h-4 text-muted-foreground" />
+                      Manage Wallet
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setIsAccountOpen(false);
+                      }}
+                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-destructive hover:bg-destructive/5 transition-colors text-left"
+                    >
+                      <LogOut className="w-4 h-4 text-destructive" />
+                      Disconnect
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </nav>
