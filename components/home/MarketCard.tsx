@@ -13,6 +13,14 @@ function formatEndDate(endTime?: number): string {
     return date.toLocaleDateString(undefined, { month: "short", day: "numeric" })
 }
 
+function getMarketStatus(market: Market) {
+    if (market.resolved) return { label: "Resolved", colorClass: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20" };
+    const now = Date.now() / 1000;
+    const isEnded = market.isExpired || (market.endTime && now > market.endTime);
+    if (isEnded) return { label: "Ended", colorClass: "bg-destructive/10 text-destructive border-destructive/20" };
+    return { label: "Active", colorClass: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" };
+}
+
 export function MarketCard({ market }: MarketCardProps) {
     const yesOutcome = market.outcomes.find((o) => o.name.toLowerCase() === "yes")
     const noOutcome = market.outcomes.find((o) => o.name.toLowerCase() === "no")
@@ -42,12 +50,15 @@ export function MarketCard({ market }: MarketCardProps) {
                     )}
                 </div>
                 <div className="flex-1 min-w-0">
-                    {(market.category || market.tag) && (
-                        <span className="text-caption font-bold text-primary">
-                            {market.category || market.tag}
-                        </span>
-                    )}
-                    <h3 className="text-heading-3 text-foreground leading-snug mt-0.5 line-clamp-2">
+                    <div className="flex items-start justify-between gap-2">
+                        {(market.category || market.tag) && (
+                            <span className="text-caption font-bold text-primary truncate mt-0.5">
+                                {market.category || market.tag}
+                            </span>
+                        )}
+                       
+                    </div>
+                    <h3 className="text-heading-3 text-foreground leading-snug mt-1 line-clamp-2">
                         {market.title}
                     </h3>
                 </div>
@@ -96,7 +107,12 @@ export function MarketCard({ market }: MarketCardProps) {
 
             {/* Footer Stats */}
             <div className="flex items-center gap-3 text-caption pt-1">
-                <span>{market.volume} Vol.</span>
+                <div className="flex items-center gap-2">
+                    <span>{market.volume} Vol.</span>
+                    <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded border ${getMarketStatus(market).colorClass} shrink-0 ml-auto`}>
+                        {getMarketStatus(market).label}
+                    </span>
+                </div>
                 <span className="flex items-center gap-0.5 ml-auto">
                     <Calendar className="w-3 h-3" />
                     {formatEndDate(market.endTime)}

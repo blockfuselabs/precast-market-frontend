@@ -47,15 +47,7 @@ export function AllMarkets() {
                         >
                             <LayoutGrid className="w-4 h-4" />
                         </button>
-                        <button
-                            onClick={() => setViewMode("list")}
-                            className={`p-1.5 transition-colors ${viewMode === "list"
-                                    ? "bg-primary/15 text-primary"
-                                    : "text-muted-foreground hover:text-foreground"
-                                }`}
-                        >
-                            <List className="w-4 h-4" />
-                        </button>
+
                     </div>
                 </div>
             </div>
