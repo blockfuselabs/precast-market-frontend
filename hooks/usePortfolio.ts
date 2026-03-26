@@ -13,6 +13,7 @@ export interface TradeEntry {
     priceNO: string
     blockTimestamp: string
     transactionHash: string
+    marketTitle?: string
 }
 
 export interface PortfolioPosition {
@@ -21,6 +22,7 @@ export interface PortfolioPosition {
     noShares: number
     totalSpent: number     // in USDC
     trades: TradeEntry[]
+    marketTitle?: string
 }
 
 const SHARES_BOUGHT_QUERY = `
@@ -42,6 +44,10 @@ const SHARES_BOUGHT_QUERY = `
       blockTimestamp
       transactionHash
     }
+    marketCreateds(first: 1000) {
+      marketId
+      question
+    }
   }
 `
 
@@ -62,13 +68,24 @@ export function usePortfolio(walletAddress: string | undefined) {
             setIsLoading(true)
             setError(null)
             try {
-                const data = await fetchSubgraph<{ sharesBoughts: TradeEntry[] }>(
+                const data = await fetchSubgraph<{ 
+                    sharesBoughts: TradeEntry[],
+                    marketCreateds: { marketId: string, question: string }[] 
+                }>(
                     SHARES_BOUGHT_QUERY,
                     { user: walletAddress.toLowerCase() }
                 )
 
                 const allTrades = data.sharesBoughts || []
-                setTrades(allTrades)
+                const markets = data.marketCreateds || []
+                const marketMap = new Map<string, string>(markets.map(m => [m.marketId, m.question]))
+
+                const tradesWithTitles = allTrades.map(t => ({
+                    ...t,
+                    marketTitle: marketMap.get(t.marketId) || `Market #${t.marketId}`
+                }))
+
+                setTrades(tradesWithTitles)
 
                 // Aggregate into positions per market
                 const posMap = new Map<string, PortfolioPosition>()
@@ -90,6 +107,7 @@ export function usePortfolio(walletAddress: string | undefined) {
                     }
                     existing.totalSpent += costUsdc
                     existing.trades.push(t)
+                    existing.marketTitle = marketMap.get(t.marketId) || `Market #${t.marketId}`
                     posMap.set(t.marketId, existing)
                 }
 

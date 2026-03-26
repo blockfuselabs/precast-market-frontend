@@ -2,8 +2,9 @@
 
 import { usePrivy } from "@privy-io/react-auth"
 import { usePortfolio } from "@/hooks/usePortfolio"
+import { useState, useMemo } from "react"
 import { formatUnits } from "viem"
-import { Wallet, TrendingUp, Clock, AlertTriangle } from "lucide-react"
+import { Wallet, TrendingUp, Clock, AlertTriangle, Search, ChevronDown } from "lucide-react"
 import Link from "next/link"
 import { Navbar } from "@/components/layout/Navbar"
 import { TrendingTicker } from "@/components/layout/TrendingTicker"
@@ -14,6 +15,30 @@ export default function PortfolioPage() {
     const walletAddress = user?.wallet?.address
 
     const { trades, positions, totalSpent, isLoading, error } = usePortfolio(walletAddress)
+    const [searchQuery, setSearchQuery] = useState("")
+    const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest")
+
+    const filteredAndSortedTrades = useMemo(() => {
+        let result = [...trades]
+
+        // Search filter
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase()
+            result = result.filter(trade => 
+                trade.marketTitle?.toLowerCase().includes(query) || 
+                trade.marketId.toLowerCase().includes(query)
+            )
+        }
+
+        // Sorting
+        result.sort((a, b) => {
+            const timeA = Number(a.blockTimestamp)
+            const timeB = Number(b.blockTimestamp)
+            return sortOrder === "newest" ? timeB - timeA : timeA - timeB
+        })
+
+        return result
+    }, [trades, searchQuery, sortOrder])
 
     return (
         <>
@@ -120,8 +145,38 @@ export default function PortfolioPage() {
                                 </section>
 
                                 {/* Trade History */}
-                                <section className="space-y-3">
-                                    <h2 className="text-heading-3 text-foreground">Trade History</h2>
+                                <section className="space-y-4">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                        <h2 className="text-heading-3 text-foreground whitespace-nowrap">Trade History</h2>
+                                        
+                                        <div className="flex flex-1 items-center gap-3 w-full sm:max-w-md">
+                                            {/* Search */}
+                                            <div className="relative flex-1">
+                                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search market or ID..."
+                                                    value={searchQuery}
+                                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                                    className="w-full bg-secondary/50 border border-border rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all"
+                                                />
+                                            </div>
+
+                                            {/* Sort Dropdown */}
+                                            <div className="relative">
+                                                <select
+                                                    value={sortOrder}
+                                                    onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
+                                                    className="appearance-none bg-secondary/50 border border-border rounded-xl pl-3 pr-8 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all cursor-pointer"
+                                                >
+                                                    <option value="newest">Newest first</option>
+                                                    <option value="oldest">Oldest first</option>
+                                                </select>
+                                                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div className="rounded-2xl border border-border bg-card overflow-hidden">
                                         <table className="w-full text-sm">
                                             <thead className="border-b border-border">
@@ -134,12 +189,20 @@ export default function PortfolioPage() {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {trades.map(trade => (
+                                                {filteredAndSortedTrades.length === 0 ? (
+                                                    <tr>
+                                                        <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground font-medium">
+                                                            No matching trades found
+                                                        </td>
+                                                    </tr>
+                                                ) : (
+                                                    filteredAndSortedTrades.map(trade => (
                                                     <tr key={trade.id} className="border-b border-border last:border-none hover:bg-secondary/50 transition-colors">
                                                         <td className="px-4 py-3">
-                                                            <Link href={`/markets/${trade.marketId}`} className="text-primary hover:underline">
-                                                                #{trade.marketId}
+                                                            <Link href={`/markets/${trade.marketId}`} className="text-primary hover:underline block font-medium">
+                                                                {trade.marketTitle}
                                                             </Link>
+                                                            <span className="text-[10px] text-muted-foreground uppercase opacity-70">ID: #{trade.marketId}</span>
                                                         </td>
                                                         <td className="px-4 py-3">
                                                             <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${trade.yes
@@ -162,7 +225,8 @@ export default function PortfolioPage() {
                                                             </span>
                                                         </td>
                                                     </tr>
-                                                ))}
+                                                    ))
+                                                )}
                                             </tbody>
                                         </table>
                                     </div>
